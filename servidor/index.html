@@ -1028,7 +1028,7 @@ footer ul{max-width:none;columns:2;column-gap:2.5rem}
 <b>$</b> chmod +t directori             <i># sticky bit</i>
 <b>$</b> chmod 2770 /srv/equip          <i># octal: SGID + rwxrwx---</i>
 <b>$</b> sudo find / -perm -4000 -type f 2&gt;/dev/null   <i># tots els SUID del sistema</i></pre>
-    <p class="cap">Si veieu una <code>S</code> o una <code>T</code> majúscules, el bit especial hi és però falta la <code>x</code> de sota: normalment és un error.</p>
+    <p class="cap">Si veieu una <code>S</code> o una <code>T</code> majúscules, el bit especial hi és però falta la <code>x</code> de sota. Una <code>S</code> sol ser un error. Una <code>T</code> en un directori tancat als altres (<code>---</code>) és normal: el sticky bit hi és i els altres simplement no hi poden entrar.</p>
   </div>
 
   <div class="note">
