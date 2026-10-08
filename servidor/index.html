@@ -339,6 +339,31 @@ footer ul{max-width:none;columns:2;column-gap:2.5rem}
 
 .note.dark a{color:#F3AFAD}
 @media print{.note.dark a{color:#F3AFAD !important}}
+
+/* ---------- barres LVM ---------- */
+.lvm{margin:1.1rem 0 1.5rem;max-width:62rem}
+.lvm .lt{font-size:.82rem;font-weight:700;margin:.2rem 0 .35rem}
+.lvm .lt code{font-weight:400}
+.lvm .arrow{font-size:.82rem;color:var(--muted);margin:.55rem 0 .55rem}
+.lvm .bar{display:flex;border:1px solid var(--ink);font-size:.78rem;line-height:1.3}
+.lvm .bar>div{padding:.45rem .5rem;border-right:1px solid var(--ink);min-width:3.6rem;overflow:hidden}
+.lvm .bar>div:last-child{border-right:0}
+.lvm .bar b{display:block}
+.lvm .sys{background:var(--surface);color:var(--muted)}
+.lvm .pv{background:var(--ink);color:#fff}
+.lvm .lv{background:var(--paper)}
+.lvm .lv.grow{background:#F6DCDB}
+.lvm .free{background:repeating-linear-gradient(45deg,transparent 0 6px,rgba(190,45,42,.12) 6px 12px);color:var(--red)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .lvm .pv{background:#2E2B29}
+  :root:not([data-theme="light"]) .lvm .lv.grow{background:#4A2725}
+}
+@media (max-width:640px){.lvm .bar{font-size:.7rem}.lvm .bar>div{min-width:2.8rem;padding:.4rem .35rem}}
+@media print{
+  .lvm{break-inside:avoid;page-break-inside:avoid}
+  .lvm .pv{background:#242121 !important;color:#fff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .lvm .sys,.lvm .lv.grow,.lvm .free{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
 /* ---------- topologia ---------- */
 .topo{display:flex;align-items:stretch;margin:1.4rem 0 1.7rem;max-width:62rem}
 .topo .box{flex:1 1 0;border:1px solid var(--rule);padding:.75rem .9rem;font-size:.86rem;background:var(--paper)}
@@ -508,26 +533,76 @@ footer ul{max-width:none;columns:2;column-gap:2.5rem}
 
   <h3>LVM: particions que es poden fer créixer</h3>
 
-  <p>Decidir les mides el primer dia és endevinar. El <strong>gestor de volums lògics</strong> (LVM) resol el problema posant una capa entre el disc i els sistemes de fitxers:</p>
+  <p>Amb particions normals, cada tros de disc queda fix el dia de la instal·lació. Si al cap d'un any <code>/var</code> s'omple i <code>/home</code> està mig buit, no podeu passar espai de l'un a l'altre: les particions són blocs consecutius del disc i, per fer-ne créixer una, caldria moure les del costat. A la pràctica vol dir reinstal·lar o fer operacions de risc.</p>
 
-  <div class="stack">
-    <div><b>Sistemes de fitxers</b> <code>/</code> · <code>/var</code> · <code>/home</code></div>
-    <div class="k"><b>Volums lògics (LV)</b> els «discos» que es formaten i es munten</div>
-    <div><b>Grup de volums (VG)</b> una bossa d'espai feta d'un o més PV</div>
-    <div><b>Volums físics (PV)</b> particions o discos cedits al LVM</div>
-    <div class="hw"><b>Disc</b> <code>/dev/vda</code></div>
+  <p>El <strong>gestor de volums lògics</strong> (LVM) ho resol posant una capa entre el disc i els sistemes de fitxers. En lloc de formatar particions, es fa en tres passos:</p>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Capa</th><th>Què és</th><th>Comparació</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Volum físic (PV)</strong></td><td>Una partició (o un disc sencer) que es cedeix al LVM. Deixa de fer-se servir directament</td><td>Els diners que ingresseu en un compte</td></tr>
+      <tr><td><strong>Grup de volums (VG)</strong></td><td>La suma de l'espai de tots els PV, en una sola bossa</td><td>El saldo del compte</td></tr>
+      <tr><td><strong>Volum lògic (LV)</strong></td><td>Un tros d'aquella bossa amb la mida que vulgueu. És el que es formata i es munta, com si fos una partició</td><td>Les partides del pressupost: <code>/</code>, <code>/var</code>, <code>/home</code></td></tr>
+    </tbody>
+  </table>
   </div>
 
-  <p>Un volum lògic es pot ampliar en calent, sense desmuntar res, sempre que al grup quedi espai. Per això la bona pràctica és <strong>no repartir tot el disc el primer dia</strong>: es deixa espai lliure al grup de volums i s'assigna on faci falta quan faci falta.</p>
+  <p>La clau és que el que no assigneu a cap volum lògic queda al grup com a <strong>espai lliure</strong>, i d'allà es pot treure més endavant per fer créixer qualsevol volum, sense tocar els altres i sense reiniciar.</p>
+
+  <h4>L'esquema del projecte, amb números</h4>
+
+  <div class="lvm">
+    <p class="lt">Disc <code>/dev/vda</code> · 40 GB · particions de sempre</p>
+    <div class="bar">
+      <div class="sys" style="flex:1"><b>vda1</b>1 GB</div>
+      <div class="sys" style="flex:2"><b>vda2</b>/boot · 2 GB</div>
+      <div class="pv" style="flex:37"><b>vda3</b>PV del LVM · 37 GB</div>
+    </div>
+    <p class="arrow">↓ els 37 GB de <code>vda3</code> passen a formar el grup de volums</p>
+    <p class="lt">Grup de volums <code>vg-servidor</code> · 37 GB</p>
+    <div class="bar">
+      <div class="lv" style="flex:15"><b>lv-arrel</b>/ · 15 GB</div>
+      <div class="lv" style="flex:10"><b>lv-var</b>/var · 10 GB</div>
+      <div class="lv" style="flex:3"><b>lv-home</b>/home · 3 GB</div>
+      <div class="free" style="flex:9"><b>Lliure</b>9 GB</div>
+    </div>
+  </div>
+
+  <p>Fixeu-vos que la partició d'arrencada i <code>/boot</code> queden fora del LVM: són particions normals perquè el carregador les trobi sense complicacions. Tota la resta del disc és un sol PV, i a partir d'aquí ja no es parla de particions sinó de volums.</p>
+
+  <h4>Què passa quan /var s'omple</h4>
+
+  <p>Suposem que d'aquí a uns mesos <code>df -h</code> diu que <code>/var</code> és al 95 %. Amb LVM, se li donen 5 GB de l'espai lliure amb una sola ordre, amb el servidor funcionant:</p>
+
+  <div class="term">
+<pre><b>$</b> sudo lvextend -r -L +5G /dev/vg-servidor/lv-var   <i># -r amplia també el sistema de fitxers</i></pre>
+  </div>
+
+  <div class="lvm">
+    <p class="lt">Grup de volums <code>vg-servidor</code> després d'ampliar /var</p>
+    <div class="bar">
+      <div class="lv" style="flex:15"><b>lv-arrel</b>/ · 15 GB</div>
+      <div class="lv grow" style="flex:15"><b>lv-var</b>/var · 15 GB</div>
+      <div class="lv" style="flex:3"><b>lv-home</b>/home · 3 GB</div>
+      <div class="free" style="flex:4"><b>Lliure</b>4 GB</div>
+    </div>
+  </div>
+
+  <p>Si un dia s'acaba l'espai lliure del grup, s'afegeix un disc nou a la màquina, es converteix en PV i s'afegeix al grup: la bossa es fa més gran i els volums poden continuar creixent. Per això la bona pràctica és <strong>no repartir tot el disc el primer dia</strong>. En aquest projecte no cal ampliar res: n'hi ha prou que deixeu l'espai lliure i sapigueu explicar per a què serveix.</p>
+
+  <h4>Com es veu al sistema</h4>
 
   <div class="term">
     <button class="copy" type="button">Copia</button>
-<pre><b>$</b> sudo pvs                     <i># volums físics</i>
-<b>$</b> sudo vgs                     <i># grups de volums i espai lliure (VFree)</i>
-<b>$</b> sudo lvs                     <i># volums lògics</i></pre>
+<pre><b>$</b> sudo pvs        <i># volums físics: quina partició és PV i de quin grup</i>
+<b>$</b> sudo vgs        <i># grups: mida total i espai lliure (columna VFree)</i>
+<b>$</b> sudo lvs        <i># volums lògics i la seva mida</i>
+<b>$</b> lsblk           <i># l'arbre complet: disc → partició → volums</i></pre>
+    <p class="cap">Un mateix volum lògic té dos noms: <code>/dev/vg-servidor/lv-var</code> i, a <code>lsblk</code>, <code>vg--servidor-lv--var</code>. Els guions dobles no són cap error: el sistema dobla els guions que hi ha dins dels noms per poder separar el nom del grup del nom del volum amb un guió simple.</p>
   </div>
 
-  <h3>Un esquema per a la màquina del projecte</h3>
+  <h3>L'esquema en una taula</h3>
 
   <div class="tw">
   <table>
@@ -536,10 +611,11 @@ footer ul{max-width:none;columns:2;column-gap:2.5rem}
       <tr><td>Partició d'arrencada</td><td>La crea l'instal·lador</td><td>—</td><td>—</td></tr>
       <tr><td>Partició</td><td>ext4</td><td>2 GB</td><td><code>/boot</code></td></tr>
       <tr><td>Partició</td><td>PV del LVM</td><td>La resta</td><td>—</td></tr>
-      <tr><td>&nbsp;&nbsp;lv-arrel</td><td>ext4</td><td>15 GB</td><td><code>/</code></td></tr>
-      <tr><td>&nbsp;&nbsp;lv-var</td><td>ext4</td><td>10 GB</td><td><code>/var</code></td></tr>
-      <tr><td>&nbsp;&nbsp;lv-home</td><td>ext4</td><td>3 GB</td><td><code>/home</code></td></tr>
-      <tr><td>&nbsp;&nbsp;Espai lliure al VG</td><td>—</td><td>La resta</td><td>Reserva per créixer</td></tr>
+      <tr><td>&nbsp;&nbsp;Grup de volums</td><td>VG fet amb el PV anterior</td><td>La mida del PV</td><td>—</td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;lv-arrel</td><td>ext4</td><td>15 GB</td><td><code>/</code></td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;lv-var</td><td>ext4</td><td>10 GB</td><td><code>/var</code></td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;lv-home</td><td>ext4</td><td>3 GB</td><td><code>/home</code></td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;Espai lliure al VG</td><td>—</td><td>La resta</td><td>Reserva per créixer</td></tr>
     </tbody>
   </table>
   </div>
@@ -749,16 +825,14 @@ footer ul{max-width:none;columns:2;column-gap:2.5rem}
   <div class="term">
     <button class="copy" type="button">Copia</button>
 <pre>network:
-  version: 2
-  renderer: networkd
   ethernets:
     enp1s0:
       dhcp4: true
     enp2s0:
-      dhcp4: false
       addresses:
-        - 192.168.50.10/24</pre>
-    <p class="cap">A <code>enp2s0</code> només hi va l'adreça amb el prefix de la màscara. La passarel·la i els DNS ja els dona el DHCP a <code>enp1s0</code>.</p>
+      - 192.168.50.10/24
+  version: 2</pre>
+    <p class="cap">A <code>enp2s0</code> només hi va l'adreça amb el prefix de la màscara: si no hi poseu <code>dhcp4: true</code>, no demana adreça per DHCP. La passarel·la i els DNS ja els dona el DHCP a <code>enp1s0</code>. Si en altres guies veieu <code>renderer: networkd</code> o <code>dhcp4: false</code>, és el mateix escrit de manera explícita: són els valors per defecte en un servidor.</p>
   </div>
 
   <div class="note">
@@ -778,12 +852,11 @@ footer ul{max-width:none;columns:2;column-gap:2.5rem}
 
   <div class="term">
 <pre>    enp1s0:
-      dhcp4: false
       addresses:
-        - 192.168.1.10/24
+      - 192.168.1.10/24
       routes:
-        - to: default
-          via: 192.168.1.1
+      - to: default
+        via: 192.168.1.1
       nameservers:
         addresses: [192.168.1.1, 1.1.1.1]</pre>
     <p class="cap">Si veieu exemples amb <code>gateway4:</code>, són antics: Netplan l'accepta però avisa que està obsolet.</p>
