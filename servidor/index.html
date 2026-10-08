@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Servidor Linux · MP0374 · 2n ASIX</title>
+<meta name="description" content="Material del bloc de servidor del mòdul MP0374 Administració de sistemes operatius. Institut Mare de Déu de la Mercè.">
+<style>
+:root{
+  --ink:#242121;
+  --red:#BE2D2A;
+  --deep:#8C1512;
+  --paper:#FFFFFF;
+  --surface:#F4F2F1;
+  --rule:#DCD7D5;
+  --muted:#6E6764;
+  --term:#1A1817;
+  --termtext:#E8E4E2;
+  --maxw:none;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:5.5rem}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;
+  font-size:17px;
+  line-height:1.62;
+  -webkit-text-size-adjust:100%;
+}
+
+/* ---------- barra superior ---------- */
+.topbar{
+  position:sticky;top:0;z-index:60;
+  background:var(--ink);color:#fff;
+  padding-top:env(safe-area-inset-top,0px);
+  border-bottom:3px solid var(--red);
+}
+.topbar-in{
+  max-width:1360px;margin:0 auto;
+  display:flex;align-items:center;gap:1rem;
+  padding:.55rem 1.25rem;
+}
+.topbar img{height:26px;width:auto;display:block}
+.topbar .mod{
+  font-size:.78rem;letter-spacing:.06em;font-weight:700;
+  color:#fff;opacity:.92;
+}
+.topbar .mod span{color:var(--red);font-weight:700}
+.topbar .spacer{flex:1}
+.navtoggle{
+  display:none;background:none;border:1px solid rgba(255,255,255,.35);
+  color:#fff;font:inherit;font-size:.8rem;font-weight:700;
+  padding:.3rem .7rem;cursor:pointer;
+}
+#bar{height:3px;background:var(--red);width:0;transition:width .12s linear;
+  position:absolute;bottom:-3px;left:0}
+@media (prefers-reduced-motion:reduce){#bar{transition:none}}
+
+/* ---------- portada ---------- */
+.hero{
+  background:var(--ink);color:#fff;
+  padding:4.5rem 1.25rem 3.5rem;
+}
+.hero-in{max-width:1360px;margin:0 auto;padding:0 clamp(0px,2vw,2rem)}
+.hero img.mark{height:54px;width:auto;margin-bottom:2.6rem;display:block}
+.hero .kicker{
+  font-size:.82rem;font-weight:700;letter-spacing:.14em;
+  color:var(--red);margin:0 0 1.1rem;
+}
+.hero h1{
+  font-family:"Arial Black","Arial Bold",Arial,sans-serif;
+  font-weight:900;
+  font-size:clamp(3rem,11vw,7.5rem);
+  line-height:.88;letter-spacing:-.035em;
+  margin:0 0 1.5rem;
+}
+.hero h1 em{font-style:normal;color:var(--red)}
+.hero .lede{
+  font-size:clamp(1.05rem,2.2vw,1.3rem);
+  max-width:66ch;color:#D9D4D2;margin:0 0 2.6rem;line-height:1.5;
+}
+.prompt{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  font-size:.95rem;color:#C9C4C2;
+  border-top:1px solid rgba(255,255,255,.18);
+  padding-top:1.4rem;
+}
+.prompt b{color:var(--red);font-weight:700}
+.herometa{
+  display:flex;flex-wrap:wrap;gap:.5rem 2.5rem;
+  margin-top:1.4rem;font-size:.82rem;color:#9C9694;
+}
+
+/* ---------- graella ---------- */
+.shell{max-width:1360px;margin:0 auto;display:flex;align-items:flex-start;gap:0}
+nav.toc{
+  width:255px;flex:0 0 255px;
+  position:sticky;top:4.2rem;
+  max-height:calc(100vh - 5rem);overflow-y:auto;
+  padding:2.5rem 0 3rem 1.25rem;
+}
+nav.toc h2{
+  font-size:.7rem;letter-spacing:.14em;font-weight:700;
+  color:var(--muted);margin:0 0 .9rem;
+}
+nav.toc ol{list-style:none;margin:0;padding:0;counter-reset:t}
+nav.toc a{
+  display:flex;gap:.6rem;align-items:baseline;
+  padding:.3rem .6rem .3rem .5rem;
+  color:var(--ink);text-decoration:none;
+  font-size:.86rem;line-height:1.3;
+  border-left:3px solid transparent;
+}
+nav.toc a .n{
+  font-variant-numeric:tabular-nums;color:var(--muted);
+  font-size:.78rem;min-width:1.1em;font-weight:700;
+}
+nav.toc a:hover{background:var(--surface)}
+nav.toc a.on{background:var(--red);color:#fff;border-left-color:var(--deep)}
+nav.toc a.on .n{color:#fff}
+nav.toc a:focus-visible{outline:2px solid var(--red);outline-offset:-2px}
+
+main{flex:1;min-width:0;padding:2.5rem clamp(1.25rem,3.5vw,3.5rem) 5rem}
+
+/* ---------- seccions ---------- */
+section{padding-top:1.5rem;margin-bottom:4.5rem;scroll-margin-top:5rem}
+.shead{border-top:3px solid var(--ink);padding-top:1rem;margin-bottom:1.8rem}
+.shead .num{
+  font-family:"Arial Black",Arial,sans-serif;font-weight:900;
+  font-size:2.6rem;line-height:1;color:var(--red);
+  letter-spacing:-.04em;display:block;margin-bottom:.2rem;
+}
+.shead h2{
+  font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:700;
+  line-height:1.15;letter-spacing:-.02em;margin:0;max-width:30ch;
+}
+.shead p.sub{color:var(--muted);margin:.6rem 0 0;max-width:var(--maxw);font-size:.98rem}
+
+h3{font-size:1.18rem;font-weight:700;margin:2.4rem 0 .7rem;letter-spacing:-.01em}
+h3:first-of-type{margin-top:1.6rem}
+h4{font-size:1rem;font-weight:700;margin:1.7rem 0 .4rem;color:var(--deep)}
+p{max-width:var(--maxw);margin:0 0 1rem}
+ul,ol{max-width:var(--maxw);margin:0 0 1.15rem;padding-left:1.3rem}
+li{margin-bottom:.4rem}
+li::marker{color:var(--red)}
+strong{font-weight:700}
+a{color:var(--deep);text-decoration:underline;text-underline-offset:2px}
+a:hover{color:var(--red)}
+
+code{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  font-size:.88em;background:var(--surface);
+  padding:.1em .35em;border-radius:2px;
+  color:var(--deep);word-break:break-word;
+}
+
+/* ---------- terminal ---------- */
+.term{position:relative;margin:1.3rem 0 1.5rem}
+.term pre{
+  background:var(--term);color:var(--termtext);
+  margin:0;padding:1.05rem 1.1rem;
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  font-size:.84rem;line-height:1.72;
+  overflow-x:auto;border-left:3px solid var(--red);
+}
+.term pre b{color:var(--red);font-weight:700}
+.term pre i{color:#8C8683;font-style:normal}
+.term pre u{color:#C9A227;text-decoration:none}
+.copy{
+  position:absolute;top:.45rem;right:.45rem;
+  background:rgba(255,255,255,.1);color:#CFCAC8;
+  border:1px solid rgba(255,255,255,.22);
+  font:inherit;font-size:.7rem;font-weight:700;
+  padding:.22rem .55rem;cursor:pointer;
+}
+.copy:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.copy:focus-visible{outline:2px solid #fff;outline-offset:1px}
+.term .cap{font-size:.78rem;color:var(--muted);margin:.4rem 0 0}
+
+/* ---------- taules ---------- */
+.tw{overflow-x:auto;margin:1.3rem 0 1.6rem;border-bottom:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:.88rem}
+th,td{text-align:left;padding:.55rem .75rem;vertical-align:top;border-bottom:1px solid var(--rule)}
+thead th{
+  background:var(--ink);color:#fff;font-weight:700;
+  font-size:.78rem;letter-spacing:.03em;border-bottom:none;
+}
+tbody tr:nth-child(even){background:var(--surface)}
+td code{background:transparent;padding:0;color:var(--deep)}
+
+/* ---------- avisos ---------- */
+.note{
+  border-left:3px solid var(--red);background:var(--surface);
+  padding:.9rem 1.1rem;margin:1.3rem 0;max-width:var(--maxw);
+}
+.note p{margin:0}
+.note p+p{margin-top:.6rem}
+.note .lbl{
+  display:block;font-size:.72rem;font-weight:700;letter-spacing:.1em;
+  color:var(--deep);margin-bottom:.35rem;
+}
+.note.dark{background:var(--ink);color:#E6E2E0;border-left-color:var(--red)}
+.note.dark .lbl{color:#F0A5A3}
+.note.dark code{background:rgba(255,255,255,.12);color:#F3AFAD}
+
+/* ---------- capes / diagrama ---------- */
+.stack{margin:1.4rem 0 1.7rem;max-width:56ch}
+.stack div{
+  border:1px solid var(--rule);border-bottom:none;
+  padding:.6rem .9rem;font-size:.88rem;background:var(--paper);
+}
+.stack div:last-child{border-bottom:1px solid var(--rule)}
+.stack div b{display:inline-block;min-width:11.5em;font-weight:700}
+.stack div.k{background:var(--ink);color:#fff;border-color:var(--ink)}
+.stack div.k b{color:#fff}
+.stack div.hw{background:var(--surface);color:var(--muted)}
+
+/* ---------- llibertats ---------- */
+.freedoms{list-style:none;padding:0;margin:1.4rem 0 1.6rem;max-width:var(--maxw)}
+.freedoms li{
+  display:flex;gap:1rem;align-items:baseline;
+  border-top:1px solid var(--rule);padding:.75rem 0;margin:0;
+}
+.freedoms li span{
+  font-family:"Arial Black",Arial,sans-serif;font-weight:900;
+  font-size:1.5rem;color:var(--red);line-height:1;min-width:1.2em;
+}
+.freedoms li:last-child{border-bottom:1px solid var(--rule)}
+
+/* ---------- peu ---------- */
+footer{
+  background:var(--ink);color:#B4AEAC;
+  padding:3rem 1.25rem;margin-top:2rem;font-size:.86rem;
+}
+.footer-in{max-width:1360px;margin:0 auto;padding:0 clamp(0px,2vw,2rem)}
+footer img{height:34px;margin-bottom:1.4rem;display:block}
+footer a{color:#E8B4B2}
+footer ul{max-width:none;columns:2;column-gap:2.5rem}
+@media (max-width:640px){footer ul{columns:1}}
+
+/* ---------- responsive ---------- */
+@media (max-width:920px){
+  .shell{display:block}
+  nav.toc{
+    position:static;width:auto;flex:none;max-height:none;
+    padding:1.5rem 1.25rem 0;display:none;
+    border-bottom:1px solid var(--rule);
+  }
+  nav.toc.open{display:block}
+  nav.toc ol{columns:2;column-gap:1.2rem}
+  nav.toc a{break-inside:avoid}
+  .navtoggle{display:block}
+  main{padding:1.75rem 1.25rem 4rem}
+  body{font-size:16px}
+}
+@media (max-width:520px){
+  nav.toc ol{columns:1}
+  .hero{padding:3rem 1.25rem 2.5rem}
+  .stack div b{display:block;min-width:0}
+}
+
+/* ---------- mode fosc del visor ---------- */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#161514;--surface:#232120;--rule:#3B3735;
+    --ink:#F2EFEE;--muted:#A49D9A;--deep:#E88A87;--red:#D4433F;
+  }
+  :root:not([data-theme="light"]) .topbar,
+  :root:not([data-theme="light"]) .hero,
+  :root:not([data-theme="light"]) footer{background:#0E0D0D}
+  :root:not([data-theme="light"]) .shead{border-top-color:var(--red)}
+  :root:not([data-theme="light"]) thead th{background:#2E2B29;color:#F2EFEE}
+  :root:not([data-theme="light"]) .stack div.k{background:#2E2B29;border-color:#2E2B29}
+  :root:not([data-theme="light"]) .note.dark{background:#232120}
+}
+
+/* ---------- impressió / PDF ---------- */
+@media print{
+  @page{
+    size:A4;margin:17mm 15mm 16mm;
+    @bottom-left{
+      content:"MP0374 · Administració de sistemes operatius · Institut Mare de Déu de la Mercè";
+      font-family:Arial,sans-serif;font-size:7pt;color:#8A8482;
+    }
+    @bottom-right{
+      content:counter(page) " / " counter(pages);
+      font-family:Arial,sans-serif;font-size:7.5pt;color:#8A8482;
+    }
+  }
+  @page cover{
+    margin:0;
+    @bottom-left{content:none}
+    @bottom-right{content:none}
+  }
+  :root{--maxw:none}
+  html{scroll-behavior:auto}
+  body{font-size:10.2pt;line-height:1.45;background:#fff;color:#000}
+  .topbar,nav.toc,.copy,.navtoggle{display:none !important}
+  .shell{display:block}
+  main{padding:0}
+  .hero{
+    page:cover;background:#242121 !important;color:#fff !important;
+    height:297mm;padding:6.5cm 2.2cm 0;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
+  .hero-in{padding:0}
+  .hero img.mark{height:1.7cm;margin-bottom:3.2cm}
+  .hero h1{font-size:60pt;margin-bottom:1.4cm}
+  .hero .lede{font-size:12.5pt;color:#DDD !important;margin-bottom:2.4cm}
+  .hero .kicker{font-size:9.5pt}
+  section{page-break-before:always;break-before:page;margin-bottom:1.4cm;padding-top:0}
+  .shead .num{font-size:20pt}
+  .shead h2{font-size:17pt}
+  h3{font-size:12.5pt;page-break-after:avoid;break-after:avoid}
+  h4{page-break-after:avoid;break-after:avoid}
+  p,li{orphans:3;widows:3}
+  .term,.tw,.note,.stack,table,.freedoms{page-break-inside:avoid;break-inside:avoid}
+  .term pre{background:#1A1817 !important;color:#E8E4E2 !important;font-size:8.4pt;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;white-space:pre-wrap;word-break:break-word}
+  thead th{background:#242121 !important;color:#fff !important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  tbody tr:nth-child(even){background:#F4F2F1 !important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .note{background:#F4F2F1 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .note.dark{background:#242121 !important;color:#E6E2E0 !important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  table{min-width:0;font-size:8.6pt}
+  .tw{overflow:visible}
+  footer{background:#242121 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;
+    page-break-before:always;break-before:page}
+  a{color:#000;text-decoration:none}
+}
+
+.note.dark a{color:#F3AFAD}
+@media print{.note.dark a{color:#F3AFAD !important}}
+/* ---------- topologia ---------- */
+.topo{display:flex;align-items:stretch;margin:1.4rem 0 1.7rem;max-width:62rem}
+.topo .box{flex:1 1 0;border:1px solid var(--rule);padding:.75rem .9rem;font-size:.86rem;background:var(--paper)}
+.topo .box.net{flex:1.25 1 0}
+.topo .box b{display:block;margin-bottom:.15rem}
+.topo .box code{background:transparent;padding:0}
+.topo .net{background:var(--ink);color:#fff;border-color:var(--ink)}
+.topo .net code{color:#F3AFAD}
+.topo .link{flex:0 0 1.6rem;height:3px;align-self:center;background:var(--red)}
+@media (max-width:640px){
+  .topo{flex-direction:column}
+  .topo .link{flex:0 0 1.1rem;width:3px;height:auto}
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .topo .net{background:#2E2B29;border-color:#2E2B29}
+}
+@media print{
+  .topo{break-inside:avoid;page-break-inside:avoid}
+  .topo .net{background:#242121 !important;color:#fff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .topo .link{background:#BE2D2A !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <img src="data:image/png;base64,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" alt="Institut Mare de Déu de la Mercè">
+    <span class="mod">MP0374 <span>·</span> 2n ASIX</span>
+    <span class="spacer"></span>
+    <button class="navtoggle" id="navtoggle" aria-expanded="false" aria-controls="toc">Índex</button>
+  </div>
+  <div id="bar"></div>
+</header>
+
+<div class="hero">
+  <div class="hero-in">
+    <img class="mark" src="data:image/png;base64,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" alt="Institut Mare de Déu de la Mercè">
+    <p class="kicker">Administració de sistemes operatius · 2n ASIX · Curs 2026-2027</p>
+    <h1>Servidor <em>Linux</em></h1>
+    <p class="lede">Segon bloc del mòdul: la mateixa base que l'escriptori, però sense pantalla i al servei dels altres. Instal·lar Ubuntu Server, deixar-lo a la xarxa amb IP fixa, administrar-lo a distància i saber què hi passa a dins: registres, recursos, seguretat i rendiment.</p>
+    <p class="prompt"><b>$</b> ssh admin@servidor<br>Bloc de servidor · lliurament al Classroom · nom.asix2n26@lamerce.com</p>
+    <div class="herometa">
+      <span>Institut Mare de Déu de la Mercè</span>
+      <span>CFGS Administració de Sistemes Informàtics en Xarxa · 2n curs</span>
+    </div>
+  </div>
+</div>
+
+<div class="shell">
+<nav class="toc" id="toc">
+  <h2>ÍNDEX</h2>
+  <ol>
+    <li><a href="#s1"><span class="n">1</span> Del client al servidor</a></li>
+    <li><a href="#s2"><span class="n">2</span> Ubuntu Server i requisits</a></li>
+    <li><a href="#s3"><span class="n">3</span> Planificar el disc</a></li>
+    <li><a href="#s4"><span class="n">4</span> Isard i la instal·lació</a></li>
+    <li><a href="#s5"><span class="n">5</span> Primers passos</a></li>
+    <li><a href="#s6"><span class="n">6</span> Xarxa amb Netplan</a></li>
+    <li><a href="#s7"><span class="n">7</span> Administració remota amb SSH</a></li>
+    <li><a href="#s8"><span class="n">8</span> La línia d'ordres</a></li>
+    <li><a href="#s9"><span class="n">9</span> Permisos</a></li>
+    <li><a href="#s10"><span class="n">10</span> Usuaris i grups</a></li>
+    <li><a href="#s11"><span class="n">11</span> Registres del sistema</a></li>
+    <li><a href="#s12"><span class="n">12</span> Monitoratge des de la consola</a></li>
+    <li><a href="#s13"><span class="n">13</span> Monitoratge via web</a></li>
+    <li><a href="#s14"><span class="n">14</span> Auditoria amb Lynis</a></li>
+    <li><a href="#s15"><span class="n">15</span> Proves de rendiment</a></li>
+    <li><a href="#s16"><span class="n">16</span> El projecte inicial 2</a></li>
+    <li><a href="#s17"><span class="n">17</span> Fonts i documentació</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ========== 1 ========== -->
+<section id="s1">
+  <div class="shead">
+    <span class="num">01</span>
+    <h2>Del client al servidor</h2>
+    <p class="sub">El mateix nucli, els mateixos paquets i les mateixes ordres. Una altra manera de treballar.</p>
+  </div>
+
+  <p>Al bloc anterior vau instal·lar un escriptori: una màquina pensada per a una persona asseguda davant. Un servidor fa una altra feina. No el fa servir ningú directament; dona servei a molts clients per la xarxa i s'administra a distància. Tot el que vau aprendre continua sent vàlid, però canvien les prioritats.</p>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th></th><th>Escriptori</th><th>Servidor</th></tr></thead>
+    <tbody>
+      <tr><td>Interfície</td><td>Entorn gràfic</td><td>Consola. No hi ha ni entorn gràfic ni ratolí</td></tr>
+      <tr><td>Qui l'usa</td><td>Una persona, davant de la pantalla</td><td>Molts clients, a través de la xarxa</td></tr>
+      <tr><td>Com s'hi accedeix</td><td>Directament</td><td>A distància, per SSH</td></tr>
+      <tr><td>Xarxa</td><td>DHCP, gestionada per NetworkManager</td><td>IP fixa, descrita amb Netplan</td></tr>
+      <tr><td>Si s'atura</td><td>Molèstia per a una persona</td><td>Servei aturat per a tothom</td></tr>
+      <tr><td>Actualitzacions</td><td>Quan convé a l'usuari</td><td>Planificades, en una finestra de manteniment</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>Prescindir de l'entorn gràfic no és una qüestió d'estètica. Vol dir menys memòria ocupada, menys paquets per actualitzar i menys programari exposat a vulnerabilitats. I té un avantatge que notareu de seguida: tot el que feu queda en forma d'ordres i fitxers de text, i per tant és reproduïble i documentable. És exactament el que us demanarà la memòria del projecte.</p>
+
+  <div class="note">
+    <span class="lbl">COM ES TREBALLA EN AQUEST BLOC</span>
+    <p>Feu servir el visor d'Isard només per instal·lar el sistema i per arreglar la xarxa si deixa de funcionar. Per a tota la resta, connecteu-vos al servidor des del client per SSH (secció 7): podreu copiar i enganxar ordres i fer les captures des d'una finestra normal.</p>
+  </div>
+</section>
+
+<!-- ========== 2 ========== -->
+<section id="s2">
+  <div class="shead">
+    <span class="num">02</span>
+    <h2>Ubuntu Server i requisits de maquinari</h2>
+    <p class="sub">Per què una LTS, què demana per funcionar i quant li donareu vosaltres.</p>
+  </div>
+
+  <p>Treballarem amb <strong>Ubuntu Server 24.04 LTS</strong>, la mateixa versió que l'escriptori del bloc anterior. En un servidor, la LTS no és una opció entre d'altres: són cinc anys d'actualitzacions de seguretat garantides, ampliables fins a deu amb Ubuntu Pro. Ningú vol reinstal·lar un servidor de producció cada nou mesos.</p>
+
+  <h3>Requisits mínims oficials</h3>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Recurs</th><th>Mínim</th><th>Mínim recomanat</th></tr></thead>
+    <tbody>
+      <tr><td>Arquitectura</td><td colspan="2">64 bits (amd64, arm64 i d'altres)</td></tr>
+      <tr><td>Memòria RAM</td><td>1,5 GB (instal·lació des de la ISO)</td><td>3 GB o més</td></tr>
+      <tr><td>Disc</td><td>5 GB</td><td>25 GB o més</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Xifres de la documentació d'Ubuntu Server per a la 24.04 amd64. El mínim vol dir que s'instal·la i arrenca, no que serveixi per a res útil.</p>
+
+  <h3>Dimensionar és pensar en el que hi correrà</h3>
+
+  <p>La pregunta no és «quant necessita Ubuntu» sinó «quant necessiten els serveis que hi posarem». En aquest projecte el servidor acabarà amb dues eines de monitoratge funcionant de fons, una base de dades Redis que fa servir una d'elles, i proves de rendiment que descarreguen i compilen programari. Això és el que ha de justificar els valors que trieu, no el mínim de la taula.</p>
+
+  <div class="note">
+    <span class="lbl">LA MÀQUINA DEL PROJECTE A ISARD</span>
+    <p>Un punt de partida raonable és <strong>2 vCPU, 4 GB de RAM i 40 GB de disc</strong>. És el que recomana la mateixa documentació d'Isard per a un Ubuntu Server, amb el disc ajustat al projecte. Si més endavant us cal més, es pot canviar editant l'escriptori amb la màquina aturada.</p>
+  </div>
+</section>
+
+<!-- ========== 3 ========== -->
+<section id="s3">
+  <div class="shead">
+    <span class="num">03</span>
+    <h2>Planificar el disc d'un servidor</h2>
+    <p class="sub">A l'escriptori es parteix pensant en no perdre dades. Al servidor, pensant en què pot omplir el disc.</p>
+  </div>
+
+  <p>Al bloc anterior vau separar <code>/home</code> perquè les dades de l'usuari sobrevisquessin a una reinstal·lació. En un servidor el risc principal és un altre: que un directori creixi sense control, ompli el disc i aturi el sistema sencer. Un registre que s'escriu en bucle, una base de dades que creix, una cua de correu bloquejada. Si tot és a la mateixa partició, quan s'omple ja no pot escriure ningú, ni tan sols el sistema.</p>
+
+  <p>Per això als servidors se separen els directoris que creixen sols, de manera que si s'omplen no s'enduguin l'arrel.</p>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Punt de muntatge</th><th>Què hi ha</th><th>Per què separar-lo</th></tr></thead>
+    <tbody>
+      <tr><td><code>/boot</code></td><td>Nuclis i <em>initramfs</em></td><td>Que l'arrencada no depengui de l'estat de la resta del disc ni del LVM</td></tr>
+      <tr><td><code>/</code></td><td>Sistema i programes</td><td>—</td></tr>
+      <tr><td><code>/var</code></td><td>Registres, bases de dades, memòria cau de paquets, dades de serveis</td><td>És el que més creix. Les eines de monitoratge que instal·lareu hi guarden l'històric</td></tr>
+      <tr><td><code>/home</code></td><td>Directoris dels usuaris</td><td>En un servidor sol ser petit, però separat evita que un usuari ompli el sistema</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>L'àrea d'intercanvi (<em>swap</em>) ja no cal fer-la com a partició. Si no en definiu cap, l'instal·lador crea un fitxer <code>/swap.img</code>.</p>
+
+  <h3>LVM: particions que es poden fer créixer</h3>
+
+  <p>Decidir les mides el primer dia és endevinar. El <strong>gestor de volums lògics</strong> (LVM) resol el problema posant una capa entre el disc i els sistemes de fitxers:</p>
+
+  <div class="stack">
+    <div><b>Sistemes de fitxers</b> <code>/</code> · <code>/var</code> · <code>/home</code></div>
+    <div class="k"><b>Volums lògics (LV)</b> els «discos» que es formaten i es munten</div>
+    <div><b>Grup de volums (VG)</b> una bossa d'espai feta d'un o més PV</div>
+    <div><b>Volums físics (PV)</b> particions o discos cedits al LVM</div>
+    <div class="hw"><b>Disc</b> <code>/dev/vda</code></div>
+  </div>
+
+  <p>Un volum lògic es pot ampliar en calent, sense desmuntar res, sempre que al grup quedi espai. Per això la bona pràctica és <strong>no repartir tot el disc el primer dia</strong>: es deixa espai lliure al grup de volums i s'assigna on faci falta quan faci falta.</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo pvs                     <i># volums físics</i>
+<b>$</b> sudo vgs                     <i># grups de volums i espai lliure (VFree)</i>
+<b>$</b> sudo lvs                     <i># volums lògics</i></pre>
+  </div>
+
+  <h3>Un esquema per a la màquina del projecte</h3>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Element</th><th>Tipus</th><th>Mida</th><th>Punt de muntatge</th></tr></thead>
+    <tbody>
+      <tr><td>Partició d'arrencada</td><td>La crea l'instal·lador</td><td>—</td><td>—</td></tr>
+      <tr><td>Partició</td><td>ext4</td><td>2 GB</td><td><code>/boot</code></td></tr>
+      <tr><td>Partició</td><td>PV del LVM</td><td>La resta</td><td>—</td></tr>
+      <tr><td>&nbsp;&nbsp;lv-arrel</td><td>ext4</td><td>15 GB</td><td><code>/</code></td></tr>
+      <tr><td>&nbsp;&nbsp;lv-var</td><td>ext4</td><td>10 GB</td><td><code>/var</code></td></tr>
+      <tr><td>&nbsp;&nbsp;lv-home</td><td>ext4</td><td>3 GB</td><td><code>/home</code></td></tr>
+      <tr><td>&nbsp;&nbsp;Espai lliure al VG</td><td>—</td><td>La resta</td><td>Reserva per créixer</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Per a un disc de 40 GB. No és l'única manera correcta de fer-ho: el que s'avalua és que sapigueu justificar per què separeu cada cosa i per què li doneu aquella mida.</p>
+
+  <div class="note">
+    <span class="lbl">EL DISC ES DIU VDA, NO SDA</span>
+    <p>A Isard el disc de la màquina virtual és un dispositiu <em>virtio</em> i el sistema el veu com <code>/dev/vda</code>, i les particions com <code>vda1</code>, <code>vda2</code>... Si seguiu una guia que parla de <code>/dev/sda</code>, és el mateix disc amb un altre nom.</p>
+  </div>
+</section>
+
+<!-- ========== 4 ========== -->
+<section id="s4">
+  <div class="shead">
+    <span class="num">04</span>
+    <h2>Crear la màquina a Isard i instal·lar</h2>
+    <p class="sub">Primer es prepara l'escriptori a Isard, després s'instal·la, i al final es torna a Isard a canviar l'arrencada.</p>
+  </div>
+
+  <h3>1. L'escriptori a Isard</h3>
+
+  <ol>
+    <li>Creeu un escriptori nou i poseu-li un nom que identifiqui el servidor.</li>
+    <li><strong>Recursos</strong>: els que hàgiu decidit a la secció 2 (vCPU, RAM i mida del disc).</li>
+    <li><strong>Xarxes</strong>: afegiu-ne dues, <strong>primer <code>Default</code> i després la vostra xarxa personal</strong>. L'ordre no és indiferent: s'explica a la secció 6.</li>
+    <li><strong>Mitjans</strong>: connecteu la ISO d'Ubuntu Server 24.04 a la unitat de CD/DVD.</li>
+    <li><strong>Arrencada</strong>: CD/DVD.</li>
+    <li>Deseu, engegueu l'escriptori i obriu-lo amb el visor (SPICE o el visor del navegador).</li>
+  </ol>
+
+  <h3>2. L'instal·lador, pantalla per pantalla</h3>
+
+  <p>L'instal·lador d'Ubuntu Server és en mode text. Fletxes, tabulador, espai per marcar i retorn per confirmar.</p>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Pantalla</th><th>Què hi trieu</th><th>Per què</th></tr></thead>
+    <tbody>
+      <tr><td>Idioma</td><td>English</td><td>Els missatges d'error en anglès es troben a qualsevol fòrum. El teclat es configura a part</td></tr>
+      <tr><td>Teclat</td><td>Spanish</td><td>La distribució física del teclat de l'aula</td></tr>
+      <tr><td>Tipus d'instal·lació</td><td>Ubuntu Server</td><td>La versió <em>minimized</em> treu eines d'administració que fareu servir</td></tr>
+      <tr><td>Xarxa</td><td>No toqueu res</td><td>Hi sortiran dues interfícies. La primera rep adreça per DHCP de la xarxa <code>Default</code>. La segona no en rep cap, perquè a la xarxa personal no hi ha DHCP: és normal. Es configura després amb Netplan</td></tr>
+      <tr><td>Proxy i rèplica</td><td>Valors per defecte</td><td>—</td></tr>
+      <tr><td>Emmagatzematge</td><td><strong>Custom storage layout</strong></td><td>Per aplicar el pla de la secció 3. Detall a continuació</td></tr>
+      <tr><td>Perfil</td><td>Nom, nom del servidor, usuari i contrasenya</td><td>L'usuari que creeu aquí és administrador: queda dins del grup <code>sudo</code></td></tr>
+      <tr><td>Ubuntu Pro</td><td>Ometre</td><td>Es pot activar més endavant</td></tr>
+      <tr><td>SSH</td><td>Marcar <strong>Install OpenSSH server</strong></td><td>Sense SSH, el servidor només s'administra des del visor</td></tr>
+      <tr><td>Snaps destacats</td><td>Cap</td><td>Tot el que cal s'instal·larà amb <code>apt</code></td></tr>
+      <tr><td>Instal·lació</td><td>Esperar i <em>Reboot Now</em></td><td>Si es queda esperant que traieu el suport, passeu al pas 3</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h4>Custom storage layout</h4>
+
+  <ol>
+    <li>Seleccioneu el disc i trieu <strong>Use As Boot Device</strong>. L'instal·lador crea la partició d'arrencada que toqui.</li>
+    <li>Sobre <em>free space</em>, <strong>Add GPT Partition</strong>: 2 GB, format ext4, muntatge <code>/boot</code>.</li>
+    <li>Sobre l'espai lliure que queda, una altra partició amb tota la resta i <strong>Leave unformatted</strong>. Serà el PV.</li>
+    <li><strong>Create volume group (LVM)</strong>: poseu-li nom i seleccioneu la partició sense format.</li>
+    <li>Sobre l'espai lliure del grup, <strong>Create Logical Volume</strong> per a cada volum: nom, mida, ext4 i punt de muntatge. Deixeu espai sense assignar.</li>
+    <li>Reviseu el resum <em>FILE SYSTEM SUMMARY</em> de dalt de tot abans de prémer <em>Done</em>. L'instal·lador avisa que l'operació és destructiva: és l'últim moment per corregir.</li>
+  </ol>
+
+  <div class="note">
+    <span class="lbl">PER A LA MEMÒRIA</span>
+    <p>Feu la captura de cada pantalla <strong>abans</strong> de prémer <em>Done</em> o <em>Continue</em>, no després. I apunteu el que trieu i per què mentre ho feu: reconstruir-ho l'endemà no surt mai bé.</p>
+  </div>
+
+  <h3>3. Tornar a Isard: arrencar des del disc</h3>
+
+  <p>Si l'escriptori continua arrencant des del CD/DVD, cada vegada que l'engegueu tornarà a sortir l'instal·lador.</p>
+
+  <ol>
+    <li>Atureu l'escriptori.</li>
+    <li>Editeu-lo: traieu la ISO dels mitjans i canvieu l'<strong>arrencada</strong> de CD/DVD a <strong>disc dur</strong>.</li>
+    <li>Engegueu-lo de nou. Ha d'aparèixer la pantalla d'inici de sessió del servidor.</li>
+  </ol>
+
+  <h3>4. Comprovar el resultat</h3>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> lsblk                  <i># arbre de discos, particions i volums lògics</i>
+<b>$</b> df -hT                 <i># sistemes de fitxers muntats, tipus i espai</i>
+<b>$</b> sudo vgs &amp;&amp; sudo lvs   <i># l'espai lliure que heu reservat al grup</i></pre>
+    <p class="cap">A <code>lsblk</code> els volums lògics apareixen penjant de la partició que fa de PV, amb noms del tipus <code>vg--servidor-lv--var</code>.</p>
+  </div>
+</section>
+
+<!-- ========== 5 ========== -->
+<section id="s5">
+  <div class="shead">
+    <span class="num">05</span>
+    <h2>Primers passos al servidor</h2>
+    <p class="sub">El que es fa sempre, i en aquest ordre, abans de posar-hi cap servei.</p>
+  </div>
+
+  <h3>Actualitzar</h3>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo apt update            <i># descarrega la llista de paquets disponibles</i>
+<b>$</b> apt list --upgradable      <i># què s'actualitzarà</i>
+<b>$</b> sudo apt upgrade           <i># instal·la les versions noves</i>
+<b>$</b> sudo apt autoremove        <i># treu dependències que ja no fan falta</i>
+<b>$</b> ls /var/run/reboot-required 2&gt;/dev/null &amp;&amp; echo "Cal reiniciar"</pre>
+    <p class="cap"><code>update</code> no actualitza res: només refresca el catàleg. Sense <code>update</code> previ, <code>upgrade</code> treballa amb una llista antiga.</p>
+  </div>
+
+  <h3>Nom de l'equip</h3>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> hostnamectl                              <i># nom actual i dades del sistema</i>
+<b>$</b> sudo hostnamectl set-hostname nou-nom
+<b>$</b> sudo nano /etc/hosts                     <i># canvieu el nom antic a la línia 127.0.1.1</i>
+  <u>127.0.1.1   nou-nom</u></pre>
+    <p class="cap">Si no actualitzeu <code>/etc/hosts</code>, <code>sudo</code> tardarà uns segons cada vegada perquè no sap resoldre el nom de la pròpia màquina. Si en reiniciar torna el nom antic, mireu el paràmetre <code>preserve_hostname</code> de <code>/etc/cloud/cloud.cfg</code>.</p>
+  </div>
+
+  <h3>Hora i zona horària</h3>
+
+  <p>Sembla un detall fins que heu de comparar registres de dues màquines i les hores no quadren. Tots els esdeveniments que analitzareu a la secció 11 porten data i hora.</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> timedatectl                                  <i># zona i si està sincronitzat</i>
+<b>$</b> sudo timedatectl set-timezone Europe/Madrid</pre>
+  </div>
+
+  <h3>Un segon administrador</h3>
+
+  <p>L'usuari creat a l'instal·lador ja és administrador. Si en necessiteu un altre, es crea com qualsevol usuari i s'afegeix al grup <code>sudo</code>. El compte <code>root</code> d'Ubuntu està bloquejat i no té contrasenya: l'administració es fa sempre amb <code>sudo</code>, que deixa constància de qui ha fet què.</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo adduser nomadmin
+<b>$</b> sudo usermod -aG sudo nomadmin
+<b>$</b> su - nomadmin                 <i># entrar com a aquest usuari</i>
+<b>$</b> sudo -l                       <i># comprovar quins permisos de sudo té</i></pre>
+    <p class="cap">Els detalls de <code>adduser</code> i <code>usermod</code> són a la secció 10.</p>
+  </div>
+</section>
+
+<!-- ========== 6 ========== -->
+<section id="s6">
+  <div class="shead">
+    <span class="num">06</span>
+    <h2>Xarxa amb Netplan</h2>
+    <p class="sub">Dues targetes, cadascuna amb la seva feina. I l'ordre en què les poseu a Isard importa.</p>
+  </div>
+
+  <p>Al bloc anterior vau veure que Netplan és la capa que descriu la xarxa a Ubuntu. A l'escriptori li passa la feina al NetworkManager; al servidor, a <code>systemd-networkd</code>. Aquí no hi ha cap finestra per configurar la xarxa: s'escriu un fitxer YAML i s'aplica.</p>
+
+  <h3>1. Dues targetes, dues feines</h3>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Ordre a Isard</th><th>Interfície</th><th>Xarxa</th><th>Per a què</th><th>Adreça</th></tr></thead>
+    <tbody>
+      <tr><td>Primera</td><td><code>enp1s0</code></td><td><code>Default</code></td><td>Sortir a Internet</td><td>Per DHCP: la dona Isard, amb passarel·la i DNS</td></tr>
+      <tr><td>Segona</td><td><code>enp2s0</code></td><td>Xarxa personal</td><td>Parlar amb el client</td><td>Fixa: la poseu vosaltres</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>La <strong>xarxa personal</strong> només connecta els escriptoris d'un mateix usuari. Cada alumne té la seva, i per això tots podeu fer servir les mateixes adreces sense trepitjar-vos. No té servidor DHCP ni sortida a Internet: és un cable entre les vostres dues màquines.</p>
+
+  <div class="topo">
+    <div class="box"><b>Client</b>Ubuntu Desktop<br><code>enp2s0</code> · <code>192.168.50.20/24</code></div>
+    <div class="link"></div>
+    <div class="box net"><b>Xarxa personal</b><code>192.168.50.0/24</code><br>Sense DHCP ni Internet</div>
+    <div class="link"></div>
+    <div class="box"><b>Servidor</b>Ubuntu Server<br><code>enp2s0</code> · <code>192.168.50.10/24</code></div>
+  </div>
+  <p>Totes dues màquines tenen, a més, la primera targeta (<code>enp1s0</code>) a la xarxa <code>Default</code>, que és per on surten a Internet. Les adreces del dibuix són d'exemple.</p>
+
+  <div class="note">
+    <span class="lbl">L'ORDRE DE LES TARGETES</span>
+    <p>L'ordre en què afegiu les xarxes a l'escriptori d'Isard és l'ordre en què el sistema veu les targetes: la primera xarxa serà <code>enp1s0</code> i la segona, <code>enp2s0</code>. Si poseu la xarxa personal primer, <code>enp1s0</code> serà la personal, no rebrà adreça, i la configuració que escrigueu anirà a parar a la targeta equivocada. Els símptomes: el servidor es queda sense Internet o el client no respon al ping.</p>
+    <p>Comproveu-ho <strong>abans</strong> d'escriure res: amb <code>ip -br a</code>, la targeta que ja té adreça és la de <code>Default</code> i la que no en té és la personal. Si estan girades, atureu l'escriptori i canvieu l'ordre de les xarxes a Isard.</p>
+  </div>
+
+  <h3>2. Abans de tocar res</h3>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ip -br a                     <i># interfícies, estat i adreces, una per línia</i>
+<b>$</b> ip r                         <i># la ruta per defecte ha de sortir per enp1s0</i>
+<b>$</b> ls -l /etc/netplan/          <i># fitxers de configuració existents</i>
+<b>$</b> cat /etc/netplan/50-cloud-init.yaml</pre>
+  </div>
+
+  <h3>3. El fitxer</h3>
+
+  <p>Netplan llegeix els fitxers <code>.yaml</code> de <code>/etc/netplan/</code>. Després d'instal·lar n'hi ha un, <code>50-cloud-init.yaml</code>, generat per <strong>cloud-init</strong>, l'eina que configura la màquina al primer arrencament. Mentre cloud-init en tingui el control, pot sobreescriure els vostres canvis. Primer cal dir-li que deixi la xarxa:</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> echo 'network: {config: disabled}' | sudo tee /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+<b>$</b> sudo nano /etc/netplan/50-cloud-init.yaml</pre>
+  </div>
+
+  <p>La configuració que necessiteu és aquesta: la primera targeta continua per DHCP i la segona porta l'adreça fixa.</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre>network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    enp1s0:
+      dhcp4: true
+    enp2s0:
+      dhcp4: false
+      addresses:
+        - 192.168.50.10/24</pre>
+    <p class="cap">A <code>enp2s0</code> només hi va l'adreça amb el prefix de la màscara. La passarel·la i els DNS ja els dona el DHCP a <code>enp1s0</code>.</p>
+  </div>
+
+  <div class="note">
+    <span class="lbl">PER QUÈ LA SEGONA TARGETA NO PORTA PASSAREL·LA</span>
+    <p>Una màquina només fa servir una ruta per defecte, la que diu per on surt tot el que no és de cap xarxa local. Aquí la posa el DHCP de <code>enp1s0</code>. Si n'afegiu una altra a <code>enp2s0</code>, part del trànsit cap a Internet anirà a la xarxa personal, on no hi ha cap encaminador, i es perdrà. Per parlar amb el client no cal passarel·la: és a la mateixa xarxa <code>/24</code> i s'hi arriba directament.</p>
+  </div>
+
+  <div class="note">
+    <span class="lbl">ON FALLA GAIREBÉ TOTHOM</span>
+    <p><strong>Sagnat amb espais, mai amb tabuladors</strong>, i sempre el mateix nombre per nivell. Després de cada dos punts hi va un espai. Els elements d'una llista comencen amb guió i espai.</p>
+    <p>Els fitxers de Netplan han de tenir permisos <code>600</code>. Si són més oberts, us sortirà un avís cada vegada que l'apliqueu: <code>sudo chmod 600 /etc/netplan/*.yaml</code>.</p>
+  </div>
+
+  <h4>I si una adreça fixa també hagués de sortir a Internet?</h4>
+
+  <p>És el cas d'un servidor amb una sola targeta. Llavors la mateixa interfície porta l'adreça, la ruta per defecte i els DNS. No és el que fareu en aquest projecte, però és la configuració que trobareu a la majoria de guies:</p>
+
+  <div class="term">
+<pre>    enp1s0:
+      dhcp4: false
+      addresses:
+        - 192.168.1.10/24
+      routes:
+        - to: default
+          via: 192.168.1.1
+      nameservers:
+        addresses: [192.168.1.1, 1.1.1.1]</pre>
+    <p class="cap">Si veieu exemples amb <code>gateway4:</code>, són antics: Netplan l'accepta però avisa que està obsolet.</p>
+  </div>
+
+  <h3>4. Aplicar-ho sense quedar-se fora</h3>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo netplan generate     <i># valida el YAML sense aplicar res</i>
+<b>$</b> sudo netplan try          <i># aplica; si no confirmeu amb Enter en 120 s, torna enrere</i>
+<b>$</b> sudo netplan apply        <i># aplica definitivament</i>
+<b>$</b> ip -br a                  <i># enp2s0 ja ha de tenir l'adreça fixa</i></pre>
+  </div>
+
+  <h3>5. El client</h3>
+
+  <p>L'Ubuntu Desktop porta les mateixes dues xarxes a Isard i en el mateix ordre. La primera targeta es deixa per DHCP i a la segona se li posa una adreça fixa de la mateixa xarxa que el servidor, també sense passarel·la ni DNS. A l'escriptori ho gestiona el NetworkManager, de manera que es fa des de Configuració → Xarxa o amb <code>nmcli</code>, com al bloc anterior:</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> nmcli connection show          <i># nom de la connexió de la segona targeta</i>
+<b>$</b> sudo nmcli connection modify "Wired connection 2" ipv4.method manual ipv4.addresses 192.168.50.20/24
+<b>$</b> sudo nmcli connection up "Wired connection 2"</pre>
+    <p class="cap">El nom de la connexió pot ser diferent, i en català és «Connexió cablejada 2». Feu servir el que surti a <code>nmcli connection show</code> per a la interfície <code>enp2s0</code>.</p>
+  </div>
+
+  <h3>6. Comprovar</h3>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ip r                        <i># una sola ruta per defecte, per enp1s0</i>
+<b>$</b> ping -c4 192.168.50.20      <i># del servidor al client (i després, a la inversa)</i>
+<b>$</b> ping -c4 ubuntu.com         <i># el servidor surt a Internet i resol noms</i></pre>
+    <p class="cap">Si el ping entre màquines falla, comproveu primer l'ordre de les targetes a les dues màquines. És la causa més habitual.</p>
+  </div>
+</section>
+
+<!-- ========== 7 ========== -->
+<section id="s7">
+  <div class="shead">
+    <span class="num">07</span>
+    <h2>Administració remota amb SSH</h2>
+    <p class="sub">La manera normal d'entrar a un servidor. La consola és per a emergències.</p>
+  </div>
+
+  <p>SSH obre una sessió de terminal en una màquina remota amb tot el trànsit xifrat: ordres, contrasenyes i fitxers. Si a l'instal·lador vau marcar <em>Install OpenSSH server</em>, ja el teniu. Si no, <code>sudo apt install openssh-server</code>.</p>
+
+  <h3>Al servidor</h3>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> systemctl status ssh.socket     <i># qui escolta les connexions entrants</i>
+<b>$</b> systemctl status ssh            <i># el servei, que arrenca amb la primera connexió</i>
+<b>$</b> ss -tlnp | grep :22             <i># hi ha alguna cosa escoltant al port 22?</i></pre>
+    <p class="cap">A Ubuntu 24.04 el servei SSH s'activa per sòcol: si encara no s'hi ha connectat ningú, <code>ssh</code> pot sortir com a inactiu i tot estar bé. El que ha d'estar actiu és <code>ssh.socket</code>.</p>
+  </div>
+
+  <h3>Des del client</h3>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ssh usuari@192.168.50.10                       <i># obrir sessió</i>
+<b>$</b> scp usuari@192.168.50.10:/home/usuari/informe.txt .   <i># portar un fitxer al client</i>
+<b>$</b> scp captura.png usuari@192.168.50.10:/tmp/      <i># enviar-lo al servidor</i>
+<b>$</b> exit                                           <i># tancar la sessió remota</i></pre>
+  </div>
+
+  <p>La primera vegada que us connecteu, SSH us mostra l'empremta de la clau del servidor i us demana confirmació. En dir que sí, la desa a <code>~/.ssh/known_hosts</code> i a partir d'aleshores comprova que el servidor és sempre el mateix. Si reinstal·leu el servidor amb la mateixa IP, la clau canvia i SSH es negarà a connectar amb un avís alarmant: és el comportament correcte. Esborreu l'entrada antiga amb <code>ssh-keygen -R 192.168.50.10</code>.</p>
+
+  <h3>Entrar amb clau en comptes de contrasenya</h3>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ssh-keygen -t ed25519                 <i># al client: genera el parell de claus</i>
+<b>$</b> ssh-copy-id usuari@192.168.50.10      <i># copia la clau pública al servidor</i>
+<b>$</b> ssh usuari@192.168.50.10              <i># ja no demana la contrasenya del servidor</i></pre>
+    <p class="cap">La clau privada no surt mai del client. Al servidor només hi va la pública, a <code>~/.ssh/authorized_keys</code>.</p>
+  </div>
+
+  <div class="note">
+    <span class="lbl">LA CONFIGURACIÓ</span>
+    <p>És a <code>/etc/ssh/sshd_config</code> i als fitxers de <code>/etc/ssh/sshd_config.d/</code>. Les directives que més surten en una auditoria són <code>PermitRootLogin</code>, <code>PasswordAuthentication</code> i <code>MaxAuthTries</code>. Abans de reiniciar el servei després d'un canvi, comproveu la sintaxi amb <code>sudo sshd -t</code>: un error de configuració en un servidor remot us pot deixar fora.</p>
+  </div>
+</section>
+
+<!-- ========== 8 ========== -->
+<section id="s8">
+  <div class="shead">
+    <span class="num">08</span>
+    <h2>La línia d'ordres, repàs</h2>
+    <p class="sub">El que heu de fer sense pensar-hi, perquè al servidor no hi ha res més.</p>
+  </div>
+
+  <h3>Rutes</h3>
+
+  <ul>
+    <li><strong>Absoluta</strong> — comença per <code>/</code> i és vàlida des de qualsevol lloc: <code>/var/log/syslog</code>.</li>
+    <li><strong>Relativa</strong> — parteix del directori on sou: <code>documents/notes.txt</code>.</li>
+    <li><code>~</code> és el vostre directori personal, <code>.</code> el directori actual i <code>..</code> el directori pare.</li>
+  </ul>
+
+  <h3>Moure's i treballar amb fitxers</h3>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Ordre</th><th>Què fa</th></tr></thead>
+    <tbody>
+      <tr><td><code>pwd</code></td><td>Mostra el directori on sou</td></tr>
+      <tr><td><code>cd ruta</code> · <code>cd</code> · <code>cd -</code></td><td>Canvia de directori · torna al personal · torna a l'anterior</td></tr>
+      <tr><td><code>ls -l</code> · <code>ls -la</code></td><td>Llista amb detall · inclou els fitxers ocults, que comencen per punt</td></tr>
+      <tr><td><code>mkdir -p a/b/c</code></td><td>Crea el directori i tots els intermedis que faltin</td></tr>
+      <tr><td><code>touch fitxer</code></td><td>Crea un fitxer buit, o n'actualitza la data si ja existeix</td></tr>
+      <tr><td><code>cp</code> · <code>mv</code> · <code>rm</code></td><td>Copiar · moure o reanomenar · esborrar (<code>-r</code> per a directoris)</td></tr>
+      <tr><td><code>cat</code> · <code>less</code> · <code>head</code> · <code>tail -f</code></td><td>Mostrar · paginar · primeres línies · seguir un fitxer mentre creix</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> mkdir -p ~/curs/{tema1,tema2/annexos}   <i># diversos directoris, amb intermedis, d'una vegada</i>
+<b>$</b> ls -R ~/curs                             <i># comprovar-ho recursivament</i></pre>
+    <p class="cap">Les claus <code>{ }</code> les expandeix l'intèrpret abans d'executar: l'ordre rep <code>~/curs/tema1</code> i <code>~/curs/tema2/annexos</code>.</p>
+  </div>
+
+  <h3>Llegir un <code>ls -l</code></h3>
+
+  <div class="term">
+<pre><b>$</b> ls -l informe.txt
+-rw-r--r-- 1 tecnic tecnic 2048 oct  8 10:15 informe.txt</pre>
+  </div>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Camp</th><th>Valor</th><th>Significat</th></tr></thead>
+    <tbody>
+      <tr><td>Tipus</td><td><code>-</code></td><td><code>-</code> fitxer, <code>d</code> directori, <code>l</code> enllaç simbòlic</td></tr>
+      <tr><td>Permisos</td><td><code>rw-r--r--</code></td><td>Propietari, grup i altres (secció 9)</td></tr>
+      <tr><td>Enllaços</td><td><code>1</code></td><td>Nombre d'enllaços durs</td></tr>
+      <tr><td>Propietari i grup</td><td><code>tecnic tecnic</code></td><td>Qui n'és l'amo i a quin grup pertany</td></tr>
+      <tr><td>Mida, data i nom</td><td><code>2048 oct 8 10:15</code></td><td>Bytes i darrera modificació</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Encadenar i redirigir</h3>
+
+  <p>La potència de la consola és combinar ordres petites. Ho fareu servir constantment a la secció 11.</p>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Operador</th><th>Què fa</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td><code>|</code></td><td>La sortida d'una ordre és l'entrada de la següent</td><td><code>ls -l /etc | less</code></td></tr>
+      <tr><td><code>&gt;</code></td><td>Envia la sortida a un fitxer, i el sobreescriu</td><td><code>ls /etc &gt; llista.txt</code></td></tr>
+      <tr><td><code>&gt;&gt;</code></td><td>Afegeix al final del fitxer</td><td><code>date &gt;&gt; registre.txt</code></td></tr>
+      <tr><td><code>2&gt;</code></td><td>Redirigeix només els errors</td><td><code>find / -name x 2&gt;/dev/null</code></td></tr>
+      <tr><td><code>&amp;&amp;</code></td><td>Executa la segona només si la primera ha anat bé</td><td><code>sudo apt update &amp;&amp; sudo apt upgrade</code></td></tr>
+      <tr><td><code>| tee fitxer</code></td><td>Mostra per pantalla i desa alhora</td><td><code>df -h | tee disc.txt</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note">
+    <span class="lbl">PER PRACTICAR</span>
+    <p><a href="https://overthewire.org/wargames/bandit/">Bandit</a>, d'OverTheWire, és un joc per nivells que només es pot superar fent servir la consola: es juga connectant-se per SSH a un servidor remot, i cada nivell amaga la contrasenya del següent. Els primers nivells repassen exactament el que hi ha en aquesta secció.</p>
+  </div>
+</section>
+
+<!-- ========== 9 ========== -->
+<section id="s9">
+  <div class="shead">
+    <span class="num">09</span>
+    <h2>Permisos</h2>
+    <p class="sub">Tres grups de tres lletres, i tres bits especials que gairebé ningú entén a la primera.</p>
+  </div>
+
+  <p>Cada fitxer té un propietari i un grup, i defineix què poden fer tres categories d'usuaris: el <strong>propietari</strong> (u), els membres del <strong>grup</strong> (g) i <strong>tots els altres</strong> (o). Per a cadascuna hi ha tres permisos, que no volen dir el mateix en un fitxer que en un directori:</p>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Permís</th><th>Valor</th><th>En un fitxer</th><th>En un directori</th></tr></thead>
+    <tbody>
+      <tr><td><code>r</code></td><td>4</td><td>Llegir-ne el contingut</td><td>Llistar què hi ha</td></tr>
+      <tr><td><code>w</code></td><td>2</td><td>Modificar-lo</td><td>Crear, esborrar i reanomenar fitxers a dins</td></tr>
+      <tr><td><code>x</code></td><td>1</td><td>Executar-lo</td><td>Entrar-hi amb <code>cd</code> i accedir als fitxers</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>Per esborrar un fitxer no cal tenir permís d'escriptura sobre el fitxer: cal tenir-lo sobre el <em>directori</em> que el conté. És una de les preguntes que més fallen.</p>
+
+  <h3>Canviar permisos i propietari</h3>
+
+  <p>En notació octal, cada xifra és la suma dels permisos d'una categoria: <code>rw-</code> = 4+2 = 6, <code>r-x</code> = 4+1 = 5. Així <code>640</code> vol dir <code>rw-r-----</code>.</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> chmod 640 informe.txt          <i># octal: rw- r-- ---</i>
+<b>$</b> chmod u+x script.sh            <i># simbòlic: afegeix execució al propietari</i>
+<b>$</b> chmod go-rwx privat/           <i># treu-ho tot al grup i als altres</i>
+<b>$</b> sudo chown tecnic:suport fitxer   <i># canvia propietari i grup</i>
+<b>$</b> umask                          <i># màscara que decideix els permisos dels fitxers nous</i></pre>
+  </div>
+
+  <p>Els permisos amb què neix un fitxer nou no els decideix el directori, sinó la <strong>umask</strong> de l'usuari que el crea: es parteix de <code>666</code> per als fitxers i <code>777</code> per als directoris i se'n treuen els bits de la màscara. Amb una umask <code>022</code>, un fitxer nou queda <code>644</code> i el grup no hi pot escriure; amb <code>002</code>, queda <code>664</code> i sí que hi pot escriure. En un directori compartit per un equip, aquesta diferència ho és tot.</p>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Octal</th><th>Permisos</th><th>Ús típic</th></tr></thead>
+    <tbody>
+      <tr><td><code>600</code></td><td><code>rw-------</code></td><td>Fitxers privats: claus SSH, configuració de Netplan</td></tr>
+      <tr><td><code>644</code></td><td><code>rw-r--r--</code></td><td>Fitxers que tothom pot llegir</td></tr>
+      <tr><td><code>700</code></td><td><code>rwx------</code></td><td>Directori privat</td></tr>
+      <tr><td><code>755</code></td><td><code>rwxr-xr-x</code></td><td>Programes i directoris públics</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Els permisos especials</h3>
+
+  <p>Hi ha un quart dígit, a l'esquerra dels altres tres, amb tres bits més. No es veuen com a lletres pròpies: ocupen el lloc de la <code>x</code> corresponent.</p>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Bit</th><th>Valor</th><th>On es veu</th><th>Què fa</th><th>Exemple del sistema</th></tr></thead>
+    <tbody>
+      <tr><td><strong>SUID</strong></td><td>4</td><td><code>rw<b>s</b>r-xr-x</code></td><td>Un executable s'executa amb els privilegis del seu <em>propietari</em>, no de qui el llança</td><td><code>/usr/bin/passwd</code>: és de root, i per això un usuari normal pot canviar la seva contrasenya, que es desa a <code>/etc/shadow</code></td></tr>
+      <tr><td><strong>SGID</strong></td><td>2</td><td><code>rwxr-<b>s</b>r-x</code></td><td>En un executable, s'executa amb el grup del fitxer. En un <em>directori</em>, els fitxers nous hereten el grup del directori</td><td>Carpetes compartides d'un equip: tot el que s'hi crea queda al grup de l'equip, sigui qui sigui qui ho creï</td></tr>
+      <tr><td><strong>Sticky bit</strong></td><td>1</td><td><code>rwxrwxrw<b>t</b></code></td><td>En un directori on tothom pot escriure, cadascú només pot esborrar els seus propis fitxers</td><td><code>/tmp</code>: tothom hi escriu, ningú esborra el que és dels altres</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ls -l /usr/bin/passwd          <i># fixeu-vos en la s</i>
+<b>$</b> ls -ld /tmp                    <i># i aquí en la t</i>
+<b>$</b> chmod u+s programa             <i># SUID, en simbòlic</i>
+<b>$</b> chmod g+s directori            <i># SGID</i>
+<b>$</b> chmod +t directori             <i># sticky bit</i>
+<b>$</b> chmod 2770 /srv/equip          <i># octal: SGID + rwxrwx---</i>
+<b>$</b> sudo find / -perm -4000 -type f 2&gt;/dev/null   <i># tots els SUID del sistema</i></pre>
+    <p class="cap">Si veieu una <code>S</code> o una <code>T</code> majúscules, el bit especial hi és però falta la <code>x</code> de sota: normalment és un error.</p>
+  </div>
+
+  <div class="note">
+    <span class="lbl">PER QUÈ IMPORTA EN SEGURETAT</span>
+    <p>Un programa amb SUID de root que tingui una vulnerabilitat és una porta directa a l'administració del sistema. Per això les auditories (secció 14) revisen la llista de fitxers SUID i avisen si n'hi ha d'inesperats.</p>
+  </div>
+</section>
+
+<!-- ========== 10 ========== -->
+<section id="s10">
+  <div class="shead">
+    <span class="num">10</span>
+    <h2>Usuaris i grups des de la consola</h2>
+    <p class="sub">On viu la informació ja ho sabeu del bloc anterior. Aquí, les eines i les seves diferències.</p>
+  </div>
+
+  <p>Els fitxers són els mateixos que a l'escriptori: <code>/etc/passwd</code>, <code>/etc/shadow</code> i <code>/etc/group</code> (secció 12 del tema 1). Al servidor no hi ha cap finestra de «Usuaris i grups», així que tot passa per ordres.</p>
+
+  <h3>Dues ordres per crear usuaris</h3>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th></th><th><code>useradd</code></th><th><code>adduser</code></th></tr></thead>
+    <tbody>
+      <tr><td>Què és</td><td>L'eina de baix nivell, present a totes les distribucions</td><td>Un script de Debian i Ubuntu que fa servir <code>useradd</code> per sota</td></tr>
+      <tr><td>Interacció</td><td>Cap: fa només el que li indiqueu amb opcions</td><td>Pregunta contrasenya i dades personals</td></tr>
+      <tr><td>Directori personal</td><td>No el crea si no hi poseu <code>-m</code></td><td>El crea i hi copia el contingut de <code>/etc/skel</code></td></tr>
+      <tr><td>Intèrpret</td><td>El de <code>/etc/default/useradd</code>, a Ubuntu <code>/bin/sh</code></td><td><code>/bin/bash</code></td></tr>
+      <tr><td>Contrasenya</td><td>Cap: el compte queda bloquejat fins que feu <code>passwd</code></td><td>La demana en el moment</td></tr>
+      <tr><td>Quan es fa servir</td><td>Scripts i automatització</td><td>Ús interactiu</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo useradd -m -s /bin/bash tecnic1    <i># equivalent manual del que fa adduser</i>
+<b>$</b> sudo passwd tecnic1
+<b>$</b> getent passwd tecnic1                  <i># la seva línia de /etc/passwd</i>
+<b>$</b> ls -ld /home/tecnic1                   <i># existeix el directori personal?</i></pre>
+  </div>
+
+  <h3>Grups</h3>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo groupadd suport                <i># o sudo addgroup suport</i>
+<b>$</b> sudo usermod -aG suport tecnic1     <i># -a: afegeix sense treure'l dels altres grups</i>
+<b>$</b> groups tecnic1                      <i># grups als quals pertany</i>
+<b>$</b> id tecnic1                          <i># el mateix, amb UID i GID</i>
+<b>$</b> getent group suport                 <i># membres d'un grup</i></pre>
+    <p class="cap">Un usuari que ja té la sessió oberta no veu el grup nou fins que torna a entrar. Si <code>id</code> el mostra i l'usuari encara no té accés, és això.</p>
+  </div>
+
+  <h3>Comptes que caduquen</h3>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo chage -E 2027-06-30 usuari     <i># el compte deixa de funcionar aquell dia</i>
+<b>$</b> sudo chage -l usuari                 <i># comprovar-ho</i></pre>
+    <p class="cap">No és el mateix que la caducitat de la contrasenya (secció 12 del tema 1): aquí és el compte sencer el que queda inutilitzat.</p>
+  </div>
+</section>
+
+<!-- ========== 11 ========== -->
+<section id="s11">
+  <div class="shead">
+    <span class="num">11</span>
+    <h2>Registres del sistema</h2>
+    <p class="sub">Quan alguna cosa falla, o algú intenta entrar on no toca, queda escrit aquí.</p>
+  </div>
+
+  <p>L'estàndard de jerarquia del sistema de fitxers (FHS) situa els registres a <code>/var/log</code>. A Ubuntu 24.04 el servei <strong>rsyslog</strong> hi escriu els fitxers de text clàssics. (Systemd en guarda una còpia en format binari que es consulta amb <code>journalctl</code>, però en aquest bloc treballarem amb els fitxers.)</p>
+
+  <h3>Fitxers de text</h3>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Fitxer</th><th>Què hi queda</th></tr></thead>
+    <tbody>
+      <tr><td><code>/var/log/syslog</code></td><td>El registre general i el més important: tot el que no té un fitxer propi</td></tr>
+      <tr><td><code>/var/log/auth.log</code></td><td>Autenticacions, correctes i fallides: inicis de sessió, SSH, <code>sudo</code></td></tr>
+      <tr><td><code>/var/log/kern.log</code></td><td>Missatges del nucli</td></tr>
+      <tr><td><code>/var/log/dpkg.log</code> · <code>/var/log/apt/history.log</code></td><td>Paquets instal·lats, actualitzats i esborrats</td></tr>
+      <tr><td><code>/var/log/<em>servei</em>/</code></td><td>Molts serveis tenen el seu directori: <code>apache2</code>, <code>mysql</code>...</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>Per llegir-los cal <code>sudo</code>, o pertànyer al grup <code>adm</code>. L'usuari creat a la instal·lació ja hi és.</p>
+
+  <h3>Fitxers binaris</h3>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Fitxer</th><th>Contingut</th><th>Com es llegeix</th></tr></thead>
+    <tbody>
+      <tr><td><code>/var/log/wtmp</code></td><td>Historial d'entrades, sortides i reinicis</td><td><code>last</code></td></tr>
+      <tr><td><code>/var/log/btmp</code></td><td>Intents d'entrada fallits</td><td><code>sudo lastb</code></td></tr>
+      <tr><td><code>/var/log/lastlog</code></td><td>Darrera connexió de cada usuari del sistema</td><td><code>lastlog</code></td></tr>
+      <tr><td><code>/run/utmp</code></td><td>Qui està connectat ara</td><td><code>who</code> · <code>w</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>La rotació</h3>
+
+  <p>Si els registres creixessin sense límit omplirien <code>/var</code>. El servei <strong>logrotate</strong> els fa rodar periòdicament: el fitxer actual passa a dir-se <code>.1</code>, l'anterior es comprimeix com a <code>.2.gz</code>, i així fins a un nombre màxim de còpies, quan s'esborra la més antiga. La política és a <code>/etc/logrotate.conf</code> i <code>/etc/logrotate.d/</code>.</p>
+
+  <div class="term">
+<pre><b>$</b> ls /var/log/syslog*
+/var/log/syslog  /var/log/syslog.1  /var/log/syslog.2.gz  /var/log/syslog.3.gz</pre>
+    <p class="cap">El fitxer actual només conté els últims dies. Tota la història del registre és la suma de tots aquests fitxers.</p>
+  </div>
+
+  <p>Els fitxers comprimits no es poden llegir amb <code>cat</code> ni <code>grep</code>. Cada eina té la seva versió amb <code>z</code> al davant, que descomprimeix al vol: <code>zcat</code>, <code>zless</code>, <code>zgrep</code>. Amb l'opció <code>-f</code>, <code>zcat</code> també accepta fitxers sense comprimir, i per tant pot llegir el fitxer actual i els rotats d'una vegada.</p>
+
+  <h3>Paginar, filtrar i desar</h3>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> less /var/log/dpkg.log                      <i># paginar: espai avança, /text cerca, q surt</i>
+<b>$</b> zcat -f /var/log/dpkg.log* | less           <i># el registre actual i tots els rotats</i>
+<b>$</b> grep "install " /var/log/dpkg.log           <i># només les línies que contenen el text</i>
+<b>$</b> grep -i "error" /var/log/syslog             <i># -i: sense distingir majúscules</i>
+<b>$</b> grep -c "sudo" /var/log/auth.log            <i># -c: només compta quantes n'hi ha</i>
+<b>$</b> grep "install " /var/log/dpkg.log &gt; paquets.txt   <i># el resultat, a un fitxer</i>
+<b>$</b> tail -f /var/log/auth.log                   <i># veure què s'hi escriu en temps real</i></pre>
+  </div>
+
+  <h3>Què hi ha a <code>auth.log</code></h3>
+
+  <p>Cada línia porta data i hora (a Ubuntu 24.04, en format ISO amb microsegons i zona horària), nom de la màquina, el procés que l'ha generat i el missatge. Un fragment típic d'un servidor amb SSH obert:</p>
+
+  <div class="term">
+<pre>2026-10-08T10:02:11.482915+02:00 srv sshd[1402]: Accepted password for tecnic from 192.168.50.20 port 51234 ssh2
+2026-10-08T10:05:37.104238+02:00 srv sshd[1455]: Failed password for tecnic from 192.168.50.20 port 51240 ssh2
+2026-10-08T10:06:02.733051+02:00 srv sshd[1461]: Invalid user oracle from 192.168.50.20 port 51244
+2026-10-08T10:06:04.918620+02:00 srv sshd[1461]: Failed password for invalid user oracle from 192.168.50.20 port 51244 ssh2
+2026-10-08T10:07:15.260774+02:00 srv sudo:   tecnic : TTY=pts/0 ; PWD=/home/tecnic ; USER=root ; COMMAND=/usr/bin/apt update</pre>
+    <p class="cap">No és el mateix un usuari que existeix i s'equivoca de contrasenya que un intent amb un nom d'usuari que ni tan sols existeix al sistema. El segon cas, repetit amb noms com <code>admin</code>, <code>oracle</code> o <code>test</code>, és el rastre típic d'un atac automatitzat.</p>
+  </div>
+
+  <div class="note">
+    <span class="lbl">SI EL REGISTRE ÉS BUIT</span>
+    <p>En una màquina virtual acabada d'instal·lar no hi ha intents fallits perquè no ho ha intentat ningú. Genereu-los vosaltres des del client: connecteu-vos per SSH amb un usuari que no existeix i, un altre cop, amb un usuari correcte i una contrasenya equivocada.</p>
+  </div>
+
+</section>
+
+<!-- ========== 12 ========== -->
+<section id="s12">
+  <div class="shead">
+    <span class="num">12</span>
+    <h2>Monitoratge des de la consola</h2>
+    <p class="sub">Abans d'instal·lar res: el sistema ja porta eines per saber com va.</p>
+  </div>
+
+  <h3>Càrrega i processos</h3>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> uptime                         <i># temps encès, usuaris i càrrega mitjana a 1, 5 i 15 minuts</i>
+<b>$</b> nproc                          <i># nombre de nuclis, per interpretar la càrrega</i>
+<b>$</b> htop                           <i># processos en temps real; F6 per ordenar</i>
+<b>$</b> ps aux --sort=-%mem | head     <i># els processos que més memòria fan servir</i></pre>
+    <p class="cap">Una càrrega mitjana d'1,0 en una màquina d'un nucli vol dir que el processador va just. La mateixa xifra en una de quatre nuclis vol dir que en fa servir una quarta part. Sense <code>nproc</code>, la càrrega no diu res.</p>
+  </div>
+
+  <h3>Memòria, disc i ports</h3>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> free -h                        <i># mireu la columna "available", no "free"</i>
+<b>$</b> vmstat 2 5                     <i># 5 mostres cada 2 segons</i>
+<b>$</b> df -h                          <i># espai per sistema de fitxers</i>
+<b>$</b> sudo apt install sysstat       <i># porta iostat</i>
+<b>$</b> iostat -x 2                    <i># ús de cada disc: mireu %util</i>
+<b>$</b> ss -tulpn                      <i># ports oberts i quin procés escolta a cadascun</i></pre>
+  </div>
+
+  <p>Linux fa servir la memòria lliure com a memòria cau de disc, i per això <code>free</code> sempre sembla baixa. La que importa és <code>available</code>: la que es pot donar als programes si la demanen. De <code>vmstat</code>, les columnes que cal saber llegir:</p>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Columna</th><th>Significat</th><th>Senyal d'alarma</th></tr></thead>
+    <tbody>
+      <tr><td><code>r</code></td><td>Processos esperant CPU</td><td>Sostingudament per sobre del nombre de nuclis</td></tr>
+      <tr><td><code>si</code> · <code>so</code></td><td>Memòria que entra i surt de l'àrea d'intercanvi</td><td>Qualsevol valor sostingut diferent de zero: falta RAM</td></tr>
+      <tr><td><code>us</code> · <code>sy</code> · <code>id</code></td><td>% de CPU en programes, en el nucli i lliure</td><td><code>id</code> prop de zero de manera continuada</td></tr>
+      <tr><td><code>wa</code></td><td>% de temps que la CPU espera el disc</td><td>Valors alts: el disc és el coll d'ampolla</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note">
+    <span class="lbl">EL MOMENT DE MIRAR</span>
+    <p>Aquestes eines diuen com està la màquina ara. No diuen com estava ahir a les tres de la matinada, quan va anar lenta. Per això existeix el monitoratge amb històric de la secció següent.</p>
+  </div>
+</section>
+
+<!-- ========== 13 ========== -->
+<section id="s13">
+  <div class="shead">
+    <span class="num">13</span>
+    <h2>Monitoratge via web</h2>
+    <p class="sub">Gràfics amb històric, consultables des del navegador del client.</p>
+  </div>
+
+  <p>Les eines d'aquesta secció tenen dues parts: un <strong>servei recol·lector</strong> que funciona contínuament i va desant mesures, i una <strong>interfície web</strong> que les dibuixa. S'instal·len al servidor i es consulten des del navegador del client, a <code>http://IP-del-servidor:port</code>. La gràcia és l'històric: podeu veure què va passar mentre no hi éreu.</p>
+
+  <h3>Monitorix: el sistema sencer</h3>
+
+  <p>Lleuger i pensat per a servidors en producció. Recull CPU, memòria, discos, sistemes de fitxers, xarxa, processos, usuaris connectats i molts serveis, i porta el seu propi servidor web: no cal instal·lar-ne cap altre.</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo apt install monitorix
+<b>$</b> systemctl status monitorix            <i># s'engega sol en instal·lar-lo</i>
+<b>$</b> ss -tlnp | grep 8080                  <i># escolta al port 8080</i></pre>
+    <p class="cap">Des del navegador del client: <code>http://IP-del-servidor:8080/monitorix</code></p>
+  </div>
+
+  <ul>
+    <li>La configuració és a <code>/etc/monitorix/monitorix.conf</code>. A Ubuntu s'hi afegeix <code>/etc/monitorix/conf.d/00-debian.conf</code>, que es carrega després i en sobreescriu alguns valors: si un canvi no té efecte, mireu si l'altre fitxer el contradiu.</li>
+    <li>Quines gràfiques es generen ho decideix la secció <code>&lt;graph_enable&gt;</code>. El servidor web integrat i qui hi pot accedir, la secció <code>&lt;httpd_builtin&gt;</code>.</li>
+    <li>Després de cada canvi, <code>sudo systemctl restart monitorix</code>.</li>
+    <li>Les gràfiques necessiten uns minuts de dades abans de mostrar res útil. Si acabeu d'instal·lar-lo i estan buides, és normal.</li>
+  </ul>
+
+  <h3>ntopng: el trànsit de xarxa</h3>
+
+  <p>Analitza el trànsit que passa per una interfície i el classifica per equips, connexions, protocols i aplicacions, gràcies a una biblioteca d'inspecció de paquets (nDPI) que reconeix centenars de protocols. Desa les dades a Redis, que s'instal·la com a dependència.</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo apt install ntopng
+<b>$</b> sudo nano /etc/ntopng.conf            <i># una opció per línia</i>
+  <u>-i=enp1s0</u>                             <i># la targeta de la xarxa Default</i>
+  <u>-i=enp2s0</u>                             <i># la targeta de la xarxa personal</i>
+  <u>-w=3000</u>                               <i># port de la interfície web</i>
+<b>$</b> sudo systemctl restart ntopng</pre>
+    <p class="cap">Des del navegador del client: <code>http://IP-del-servidor:3000</code>. El primer accés és amb <code>admin</code> / <code>admin</code>, i us obligarà a canviar la contrasenya. La versió dels repositoris d'Ubuntu és l'edició comunitària; ntop en distribueix de més noves des del seu propi repositori.</p>
+  </div>
+
+  <p>Si l'obriu i no hi veieu gairebé res, és que gairebé no hi passa trànsit. Genereu-ne: navegueu des del client, feu un <code>apt update</code> al servidor, connecteu-vos per SSH. ntopng només veu el que passa per les interfícies que li heu dit: la connexió SSH del client va per <code>enp2s0</code> i les consultes DNS i les descàrregues, per <code>enp1s0</code>.</p>
+
+  <div class="note">
+    <span class="lbl">ON NO S'HAN DE POSAR</span>
+    <p>Aquests panells ensenyen molta informació interna: quins serveis hi ha, qui s'hi connecta, quan és més vulnerable la màquina. En un servidor real no queden mai oberts a Internet. Es limiten a la xarxa d'administració, o s'hi accedeix per VPN o per un túnel SSH.</p>
+  </div>
+
+
+</section>
+
+<!-- ========== 14 ========== -->
+<section id="s14">
+  <div class="shead">
+    <span class="num">14</span>
+    <h2>Auditoria de seguretat amb Lynis</h2>
+    <p class="sub">Centenars de comprovacions automàtiques, i una llista del que milloraríeu.</p>
+  </div>
+
+  <p><a href="https://cisofy.com/lynis/">Lynis</a> és una eina de codi obert que revisa la configuració d'un sistema Linux i la compara amb bones pràctiques de seguretat: arrencada, nucli, usuaris i contrasenyes, permisos, serveis, SSH, tallafoc, registres, paquets pendents d'actualitzar i molt més. No necessita cap agent i <strong>no canvia res</strong>: només llegeix i informa. Funciona igual en un servidor que en un escriptori.</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo apt install lynis
+<b>$</b> sudo lynis audit system               <i># l'auditoria completa, uns minuts</i>
+<b>$</b> sudo lynis show details SSH-7408      <i># detall d'una prova concreta pel seu codi</i></pre>
+    <p class="cap">La versió dels repositoris va una mica endarrerida respecte de la de CISOfy. Per a un ús docent és suficient; en producció es fa servir el seu repositori.</p>
+  </div>
+
+  <h3>Què us dona</h3>
+
+  <ul>
+    <li><strong>La sortida per pantalla</strong>, per seccions, amb cada comprovació marcada en colors: <code>OK</code>, <code>WARNING</code>, <code>SUGGESTION</code>...</li>
+    <li><strong>Avisos</strong> (<em>warnings</em>): problemes que cal resoldre.</li>
+    <li><strong>Suggeriments</strong> (<em>suggestions</em>): millores recomanables, cadascuna amb un codi de prova.</li>
+    <li><strong>L'índex d'enduriment</strong> (<em>hardening index</em>), de 0 a 100.</li>
+    <li>Dos fitxers: <code>/var/log/lynis.log</code>, amb el detall de cada prova, i <code>/var/log/lynis-report.dat</code>, un informe en format <code>clau=valor</code> fàcil de filtrar.</li>
+  </ul>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo grep -E "^warning|^suggestion" /var/log/lynis-report.dat
+<b>$</b> sudo cp /var/log/lynis-report.dat ~/lynis-servidor.dat
+<b>$</b> sudo chown $USER: ~/lynis-servidor.dat      <i># perquè el pugueu copiar amb scp</i></pre>
+  </div>
+
+  <h3>Analitzar, no copiar</h3>
+
+  <p>L'informe no és una llista de tasques per aplicar a cegues. Alguns suggeriments no tenen sentit en el vostre context i d'altres tenen un cost que cal valorar. Per a cada punt que trieu treballar, la pregunta és la mateixa: quin risc hi ha, què faríeu i què podria trencar el canvi.</p>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Tipus de suggeriment habitual</th><th>On és la teoria</th></tr></thead>
+    <tbody>
+      <tr><td>Endurir la configuració de SSH</td><td>Secció 7</td></tr>
+      <tr><td>Política i caducitat de contrasenyes</td><td>Secció 12 del tema 1</td></tr>
+      <tr><td>Separar <code>/var</code>, <code>/tmp</code> o <code>/home</code> en particions pròpies</td><td>Secció 3</td></tr>
+      <tr><td>Permisos de fitxers i fitxers SUID</td><td>Secció 9</td></tr>
+      <tr><td>Paquets pendents d'actualitzar, actualitzacions automàtiques</td><td>Secció 5</td></tr>
+      <tr><td>Tallafoc inactiu</td><td>No forma part d'aquest bloc (<code>ufw</code>)</td></tr>
+      <tr><td>Registres remots, auditoria de processos</td><td>Secció 11</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note">
+    <span class="lbl">L'ÍNDEX NO ÉS UNA NOTA</span>
+    <p>Un 65 no vol dir que el servidor estigui «aprovat». L'índex serveix per comparar la mateixa màquina abans i després dels canvis. La manera de demostrar que una mesura ha funcionat és tornar a passar l'auditoria i veure que l'avís ha desaparegut.</p>
+  </div>
+</section>
+
+<!-- ========== 15 ========== -->
+<section id="s15">
+  <div class="shead">
+    <span class="num">15</span>
+    <h2>Proves de rendiment</h2>
+    <p class="sub">Posar la màquina al límit per saber per on es trenca primer.</p>
+  </div>
+
+  <p>Monitorar és observar el sistema amb la càrrega que té. Una <strong>prova de rendiment</strong> (<em>benchmark</em>) és el contrari: generar-li una càrrega controlada i mesurar com respon. Serveix per comparar màquines, per comprovar l'efecte d'un canvi i, sobretot, per trobar el <strong>coll d'ampolla</strong>: el recurs que s'esgota primer i limita tota la resta.</p>
+
+  <h3>Phoronix Test Suite</h3>
+
+  <p>Plataforma de proves de codi obert que descarrega, instal·la i executa proves de manera automàtica, repeteix cada mesura diverses vegades i en calcula la desviació. Les proves surten d'<a href="https://openbenchmarking.org/">OpenBenchmarking.org</a>, on també podeu comparar els vostres resultats amb els d'altres màquines.</p>
+
+  <p>La versió dels repositoris d'Ubuntu és antiga. Baixeu el paquet <code>.deb</code> de la secció de descàrregues de <a href="https://www.phoronix-test-suite.com/">phoronix-test-suite.com</a> i instal·leu-lo amb les seves dependències, que són PHP:</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo apt install php-cli php-xml
+<b>$</b> sudo dpkg -i phoronix-test-suite_*_all.deb
+<b>$</b> sudo apt -f install                          <i># resol dependències pendents</i>
+
+<b>$</b> phoronix-test-suite system-info              <i># maquinari i programari detectats</i>
+<b>$</b> phoronix-test-suite list-available-tests     <i># catàleg de proves</i>
+<b>$</b> phoronix-test-suite benchmark pts/compress-7zip   <i># instal·la i executa una prova</i></pre>
+    <p class="cap">La primera execució demana acceptar la llicència i si voleu enviar estadístiques anònimes. Els resultats es desen a <code>~/.phoronix-test-suite/test-results/</code>.</p>
+  </div>
+
+  <h3>Una prova per a cada recurs</h3>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Recurs</th><th>Exemples de prova</th><th>Què mesura</th></tr></thead>
+    <tbody>
+      <tr><td>CPU</td><td><code>pts/compress-7zip</code></td><td>Compressió i descompressió: càlcul pur</td></tr>
+      <tr><td>Memòria</td><td><code>pts/stream</code> · <code>pts/ramspeed</code></td><td>Amplada de banda de la RAM</td></tr>
+      <tr><td>Disc</td><td><code>pts/fio</code></td><td>Lectura i escriptura, seqüencial i aleatòria</td></tr>
+      <tr><td>Serveis</td><td><code>pts/apache</code> · <code>pts/nginx</code> · <code>pts/redis</code> · <code>pts/sqlite</code></td><td>Peticions per segon d'un servei real sota càrrega</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note">
+    <span class="lbl">ABANS DE LLANÇAR-NE CAP</span>
+    <p>Algunes proves descarreguen centenars de MB i compilen el programari, i poden trigar molt. Comproveu l'espai lliure amb <code>df -h</code> i llegiu la descripció de la prova abans de començar.</p>
+    <p>En una màquina virtual, els resultats depenen de l'amfitrió i de les altres màquines que hi corren alhora. Per comparar, repetiu les proves en les mateixes condicions.</p>
+  </div>
+
+  <h3>Del resultat a l'actuació</h3>
+
+  <p>Una xifra sola no diu quin recurs falta. El mètode és obrir una segona sessió SSH mentre la prova s'executa i mirar què s'esgota, amb les eines de la secció 12:</p>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>El que veieu durant la prova</th><th>Recurs que limita</th><th>Actuació sobre el maquinari</th></tr></thead>
+    <tbody>
+      <tr><td>CPU al 100 % (<code>us</code> + <code>sy</code>), càrrega per sobre del nombre de nuclis</td><td>Processador</td><td>Més nuclis o més freqüència. En una màquina virtual, més vCPU</td></tr>
+      <tr><td><code>si</code> i <code>so</code> diferents de zero, <code>available</code> molt baixa</td><td>Memòria</td><td>Més RAM. Un intercanvi més ràpid només dissimula el problema</td></tr>
+      <tr><td><code>wa</code> alt, <code>%util</code> del disc prop del 100 % a <code>iostat</code></td><td>Disc</td><td>SSD o NVMe, RAID 10, separar dades i sistema en discos diferents</td></tr>
+      <tr><td>Trànsit al límit de la velocitat de la interfície a ntopng</td><td>Xarxa</td><td>Targeta més ràpida o agregació d'enllaços</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>La conclusió ha de seguir aquest ordre: què heu mesurat, quin recurs s'ha saturat i quina prova ho demostra, i només aleshores què canviaríeu. Recomanar «més RAM» sense haver vist la màquina fer servir l'intercanvi és endevinar.</p>
+</section>
+
+<!-- ========== 16 ========== -->
+<section id="s16">
+  <div class="shead">
+    <span class="num">16</span>
+    <h2>Projecte inicial 2 · Introducció a Linux (servidor)</h2>
+    <p class="sub">Tot el que hi ha en aquestes pàgines es posa en pràctica aquí.</p>
+  </div>
+
+  <p>El projecte us demana muntar un servidor i un client, fer-los parlar, i després repassar la consola, auditar-los i posar-los a prova. Consulteu l'enunciat complet per al detall; aquest és el mapa de per on passa cada apartat.</p>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Apartat del projecte</th><th>On és la teoria</th></tr></thead>
+    <tbody>
+      <tr><td>Activitat 1 · Dimensionar, crear l'escriptori a Isard i instal·lar</td><td>Seccions 2, 3 i 4</td></tr>
+      <tr><td>Activitat 1 · Configuració bàsica del sistema</td><td>Secció 5</td></tr>
+      <tr><td>Activitat 1 · Xarxes a Isard, IP fixa amb Netplan i connectivitat</td><td>Secció 6</td></tr>
+      <tr><td>Activitat 2 · Directoris, fitxers i rutes</td><td>Secció 8</td></tr>
+      <tr><td>Activitat 2 · Permisos i permisos especials</td><td>Secció 9</td></tr>
+      <tr><td>Activitat 2 · Usuaris i grups</td><td>Secció 10</td></tr>
+      <tr><td>Activitat 3 · Auditoria de seguretat</td><td>Secció 14</td></tr>
+      <tr><td>Activitat 3 · Intents d'accés fallits, darreres connexions, registre complet</td><td>Secció 11</td></tr>
+      <tr><td>Activitat 3 · Monitoratge web del sistema i de la xarxa</td><td>Seccions 12 i 13</td></tr>
+      <tr><td>Activitat 3 · Proves de càrrega i propostes de maquinari</td><td>Secció 15</td></tr>
+      <tr><td>Tot el projecte · Treballar des del client</td><td>Secció 7</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note dark">
+    <span class="lbl">ENTREGA</span>
+    <p>Memòria individual en <strong>PDF</strong> al Classroom. El projecte val un <strong>5 % de tots els RA</strong> del mòdul.</p>
+    <p>Per a cada activitat, la memòria ha de dir quins fitxers heu modificat, quines ordres exactes heu fet servir i quines proves heu fet per verificar que funciona, amb les captures corresponents. Un resultat correcte sense explicació no demostra que l'hàgiu entès.</p>
+    <p>Els nivells de <a href="https://overthewire.org/wargames/bandit/">Bandit</a> són opcionals i compten per arrodonir a l'alça la nota final del mòdul.</p>
+  </div>
+</section>
+
+<!-- ========== 17 ========== -->
+<section id="s17">
+  <div class="shead">
+    <span class="num">17</span>
+    <h2>Fonts i documentació</h2>
+    <p class="sub">On anar a buscar-ho quan no ho recordeu.</p>
+  </div>
+
+  <h3>Ubuntu Server</h3>
+  <ul>
+    <li><a href="https://documentation.ubuntu.com/server/">Documentació d'Ubuntu Server</a></li>
+    <li><a href="https://documentation.ubuntu.com/server/reference/installation/system-requirements/">Requisits del sistema</a></li>
+    <li><a href="https://netplan.readthedocs.io/">Documentació de Netplan</a>, amb exemples de configuració</li>
+    <li><a href="https://refspecs.linuxfoundation.org/FHS_3.0/fhs/index.html">Filesystem Hierarchy Standard 3.0</a></li>
+    <li><a href="https://wiki.archlinux.org/">Arch Wiki</a> — útil en qualsevol distribució</li>
+  </ul>
+
+  <h3>Isard VDI</h3>
+  <ul>
+    <li><a href="https://isard.gitlab.io/isardvdi-docs/ca/user/private_and_personal_networks/private_and_personal_networks/">Xarxes privades i personals</a></li>
+    <li><a href="https://isard.gitlab.io/isardvdi-docs/ca/user/client_server/client_server/">Exemple client–servidor</a></li>
+    <li><a href="https://isard.gitlab.io/isardvdi-docs/ca/use_cases/guests/ubuntu/ubuntu_26.04/server/installation/">Instal·lació d'Ubuntu Server a Isard</a> (guia per a la 26.04; el procés és el mateix)</li>
+  </ul>
+
+  <h3>Eines d'aquest bloc</h3>
+  <ul>
+    <li><a href="https://cisofy.com/lynis/">Lynis</a> · <a href="https://github.com/CISOfy/lynis">codi i documentació</a></li>
+    <li><a href="https://www.monitorix.org/">Monitorix</a></li>
+    <li><a href="https://www.ntop.org/guides/ntopng/">Guia de ntopng</a></li>
+    <li><a href="https://www.phoronix-test-suite.com/">Phoronix Test Suite</a> · <a href="https://openbenchmarking.org/">OpenBenchmarking.org</a></li>
+  </ul>
+
+  <h3>Practicar la consola</h3>
+  <ul>
+    <li><a href="https://overthewire.org/wargames/bandit/">OverTheWire · Bandit</a></li>
+  </ul>
+
+  <div class="note">
+    <span class="lbl">LA PRIMERA FONT ÉS LA MÀQUINA</span>
+    <p><code>man ordre</code>, <code>ordre --help</code> i <code>apropos tema</code>. Per saber on ha deixat un paquet els seus fitxers de configuració: <code>dpkg -L paquet | grep etc</code>. I la documentació que porta cada paquet és a <code>/usr/share/doc/paquet/</code>.</p>
+  </div>
+</section>
+
+</main>
+</div>
+
+<footer>
+  <div class="footer-in">
+    <img src="data:image/png;base64,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" alt="Institut Mare de Déu de la Mercè">
+    <p><strong>MP0374 · Administració de sistemes operatius</strong><br>
+    CFGS Administració de Sistemes Informàtics en Xarxa · 2n curs · 2026-2027<br>
+    Departament d'Informàtica i Comunicacions · Institut Mare de Déu de la Mercè</p>
+    <p>Material del bloc de servidor, sobre Ubuntu Server 24.04 LTS. Elaborat a partir de la documentació oficial d'Ubuntu i de cada una de les eines.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* Índex desplegable en pantalles estretes */
+  var toc = document.getElementById('toc');
+  var tg  = document.getElementById('navtoggle');
+  if (tg && toc) {
+    tg.addEventListener('click', function(){
+      var open = toc.classList.toggle('open');
+      tg.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    toc.addEventListener('click', function(e){
+      if (e.target.closest('a') && window.matchMedia('(max-width:920px)').matches) {
+        toc.classList.remove('open');
+        tg.setAttribute('aria-expanded','false');
+      }
+    });
+  }
+
+  /* Barra de progrés de lectura */
+  var bar = document.getElementById('bar');
+  var ticking = false;
+  function progress(){
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+    if (bar) bar.style.width = pct.toFixed(2) + '%';
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if (!ticking) { window.requestAnimationFrame(progress); ticking = true; }
+  }, {passive:true});
+  progress();
+
+  /* Secció activa a l'índex */
+  var links = {};
+  Array.prototype.forEach.call(document.querySelectorAll('nav.toc a'), function(a){
+    links[a.getAttribute('href').slice(1)] = a;
+  });
+  var sections = document.querySelectorAll('main section');
+  if ('IntersectionObserver' in window && sections.length) {
+    var seen = {};
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ seen[en.target.id] = en.isIntersecting ? en.intersectionRatio : 0; });
+      var best = null, bestVal = 0;
+      Object.keys(seen).forEach(function(id){
+        if (seen[id] > bestVal) { bestVal = seen[id]; best = id; }
+      });
+      Object.keys(links).forEach(function(id){
+        links[id].classList.toggle('on', id === best);
+      });
+    }, {rootMargin:'-15% 0px -70% 0px', threshold:[0,.25,.5,1]});
+    Array.prototype.forEach.call(sections, function(s){ io.observe(s); });
+  }
+
+  /* Copiar blocs de terminal */
+  Array.prototype.forEach.call(document.querySelectorAll('.term .copy'), function(btn){
+    btn.addEventListener('click', function(){
+      var pre = btn.parentNode.querySelector('pre');
+      if (!pre) return;
+      var lines = pre.innerText.split('\n').map(function(l){
+        return l.replace(/\s+#\s.*$/, '').replace(/^\s*[$#]\s?/, '').trimEnd();
+      }).filter(function(l){ return l.length > 0; });
+      var text = lines.join('\n');
+      var done = function(){
+        var old = btn.textContent;
+        btn.textContent = 'Copiat';
+        setTimeout(function(){ btn.textContent = old; }, 1400);
+      };
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else { fallback(); }
+      function fallback(){
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly','');
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); done(); }
+        catch(e){ btn.textContent = 'Error'; }
+        document.body.removeChild(ta);
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
