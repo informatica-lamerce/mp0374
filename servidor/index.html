@@ -854,19 +854,9 @@ footer ul{max-width:none;columns:2;column-gap:2.5rem}
 
   <p>La primera vegada que us connecteu, SSH us mostra l'empremta de la clau del servidor i us demana confirmació. En dir que sí, la desa a <code>~/.ssh/known_hosts</code> i a partir d'aleshores comprova que el servidor és sempre el mateix. Si reinstal·leu el servidor amb la mateixa IP, la clau canvia i SSH es negarà a connectar amb un avís alarmant: és el comportament correcte. Esborreu l'entrada antiga amb <code>ssh-keygen -R 192.168.50.10</code>.</p>
 
-  <h3>Entrar amb clau en comptes de contrasenya</h3>
-
-  <div class="term">
-    <button class="copy" type="button">Copia</button>
-<pre><b>$</b> ssh-keygen -t ed25519                 <i># al client: genera el parell de claus</i>
-<b>$</b> ssh-copy-id usuari@192.168.50.10      <i># copia la clau pública al servidor</i>
-<b>$</b> ssh usuari@192.168.50.10              <i># ja no demana la contrasenya del servidor</i></pre>
-    <p class="cap">La clau privada no surt mai del client. Al servidor només hi va la pública, a <code>~/.ssh/authorized_keys</code>.</p>
-  </div>
-
   <div class="note">
-    <span class="lbl">LA CONFIGURACIÓ</span>
-    <p>És a <code>/etc/ssh/sshd_config</code> i als fitxers de <code>/etc/ssh/sshd_config.d/</code>. Les directives que més surten en una auditoria són <code>PermitRootLogin</code>, <code>PasswordAuthentication</code> i <code>MaxAuthTries</code>. Abans de reiniciar el servei després d'un canvi, comproveu la sintaxi amb <code>sudo sshd -t</code>: un error de configuració en un servidor remot us pot deixar fora.</p>
+    <span class="lbl">EN AQUEST PROJECTE, NOMÉS ENTRAR</span>
+    <p>Aquí SSH és l'eina per treballar còmodament amb el servidor. L'accés per clau, la configuració del servei i el seu enduriment es treballen més endavant, en l'apartat del mòdul dedicat a l'administració remota.</p>
   </div>
 </section>
 
@@ -986,11 +976,8 @@ footer ul{max-width:none;columns:2;column-gap:2.5rem}
 <pre><b>$</b> chmod 640 informe.txt          <i># octal: rw- r-- ---</i>
 <b>$</b> chmod u+x script.sh            <i># simbòlic: afegeix execució al propietari</i>
 <b>$</b> chmod go-rwx privat/           <i># treu-ho tot al grup i als altres</i>
-<b>$</b> sudo chown tecnic:suport fitxer   <i># canvia propietari i grup</i>
-<b>$</b> umask                          <i># màscara que decideix els permisos dels fitxers nous</i></pre>
+<b>$</b> sudo chown tecnic:suport fitxer   <i># canvia propietari i grup</i></pre>
   </div>
-
-  <p>Els permisos amb què neix un fitxer nou no els decideix el directori, sinó la <strong>umask</strong> de l'usuari que el crea: es parteix de <code>666</code> per als fitxers i <code>777</code> per als directoris i se'n treuen els bits de la màscara. Amb una umask <code>022</code>, un fitxer nou queda <code>644</code> i el grup no hi pot escriure; amb <code>002</code>, queda <code>664</code> i sí que hi pot escriure. En un directori compartit per un equip, aquesta diferència ho és tot.</p>
 
   <div class="tw">
   <table>
@@ -1000,6 +987,7 @@ footer ul{max-width:none;columns:2;column-gap:2.5rem}
       <tr><td><code>644</code></td><td><code>rw-r--r--</code></td><td>Fitxers que tothom pot llegir</td></tr>
       <tr><td><code>700</code></td><td><code>rwx------</code></td><td>Directori privat</td></tr>
       <tr><td><code>755</code></td><td><code>rwxr-xr-x</code></td><td>Programes i directoris públics</td></tr>
+      <tr><td><code>770</code></td><td><code>rwxrwx---</code></td><td>Directori d'un equip: propietari i grup hi treballen, la resta no hi entra</td></tr>
     </tbody>
   </table>
   </div>
@@ -1022,13 +1010,8 @@ footer ul{max-width:none;columns:2;column-gap:2.5rem}
   <div class="term">
     <button class="copy" type="button">Copia</button>
 <pre><b>$</b> ls -l /usr/bin/passwd          <i># fixeu-vos en la s</i>
-<b>$</b> ls -ld /tmp                    <i># i aquí en la t</i>
-<b>$</b> chmod u+s programa             <i># SUID, en simbòlic</i>
-<b>$</b> chmod g+s directori            <i># SGID</i>
-<b>$</b> chmod +t directori             <i># sticky bit</i>
-<b>$</b> chmod 2770 /srv/equip          <i># octal: SGID + rwxrwx---</i>
-<b>$</b> sudo find / -perm -4000 -type f 2&gt;/dev/null   <i># tots els SUID del sistema</i></pre>
-    <p class="cap">Si veieu una <code>S</code> o una <code>T</code> majúscules, el bit especial hi és però falta la <code>x</code> de sota. Una <code>S</code> sol ser un error. Una <code>T</code> en un directori tancat als altres (<code>---</code>) és normal: el sticky bit hi és i els altres simplement no hi poden entrar.</p>
+<b>$</b> ls -ld /tmp                    <i># i aquí en la t</i></pre>
+    <p class="cap">En aquest bloc n'hi ha prou amb saber-los reconèixer i entendre per què hi són. Com i quan aplicar-los es veurà més endavant al mòdul.</p>
   </div>
 
   <div class="note">
@@ -1083,14 +1066,6 @@ footer ul{max-width:none;columns:2;column-gap:2.5rem}
     <p class="cap">Un usuari que ja té la sessió oberta no veu el grup nou fins que torna a entrar. Si <code>id</code> el mostra i l'usuari encara no té accés, és això.</p>
   </div>
 
-  <h3>Comptes que caduquen</h3>
-
-  <div class="term">
-    <button class="copy" type="button">Copia</button>
-<pre><b>$</b> sudo chage -E 2027-06-30 usuari     <i># el compte deixa de funcionar aquell dia</i>
-<b>$</b> sudo chage -l usuari                 <i># comprovar-ho</i></pre>
-    <p class="cap">No és el mateix que la caducitat de la contrasenya (secció 12 del tema 1): aquí és el compte sencer el que queda inutilitzat.</p>
-  </div>
 </section>
 
 <!-- ========== 11 ========== -->
@@ -1319,28 +1294,27 @@ footer ul{max-width:none;columns:2;column-gap:2.5rem}
 <b>$</b> sudo chown $USER: ~/lynis-servidor.dat      <i># perquè el pugueu copiar amb scp</i></pre>
   </div>
 
-  <h3>Analitzar, no copiar</h3>
+  <h3>Llegir l'informe</h3>
 
-  <p>L'informe no és una llista de tasques per aplicar a cegues. Alguns suggeriments no tenen sentit en el vostre context i d'altres tenen un cost que cal valorar. Per a cada punt que trieu treballar, la pregunta és la mateixa: quin risc hi ha, què faríeu i què podria trencar el canvi.</p>
+  <p>En aquest projecte no s'aplica cap canvi: es tracta d'entendre què detecta Lynis i per què ho considera un risc. Cada suggeriment porta un codi, i amb <code>lynis show details</code> en podeu veure el detall. Els més habituals en un Ubuntu acabat d'instal·lar són d'aquest tipus:</p>
 
   <div class="tw">
   <table>
-    <thead><tr><th>Tipus de suggeriment habitual</th><th>On és la teoria</th></tr></thead>
+    <thead><tr><th>Tipus de suggeriment</th><th>Què vol dir</th></tr></thead>
     <tbody>
-      <tr><td>Endurir la configuració de SSH</td><td>Secció 7</td></tr>
-      <tr><td>Política i caducitat de contrasenyes</td><td>Secció 12 del tema 1</td></tr>
-      <tr><td>Separar <code>/var</code>, <code>/tmp</code> o <code>/home</code> en particions pròpies</td><td>Secció 3</td></tr>
-      <tr><td>Permisos de fitxers i fitxers SUID</td><td>Secció 9</td></tr>
-      <tr><td>Paquets pendents d'actualitzar, actualitzacions automàtiques</td><td>Secció 5</td></tr>
-      <tr><td>Tallafoc inactiu</td><td>No forma part d'aquest bloc (<code>ufw</code>)</td></tr>
-      <tr><td>Registres remots, auditoria de processos</td><td>Secció 11</td></tr>
+      <tr><td>Configuració de SSH</td><td>El servei accepta opcions per defecte més permissives del necessari: més intents d'autenticació, reenviaments que no es fan servir...</td></tr>
+      <tr><td>Caducitat de contrasenyes</td><td>Les contrasenyes no caduquen mai: una de filtrada serveix per sempre</td></tr>
+      <tr><td>Particions separades</td><td><code>/tmp</code> o <code>/var</code> comparteixen sistema de fitxers amb l'arrel i el poden omplir (secció 3)</td></tr>
+      <tr><td>Paquets pendents</td><td>Hi ha actualitzacions de seguretat sense instal·lar (secció 5)</td></tr>
+      <tr><td>Tallafoc</td><td>No hi ha cap tallafoc actiu filtrant les connexions entrants</td></tr>
+      <tr><td>Programari addicional</td><td>Recomana eines extra: bloqueig automàtic d'IP, verificació d'integritat de fitxers, comptabilitat del sistema...</td></tr>
     </tbody>
   </table>
   </div>
 
   <div class="note">
     <span class="lbl">L'ÍNDEX NO ÉS UNA NOTA</span>
-    <p>Un 65 no vol dir que el servidor estigui «aprovat». L'índex serveix per comparar la mateixa màquina abans i després dels canvis. La manera de demostrar que una mesura ha funcionat és tornar a passar l'auditoria i veure que l'avís ha desaparegut.</p>
+    <p>Un 65 no vol dir que el servidor estigui «aprovat». L'índex serveix per comparar la mateixa màquina abans i després dels canvis, i per comparar màquines entre elles: un escriptori amb entorn gràfic sol tenir més suggeriments que un servidor perquè porta més programari.</p>
   </div>
 </section>
 
