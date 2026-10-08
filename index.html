@@ -825,16 +825,14 @@ footer ul{max-width:none;columns:2;column-gap:2.5rem}
   <div class="term">
     <button class="copy" type="button">Copia</button>
 <pre>network:
-  version: 2
-  renderer: networkd
   ethernets:
     enp1s0:
       dhcp4: true
     enp2s0:
-      dhcp4: false
       addresses:
-        - 192.168.50.10/24</pre>
-    <p class="cap">A <code>enp2s0</code> només hi va l'adreça amb el prefix de la màscara. La passarel·la i els DNS ja els dona el DHCP a <code>enp1s0</code>.</p>
+      - 192.168.50.10/24
+  version: 2</pre>
+    <p class="cap">A <code>enp2s0</code> només hi va l'adreça amb el prefix de la màscara: si no hi poseu <code>dhcp4: true</code>, no demana adreça per DHCP. La passarel·la i els DNS ja els dona el DHCP a <code>enp1s0</code>. Si en altres guies veieu <code>renderer: networkd</code> o <code>dhcp4: false</code>, és el mateix escrit de manera explícita: són els valors per defecte en un servidor.</p>
   </div>
 
   <div class="note">
@@ -854,12 +852,11 @@ footer ul{max-width:none;columns:2;column-gap:2.5rem}
 
   <div class="term">
 <pre>    enp1s0:
-      dhcp4: false
       addresses:
-        - 192.168.1.10/24
+      - 192.168.1.10/24
       routes:
-        - to: default
-          via: 192.168.1.1
+      - to: default
+        via: 192.168.1.1
       nameservers:
         addresses: [192.168.1.1, 1.1.1.1]</pre>
     <p class="cap">Si veieu exemples amb <code>gateway4:</code>, són antics: Netplan l'accepta però avisa que està obsolet.</p>
