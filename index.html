@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Administració remota · MP0374 · 2n ASIX</title>
+<meta name="description" content="Material d'administració remota (AEA2, RA4) del mòdul MP0374 Administració de sistemes operatius. Institut Mare de Déu de la Mercè.">
+<style>
+:root{
+  --ink:#242121;
+  --red:#BE2D2A;
+  --deep:#8C1512;
+  --paper:#FFFFFF;
+  --surface:#F4F2F1;
+  --rule:#DCD7D5;
+  --muted:#6E6764;
+  --term:#1A1817;
+  --termtext:#E8E4E2;
+  --maxw:none;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:5.5rem}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;
+  font-size:17px;
+  line-height:1.62;
+  -webkit-text-size-adjust:100%;
+}
+
+/* ---------- barra superior ---------- */
+.topbar{
+  position:sticky;top:0;z-index:60;
+  background:var(--ink);color:#fff;
+  padding-top:env(safe-area-inset-top,0px);
+  border-bottom:3px solid var(--red);
+}
+.topbar-in{
+  max-width:1360px;margin:0 auto;
+  display:flex;align-items:center;gap:1rem;
+  padding:.55rem 1.25rem;
+}
+.topbar img{height:26px;width:auto;display:block}
+.topbar .mod{
+  font-size:.78rem;letter-spacing:.06em;font-weight:700;
+  color:#fff;opacity:.92;
+}
+.topbar .mod span{color:var(--red);font-weight:700}
+.topbar .spacer{flex:1}
+.navtoggle{
+  display:none;background:none;border:1px solid rgba(255,255,255,.35);
+  color:#fff;font:inherit;font-size:.8rem;font-weight:700;
+  padding:.3rem .7rem;cursor:pointer;
+}
+#bar{height:3px;background:var(--red);width:0;transition:width .12s linear;
+  position:absolute;bottom:-3px;left:0}
+@media (prefers-reduced-motion:reduce){#bar{transition:none}}
+
+/* ---------- portada ---------- */
+.hero{
+  background:var(--ink);color:#fff;
+  padding:4.5rem 1.25rem 3.5rem;
+}
+.hero-in{max-width:1360px;margin:0 auto;padding:0 clamp(0px,2vw,2rem)}
+.hero img.mark{height:54px;width:auto;margin-bottom:2.6rem;display:block}
+.hero .kicker{
+  font-size:.82rem;font-weight:700;letter-spacing:.14em;
+  color:var(--red);margin:0 0 1.1rem;
+}
+.hero h1{
+  font-family:"Arial Black","Arial Bold",Arial,sans-serif;
+  font-weight:900;
+  font-size:clamp(3rem,11vw,7.5rem);
+  line-height:.88;letter-spacing:-.035em;
+  margin:0 0 1.5rem;
+}
+.hero h1 em{font-style:normal;color:var(--red)}
+.hero .lede{
+  font-size:clamp(1.05rem,2.2vw,1.3rem);
+  max-width:66ch;color:#D9D4D2;margin:0 0 2.6rem;line-height:1.5;
+}
+.prompt{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  font-size:.95rem;color:#C9C4C2;
+  border-top:1px solid rgba(255,255,255,.18);
+  padding-top:1.4rem;
+}
+.prompt b{color:var(--red);font-weight:700}
+.herometa{
+  display:flex;flex-wrap:wrap;gap:.5rem 2.5rem;
+  margin-top:1.4rem;font-size:.82rem;color:#9C9694;
+}
+
+/* ---------- graella ---------- */
+.shell{max-width:1360px;margin:0 auto;display:flex;align-items:flex-start;gap:0}
+nav.toc{
+  width:255px;flex:0 0 255px;
+  position:sticky;top:4.2rem;
+  max-height:calc(100vh - 5rem);overflow-y:auto;
+  padding:2.5rem 0 3rem 1.25rem;
+}
+nav.toc h2{
+  font-size:.7rem;letter-spacing:.14em;font-weight:700;
+  color:var(--muted);margin:0 0 .9rem;
+}
+nav.toc ol{list-style:none;margin:0;padding:0;counter-reset:t}
+nav.toc a{
+  display:flex;gap:.6rem;align-items:baseline;
+  padding:.3rem .6rem .3rem .5rem;
+  color:var(--ink);text-decoration:none;
+  font-size:.86rem;line-height:1.3;
+  border-left:3px solid transparent;
+}
+nav.toc a .n{
+  font-variant-numeric:tabular-nums;color:var(--muted);
+  font-size:.78rem;min-width:1.1em;font-weight:700;
+}
+nav.toc a:hover{background:var(--surface)}
+nav.toc a.on{background:var(--red);color:#fff;border-left-color:var(--deep)}
+nav.toc a.on .n{color:#fff}
+nav.toc a:focus-visible{outline:2px solid var(--red);outline-offset:-2px}
+
+main{flex:1;min-width:0;padding:2.5rem clamp(1.25rem,3.5vw,3.5rem) 5rem}
+
+/* ---------- seccions ---------- */
+section{padding-top:1.5rem;margin-bottom:4.5rem;scroll-margin-top:5rem}
+.shead{border-top:3px solid var(--ink);padding-top:1rem;margin-bottom:1.8rem}
+.shead .num{
+  font-family:"Arial Black",Arial,sans-serif;font-weight:900;
+  font-size:2.6rem;line-height:1;color:var(--red);
+  letter-spacing:-.04em;display:block;margin-bottom:.2rem;
+}
+.shead h2{
+  font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:700;
+  line-height:1.15;letter-spacing:-.02em;margin:0;max-width:30ch;
+}
+.shead p.sub{color:var(--muted);margin:.6rem 0 0;max-width:var(--maxw);font-size:.98rem}
+
+h3{font-size:1.18rem;font-weight:700;margin:2.4rem 0 .7rem;letter-spacing:-.01em}
+h3:first-of-type{margin-top:1.6rem}
+h4{font-size:1rem;font-weight:700;margin:1.7rem 0 .4rem;color:var(--deep)}
+p{max-width:var(--maxw);margin:0 0 1rem}
+ul,ol{max-width:var(--maxw);margin:0 0 1.15rem;padding-left:1.3rem}
+li{margin-bottom:.4rem}
+li::marker{color:var(--red)}
+strong{font-weight:700}
+a{color:var(--deep);text-decoration:underline;text-underline-offset:2px}
+a:hover{color:var(--red)}
+
+code{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  font-size:.88em;background:var(--surface);
+  padding:.1em .35em;border-radius:2px;
+  color:var(--deep);word-break:break-word;
+}
+
+/* ---------- terminal ---------- */
+.term{position:relative;margin:1.3rem 0 1.5rem}
+.term pre{
+  background:var(--term);color:var(--termtext);
+  margin:0;padding:1.05rem 1.1rem;
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  font-size:.84rem;line-height:1.72;
+  overflow-x:auto;border-left:3px solid var(--red);
+}
+.term pre b{color:var(--red);font-weight:700}
+.term pre i{color:#8C8683;font-style:normal}
+.term pre u{color:#C9A227;text-decoration:none}
+.copy{
+  position:absolute;top:.45rem;right:.45rem;
+  background:rgba(255,255,255,.1);color:#CFCAC8;
+  border:1px solid rgba(255,255,255,.22);
+  font:inherit;font-size:.7rem;font-weight:700;
+  padding:.22rem .55rem;cursor:pointer;
+}
+.copy:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.copy:focus-visible{outline:2px solid #fff;outline-offset:1px}
+.term .cap{font-size:.78rem;color:var(--muted);margin:.4rem 0 0}
+
+/* ---------- taules ---------- */
+.tw{overflow-x:auto;margin:1.3rem 0 1.6rem;border-bottom:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:.88rem}
+th,td{text-align:left;padding:.55rem .75rem;vertical-align:top;border-bottom:1px solid var(--rule)}
+thead th{
+  background:var(--ink);color:#fff;font-weight:700;
+  font-size:.78rem;letter-spacing:.03em;border-bottom:none;
+}
+tbody tr:nth-child(even){background:var(--surface)}
+td code{background:transparent;padding:0;color:var(--deep)}
+
+/* ---------- avisos ---------- */
+.note{
+  border-left:3px solid var(--red);background:var(--surface);
+  padding:.9rem 1.1rem;margin:1.3rem 0;max-width:var(--maxw);
+}
+.note p{margin:0}
+.note p+p{margin-top:.6rem}
+.note .lbl{
+  display:block;font-size:.72rem;font-weight:700;letter-spacing:.1em;
+  color:var(--deep);margin-bottom:.35rem;
+}
+.note.dark{background:var(--ink);color:#E6E2E0;border-left-color:var(--red)}
+.note.dark .lbl{color:#F0A5A3}
+.note.dark code{background:rgba(255,255,255,.12);color:#F3AFAD}
+
+/* ---------- capes / diagrama ---------- */
+.stack{margin:1.4rem 0 1.7rem;max-width:56ch}
+.stack div{
+  border:1px solid var(--rule);border-bottom:none;
+  padding:.6rem .9rem;font-size:.88rem;background:var(--paper);
+}
+.stack div:last-child{border-bottom:1px solid var(--rule)}
+.stack div b{display:inline-block;min-width:11.5em;font-weight:700}
+.stack div.k{background:var(--ink);color:#fff;border-color:var(--ink)}
+.stack div.k b{color:#fff}
+.stack div.hw{background:var(--surface);color:var(--muted)}
+
+/* ---------- llibertats ---------- */
+.freedoms{list-style:none;padding:0;margin:1.4rem 0 1.6rem;max-width:var(--maxw)}
+.freedoms li{
+  display:flex;gap:1rem;align-items:baseline;
+  border-top:1px solid var(--rule);padding:.75rem 0;margin:0;
+}
+.freedoms li span{
+  font-family:"Arial Black",Arial,sans-serif;font-weight:900;
+  font-size:1.5rem;color:var(--red);line-height:1;min-width:1.2em;
+}
+.freedoms li:last-child{border-bottom:1px solid var(--rule)}
+
+/* ---------- peu ---------- */
+footer{
+  background:var(--ink);color:#B4AEAC;
+  padding:3rem 1.25rem;margin-top:2rem;font-size:.86rem;
+}
+.footer-in{max-width:1360px;margin:0 auto;padding:0 clamp(0px,2vw,2rem)}
+footer img{height:34px;margin-bottom:1.4rem;display:block}
+footer a{color:#E8B4B2}
+footer ul{max-width:none;columns:2;column-gap:2.5rem}
+@media (max-width:640px){footer ul{columns:1}}
+
+/* ---------- responsive ---------- */
+@media (max-width:920px){
+  .shell{display:block}
+  nav.toc{
+    position:static;width:auto;flex:none;max-height:none;
+    padding:1.5rem 1.25rem 0;display:none;
+    border-bottom:1px solid var(--rule);
+  }
+  nav.toc.open{display:block}
+  nav.toc ol{columns:2;column-gap:1.2rem}
+  nav.toc a{break-inside:avoid}
+  .navtoggle{display:block}
+  main{padding:1.75rem 1.25rem 4rem}
+  body{font-size:16px}
+}
+@media (max-width:520px){
+  nav.toc ol{columns:1}
+  .hero{padding:3rem 1.25rem 2.5rem}
+  .stack div b{display:block;min-width:0}
+}
+
+/* ---------- mode fosc del visor ---------- */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#161514;--surface:#232120;--rule:#3B3735;
+    --ink:#F2EFEE;--muted:#A49D9A;--deep:#E88A87;--red:#D4433F;
+  }
+  :root:not([data-theme="light"]) .topbar,
+  :root:not([data-theme="light"]) .hero,
+  :root:not([data-theme="light"]) footer{background:#0E0D0D}
+  :root:not([data-theme="light"]) .shead{border-top-color:var(--red)}
+  :root:not([data-theme="light"]) thead th{background:#2E2B29;color:#F2EFEE}
+  :root:not([data-theme="light"]) .stack div.k{background:#2E2B29;border-color:#2E2B29}
+  :root:not([data-theme="light"]) .note.dark{background:#232120}
+}
+
+/* ---------- impressió / PDF ---------- */
+@media print{
+  @page{
+    size:A4;margin:17mm 15mm 16mm;
+    @bottom-left{
+      content:"MP0374 · Administració de sistemes operatius · Institut Mare de Déu de la Mercè";
+      font-family:Arial,sans-serif;font-size:7pt;color:#8A8482;
+    }
+    @bottom-right{
+      content:counter(page) " / " counter(pages);
+      font-family:Arial,sans-serif;font-size:7.5pt;color:#8A8482;
+    }
+  }
+  @page cover{
+    margin:0;
+    @bottom-left{content:none}
+    @bottom-right{content:none}
+  }
+  :root{--maxw:none}
+  html{scroll-behavior:auto}
+  body{font-size:10.2pt;line-height:1.45;background:#fff;color:#000}
+  .topbar,nav.toc,.copy,.navtoggle{display:none !important}
+  .shell{display:block}
+  main{padding:0}
+  .hero{
+    page:cover;background:#242121 !important;color:#fff !important;
+    height:297mm;padding:6.5cm 2.2cm 0;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
+  .hero-in{padding:0}
+  .hero img.mark{height:1.7cm;margin-bottom:3.2cm}
+  .hero h1{font-size:60pt;margin-bottom:1.4cm}
+  .hero .lede{font-size:12.5pt;color:#DDD !important;margin-bottom:2.4cm}
+  .hero .kicker{font-size:9.5pt}
+  section{page-break-before:always;break-before:page;margin-bottom:1.4cm;padding-top:0}
+  .shead .num{font-size:20pt}
+  .shead h2{font-size:17pt}
+  h3{font-size:12.5pt;page-break-after:avoid;break-after:avoid}
+  h4{page-break-after:avoid;break-after:avoid}
+  p,li{orphans:3;widows:3}
+  .term,.tw,.note,.stack,table,.freedoms{page-break-inside:avoid;break-inside:avoid}
+  .term pre{background:#1A1817 !important;color:#E8E4E2 !important;font-size:8.4pt;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;white-space:pre-wrap;word-break:break-word}
+  thead th{background:#242121 !important;color:#fff !important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  tbody tr:nth-child(even){background:#F4F2F1 !important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .note{background:#F4F2F1 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .note.dark{background:#242121 !important;color:#E6E2E0 !important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  table{min-width:0;font-size:8.6pt}
+  .tw{overflow:visible}
+  footer{background:#242121 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;
+    page-break-before:always;break-before:page}
+  a{color:#000;text-decoration:none}
+}
+
+.note.dark a{color:#F3AFAD}
+@media print{.note.dark a{color:#F3AFAD !important}}
+
+/* ---------- barres LVM ---------- */
+.lvm{margin:1.1rem 0 1.5rem;max-width:62rem}
+.lvm .lt{font-size:.82rem;font-weight:700;margin:.2rem 0 .35rem}
+.lvm .lt code{font-weight:400}
+.lvm .arrow{font-size:.82rem;color:var(--muted);margin:.55rem 0 .55rem}
+.lvm .bar{display:flex;border:1px solid var(--ink);font-size:.78rem;line-height:1.3}
+.lvm .bar>div{padding:.45rem .5rem;border-right:1px solid var(--ink);min-width:3.6rem;overflow:hidden}
+.lvm .bar>div:last-child{border-right:0}
+.lvm .bar b{display:block}
+.lvm .sys{background:var(--surface);color:var(--muted)}
+.lvm .pv{background:var(--ink);color:#fff}
+.lvm .lv{background:var(--paper)}
+.lvm .lv.grow{background:#F6DCDB}
+.lvm .free{background:repeating-linear-gradient(45deg,transparent 0 6px,rgba(190,45,42,.12) 6px 12px);color:var(--red)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .lvm .pv{background:#2E2B29}
+  :root:not([data-theme="light"]) .lvm .lv.grow{background:#4A2725}
+}
+@media (max-width:640px){.lvm .bar{font-size:.7rem}.lvm .bar>div{min-width:2.8rem;padding:.4rem .35rem}}
+@media print{
+  .lvm{break-inside:avoid;page-break-inside:avoid}
+  .lvm .pv{background:#242121 !important;color:#fff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .lvm .sys,.lvm .lv.grow,.lvm .free{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+/* ---------- topologia ---------- */
+.topo{display:flex;align-items:stretch;margin:1.4rem 0 1.7rem;max-width:62rem}
+.topo .box{flex:1 1 0;border:1px solid var(--rule);padding:.75rem .9rem;font-size:.86rem;background:var(--paper)}
+.topo .box.net{flex:1.25 1 0}
+.topo .box b{display:block;margin-bottom:.15rem}
+.topo .box code{background:transparent;padding:0}
+.topo .net{background:var(--ink);color:#fff;border-color:var(--ink)}
+.topo .net code{color:#F3AFAD}
+.topo .link{flex:0 0 1.6rem;height:3px;align-self:center;background:var(--red)}
+@media (max-width:640px){
+  .topo{flex-direction:column}
+  .topo .link{flex:0 0 1.1rem;width:3px;height:auto}
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .topo .net{background:#2E2B29;border-color:#2E2B29}
+}
+@media print{
+  .topo{break-inside:avoid;page-break-inside:avoid}
+  .topo .net{background:#242121 !important;color:#fff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .topo .link{background:#BE2D2A !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+
+<style>
+/* ---- Prova-ho ---- */
+.prova{border:2px solid var(--ink);margin:1.8rem 0;max-width:var(--maxw)}
+.prova .ph{background:var(--ink);color:#fff;padding:.5rem 1rem;display:flex;align-items:baseline;gap:.8rem;flex-wrap:wrap}
+.prova .ph b{font-size:.74rem;letter-spacing:.14em;color:#F08A86}
+.prova .ph span{font-weight:700;font-size:.98rem}
+.prova .pb{padding:.3rem 1rem .9rem}
+.prova h4{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--deep);margin:1rem 0 .3rem}
+.prova .term{margin:.4rem 0 .5rem}
+.prova .out pre{background:#2B2826;border-left-color:#8C8683}
+.prova ul{margin:.2rem 0 .2rem;padding-left:1.2rem}
+.prova li{margin:.25rem 0}
+.prova .neteja{background:var(--surface);padding:.5rem .8rem;font-size:.9rem;margin-top:.8rem}
+.prova .neteja b{color:var(--deep)}
+.diag{margin:1.4rem 0;max-width:var(--maxw)}
+.diag svg{width:100%;height:auto;display:block}
+.diag .cap{font-size:.78rem;color:var(--muted);margin:.4rem 0 0}
+@media print{.prova{break-inside:auto}.prova .term,.prova .ph{break-inside:avoid}.prova .ph,.prova h4{break-after:avoid}.prova .out pre{background:#2B2826 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.prova .ph{background:#242121 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+
+<style>
+/* ---- Constructor de túnels ---- */
+.tunel{border:2px solid var(--red);margin:1.8rem 0;max-width:var(--maxw);background:#fff}
+.tunel .th{background:var(--red);color:#fff;padding:.5rem 1rem;display:flex;gap:.8rem;align-items:baseline;flex-wrap:wrap}
+.tunel .th b{font-size:.74rem;letter-spacing:.14em}
+.tunel .th span{font-weight:700}
+.tunel .tb{padding:.8rem 1rem 1rem}
+.tmodes{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.8rem}
+.tmodes button{font:inherit;font-weight:700;padding:.45rem .9rem;border:2px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer}
+.tmodes button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.tfields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin-bottom:.6rem}
+.tfields label{display:flex;flex-direction:column;font-size:.78rem;font-weight:700;color:var(--muted);gap:.2rem}
+.tfields input[type=text]{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9rem;padding:.35rem .5rem;border:1px solid var(--rule);color:var(--ink)}
+.tfields label.chk{flex-direction:row;align-items:center;gap:.4rem;color:var(--ink)}
+.tunel .tdiag svg{width:100%;height:auto;display:block;margin:.4rem 0}
+.tunel .texp{background:var(--surface);padding:.6rem .8rem;margin:.4rem 0 0}
+.tunel .hidden{display:none}
+@media print{.tunel .tmodes,.tunel .tfields{display:none}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <img src="data:image/png;base64,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" alt="Institut Mare de Déu de la Mercè">
+    <span class="mod">MP0374 <span>·</span> 2n ASIX</span>
+    <span class="spacer"></span>
+    <button class="navtoggle" id="navtoggle" aria-expanded="false" aria-controls="toc">Índex</button>
+  </div>
+  <div id="bar"></div>
+</header>
+
+<div class="hero">
+  <div class="hero-in">
+    <img class="mark" src="data:image/png;base64,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" alt="Institut Mare de Déu de la Mercè">
+    <p class="kicker">Administració de sistemes operatius · 2n ASIX · Curs 2026-2027</p>
+    <h1>Administració <em>remota</em></h1>
+    <p class="lede">Administrar un servidor sense tocar-lo: entrar-hi de manera segura, fer-hi arribar el que el tallafoc no deixa passar, veure'n l'escriptori i les eines gràfiques des de Linux i des de Windows, i saber qui hi entra i qui ho intenta.</p>
+    <p class="prompt"><b>$</b> ssh -L 8081:localhost:8080 srv<br>AEA2 · Pràctica 3 · RA4 · lliurament al Classroom</p>
+    <div class="herometa">
+      <span>Institut Mare de Déu de la Mercè</span>
+      <span>CFGS Administració de Sistemes Informàtics en Xarxa · 2n curs</span>
+    </div>
+  </div>
+</div>
+
+<div class="shell">
+<nav class="toc" id="toc">
+  <h2>ÍNDEX</h2>
+  <ol>
+    <li><a href="#s1"><span class="n">1</span> Abans de començar</a></li>
+    <li><a href="#s2"><span class="n">2</span> Mètodes d'accés remot</a></li>
+    <li><a href="#s3"><span class="n">3</span> Amb sessió i sense sessió</a></li>
+    <li><a href="#s4"><span class="n">4</span> Com funciona SSH</a></li>
+    <li><a href="#s5"><span class="n">5</span> Comptes i claus</a></li>
+    <li><a href="#s6"><span class="n">6</span> Ordres remotes i còpies</a></li>
+    <li><a href="#s7"><span class="n">7</span> Endurir el servidor SSH</a></li>
+    <li><a href="#s8"><span class="n">8</span> Tallafoc amb ufw</a></li>
+    <li><a href="#s9"><span class="n">9</span> Aplicacions gràfiques: X11</a></li>
+    <li><a href="#s10"><span class="n">10</span> Túnels SSH</a></li>
+    <li><a href="#s11"><span class="n">11</span> Escriptori remot</a></li>
+    <li><a href="#s12"><span class="n">12</span> Des de Windows</a></li>
+    <li><a href="#s13"><span class="n">13</span> Administració web: Cockpit</a></li>
+    <li><a href="#s14"><span class="n">14</span> Qui hi ha connectat</a></li>
+    <li><a href="#s15"><span class="n">15</span> fail2ban</a></li>
+    <li><a href="#s16"><span class="n">16</span> La pràctica</a></li>
+    <li><a href="#s17"><span class="n">17</span> Fonts i documentació</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ========== 1 ========== -->
+<section id="s1">
+  <div class="shead">
+    <span class="num">01</span>
+    <h2>Abans de començar</h2>
+    <p class="sub">Tres màquines, tres xarxes i uns quants paquets. Deixeu-ho a punt abans de la primera prova.</p>
+  </div>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Màquina</th><th>Xarxes a Isard (en aquest ordre)</th><th>Adreça a la xarxa personal</th></tr></thead>
+    <tbody>
+      <tr><td>Servidor <code>xxx-server</code></td><td>Default · personal · <code>asix-grupoXX</code></td><td><code>192.168.50.10</code></td></tr>
+      <tr><td>Client Ubuntu Desktop</td><td>Default · personal</td><td><code>192.168.50.20</code></td></tr>
+      <tr><td>Client Windows 11</td><td>Default · personal</td><td><code>192.168.50.30</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>La xarxa <strong>personal</strong> només uneix les vostres màquines. El switch <strong><code>asix-grupoXX</code></strong> uneix els servidors de tota la classe: és per on treballareu en parelles (seccions 14 i 15). A la tercera targeta del servidor hi poseu l'adreça <code>10.10.10.N</code>, on <code>N</code> és el vostre número de llista: així ningú no trepitja ningú.</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ip -br a                                <i># la tercera targeta, sense adreça: enp3s0</i>
+<b>$</b> sudo nano /etc/netplan/50-cloud-init.yaml</pre>
+  </div>
+
+  <div class="term out">
+<pre>network:
+  version: 2
+  ethernets:
+    enp1s0:
+      dhcp4: true
+    enp2s0:
+      addresses: [192.168.50.10/24]
+    <u>enp3s0:</u>
+    <u>  addresses: [10.10.10.7/24]</u>            # 7 = el vostre número de llista</pre>
+    <p class="cap">Després, <code>sudo netplan apply</code> i <code>ip -br a</code>. Com al projecte inicial 2, el nom de la targeta pot ser diferent: feu cas del que digui <code>ip -br a</code>.</p>
+  </div>
+
+  <p>Al servidor, el que farà falta (l'escriptori triga uns minuts: deixeu-lo instal·lant mentre llegiu):</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo apt update
+<b>$</b> sudo apt install --no-install-recommends xfce4 xfce4-terminal xfce4-taskmanager dbus-x11 xauth x11-apps xrdp xorgxrdp cockpit
+<b>$</b> sudo apt install fail2ban tmux</pre>
+    <p class="cap"><code>--no-install-recommends</code> evita que s'instal·li un gestor d'inici de sessió gràfic: el servidor ha de continuar arrencant en mode text.</p>
+  </div>
+
+  <p>Al client Ubuntu Desktop, el client d'escriptori remot i <code>curl</code>, si no hi són:</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo apt install remmina curl</pre>
+  </div>
+
+  <div class="note">
+    <span class="lbl">EL CLIENT WINDOWS</span>
+    <p>A Isard, un escriptori Windows 11 amb la xarxa personal com a segona targeta. Poseu-li l'adreça fixa <code>192.168.50.30/24</code> a <strong>Configuració → Xarxa i Internet → Ethernet → Assignació d'IP → Edita → Manual</strong>. Windows 11 ja porta el client SSH (<code>ssh</code>, <code>scp</code>, <code>ssh-keygen</code>) i el client d'Escriptori remot (<code>mstsc</code>): no cal instal·lar res.</p>
+  </div>
+</section>
+
+<!-- ========== 2 ========== -->
+<section id="s2">
+  <div class="shead">
+    <span class="num">02</span>
+    <h2>Mètodes d'accés remot</h2>
+    <p class="sub">Text o gràfic, xifrat o no: no tots els accessos remots són iguals.</p>
+  </div>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Mètode</th><th>Port</th><th>Què dona</th><th>Xifrat</th><th>Avui</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Telnet</strong></td><td><code>23/tcp</code></td><td>Terminal de text</td><td>No: la contrasenya viatja en clar</td><td>Prohibit en qualsevol xarxa seriosa</td></tr>
+      <tr><td><strong>SSH</strong></td><td><code>22/tcp</code></td><td>Terminal, ordres remotes, còpia de fitxers, túnels, aplicacions gràfiques</td><td>Sí, tot</td><td>L'estàndard per administrar servidors Linux</td></tr>
+      <tr><td><strong>X11</strong></td><td><code>6000/tcp</code></td><td>Una aplicació gràfica concreta d'una altra màquina</td><td>No, si no va dins d'SSH</td><td>Sempre a través d'SSH (<code>ssh -X</code>)</td></tr>
+      <tr><td><strong>VNC</strong> (protocol RFB)</td><td><code>5900+N/tcp</code></td><td>Escriptori remot complet: envia la imatge de la pantalla</td><td>No de sèrie (contrasenya de 8 caràcters com a màxim)</td><td>Suport tècnic, sempre dins d'un túnel</td></tr>
+      <tr><td><strong>RDP</strong></td><td><code>3389/tcp</code></td><td>Escriptori remot complet: envia ordres de dibuix, més eficient</td><td>Sí (TLS)</td><td>Natiu a Windows; a Linux, amb <code>xrdp</code></td></tr>
+      <tr><td><strong>Administració web</strong></td><td><code>9090</code>, <code>10000</code>...</td><td>Panell al navegador: serveis, registres, usuaris</td><td>Sí (HTTPS)</td><td>Cockpit, Webmin</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>Aquesta pràctica fa servir SSH com a <strong>única porta d'entrada</strong>: el tallafoc només deixa passar SSH, i la resta (escriptori, web d'administració, intranet) hi viatja a dins, xifrat.</p>
+</section>
+
+<!-- ========== 3 ========== -->
+<section id="s3">
+  <div class="shead">
+    <span class="num">03</span>
+    <h2>Serveis amb sessió i sense sessió</h2>
+    <p class="sub">Entrar a treballar a la màquina, o demanar-li una cosa concreta i marxar.</p>
+  </div>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th></th><th>Orientat a sessió</th><th>No orientat a sessió</th></tr></thead>
+    <tbody>
+      <tr><td>Què és</td><td>Obre un entorn de treball que es manté (shell, escriptori) fins que el tanqueu. Té un estat: directori actual, variables, programes oberts</td><td>Cada petició és independent: s'executa una operació i la connexió s'acaba. No queda res obert</td></tr>
+      <tr><td>Exemples</td><td><code>ssh srv</code> interactiu, Escriptori remot, VNC, una sessió de <code>tmux</code>, el panell de Cockpit</td><td><code>ssh srv uptime</code>, <code>scp</code>, <code>rsync</code>, una petició HTTP</td></tr>
+      <tr><td>Al servidor queda</td><td>Un usuari connectat (<code>w</code>, <code>who</code>) mentre dura</td><td>Només el registre de la connexió</td></tr>
+      <tr><td>Per a què</td><td>Feina interactiva, diagnòstic</td><td>Automatitzar: scripts que recullen dades de molts servidors</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="prova">
+    <div class="ph"><b>PROVA-HO</b><span>La mateixa connexió, amb sessió i sense</span></div>
+    <div class="pb">
+      <h4>Executeu (des del client, quan tingueu l'àlies de la secció 5)</h4>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ssh srv uptime                  <i># sense sessió: executa, respon i torna</i>
+<b>$</b> ssh srv                         <i># amb sessió: ara sou al servidor</i>
+<b>$</b> w                               <i># al servidor: hi sou connectats</i>
+<b>$</b> exit</pre>
+      </div>
+      <h4>Fixeu-vos</h4>
+      <ul>
+        <li>Amb <code>ssh srv uptime</code> el prompt no canvia: la resposta arriba al vostre terminal i la connexió es tanca.</li>
+        <li>A <code>w</code> només hi surten les sessions obertes. L'ordre sense sessió no hi apareix mai.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 4 ========== -->
+<section id="s4">
+  <div class="shead">
+    <span class="num">04</span>
+    <h2>Com funciona SSH</h2>
+    <p class="sub">Tres passos en cada connexió: el servidor demostra qui és, l'usuari demostra qui és, i a partir d'aquí tot va xifrat.</p>
+  </div>
+
+  <div class="diag">
+    <svg viewBox="0 0 900 250" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif" role="img" aria-label="Connexió SSH en tres passos">
+      <defs><marker id="m4" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#BE2D2A"/></marker></defs>
+      <rect x="10" y="20" width="200" height="210" fill="#F4F2F1" stroke="#242121" stroke-width="2"/>
+      <text x="110" y="50" text-anchor="middle" font-weight="700" font-size="16">Client</text>
+      <text x="110" y="74" text-anchor="middle" font-size="12" font-family="monospace">~/.ssh/known_hosts</text>
+      <text x="110" y="92" text-anchor="middle" font-size="12" font-family="monospace">~/.ssh/id_ed25519</text>
+      <rect x="690" y="20" width="200" height="210" fill="#242121"/>
+      <text x="790" y="50" text-anchor="middle" font-weight="700" font-size="16" fill="#fff">Servidor</text>
+      <text x="790" y="74" text-anchor="middle" font-size="12" fill="#F08A86" font-family="monospace">/etc/ssh/ssh_host_*</text>
+      <text x="790" y="92" text-anchor="middle" font-size="12" fill="#F08A86" font-family="monospace">~/.ssh/authorized_keys</text>
+      <g font-size="13">
+        <line x1="688" y1="120" x2="214" y2="120" stroke="#242121" stroke-width="2" marker-end="url(#m4)"/>
+        <text x="450" y="112" text-anchor="middle"><tspan font-weight="700">1.</tspan> «Aquesta és la meva clau de màquina» → el client la compara amb known_hosts</text>
+        <line x1="212" y1="160" x2="686" y2="160" stroke="#242121" stroke-width="2" marker-end="url(#m4)"/>
+        <text x="450" y="152" text-anchor="middle"><tspan font-weight="700">2.</tspan> L'usuari s'autentica: contrasenya o clau (es comprova a authorized_keys)</text>
+        <rect x="212" y="185" width="476" height="26" fill="#BE2D2A"/>
+        <text x="450" y="203" text-anchor="middle" fill="#fff" font-weight="700"><tspan>3.</tspan> Canal xifrat: shell, ordres, fitxers, túnels...</text>
+      </g>
+    </svg>
+  </div>
+
+  <p>La primera vegada que us connecteu a un servidor, el client mostra l'<strong>empremta</strong> (<em>fingerprint</em>) de la clau del servidor i us demana si us en fieu. Si dieu que sí, la desa a <code>~/.ssh/known_hosts</code>. Si un dia canvia, SSH s'atura i avisa: algú podria estar fent-se passar pel servidor.</p>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Fitxer</th><th>On</th><th>Què és</th></tr></thead>
+    <tbody>
+      <tr><td><code>/etc/ssh/sshd_config</code> i <code>/etc/ssh/sshd_config.d/*.conf</code></td><td>Servidor</td><td>Configuració del servei (secció 7)</td></tr>
+      <tr><td><code>/etc/ssh/ssh_host_*_key</code> (i <code>.pub</code>)</td><td>Servidor</td><td>Les claus de la màquina, que l'identifiquen</td></tr>
+      <tr><td><code>~/.ssh/authorized_keys</code></td><td>Servidor, a cada usuari</td><td>Claus públiques que poden entrar com aquest usuari</td></tr>
+      <tr><td><code>~/.ssh/id_ed25519</code> · <code>id_ed25519.pub</code></td><td>Client</td><td>La vostra clau privada (no surt mai d'aquí) i la pública (la que es copia als servidors)</td></tr>
+      <tr><td><code>~/.ssh/known_hosts</code></td><td>Client</td><td>Empremtes dels servidors en què confieu</td></tr>
+      <tr><td><code>~/.ssh/config</code></td><td>Client</td><td>Àlies i opcions per a cada servidor</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub     <i># al servidor: l'empremta de la seva clau</i>
+<b>$</b> ssh-keygen -lf ~/.ssh/known_hosts                      <i># al client: les empremtes desades</i></pre>
+    <p class="cap">Si l'empremta que us ensenya el client la primera vegada coincideix amb la del servidor, la connexió és amb qui toca.</p>
+  </div>
+</section>
+
+<!-- ========== 5 ========== -->
+<section id="s5">
+  <div class="shead">
+    <span class="num">05</span>
+    <h2>Comptes i claus per a l'accés remot</h2>
+    <p class="sub">Un usuari per administrar en remot, que entra amb clau i no amb contrasenya.</p>
+  </div>
+
+  <p>Bona pràctica: un compte dedicat a l'administració remota, separat del que es fa servir a la consola, que entra amb <strong>clau</strong>. La clau és un parell: la <strong>privada</strong> es queda al client i la <strong>pública</strong> es copia al servidor. Qui no tingui la privada no entra, encara que sàpiga la contrasenya.</p>
+
+  <div class="prova">
+    <div class="ph"><b>PROVA-HO</b><span>Compte, clau i àlies</span></div>
+    <div class="pb">
+      <h4>1. Al servidor: el compte</h4>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo adduser adminremot
+<b>$</b> sudo usermod -aG sudo adminremot          <i># que pugui administrar</i></pre>
+      </div>
+      <h4>2. Al client Linux: la clau i l'àlies</h4>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ssh-keygen -t ed25519 -C "client-linux"      <i># Intro a tot, o poseu-hi una frase de pas</i>
+<b>$</b> ssh-copy-id adminremot@192.168.50.10       <i># l'última vegada que posareu la contrasenya</i>
+<b>$</b> nano ~/.ssh/config</pre>
+      </div>
+      <div class="term out">
+<pre>Host srv
+    HostName 192.168.50.10
+    User adminremot
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519</pre>
+      </div>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ssh srv "hostname; whoami"
+<b>$</b> ssh srv cat .ssh/authorized_keys</pre>
+      </div>
+      <h4>Sortida</h4>
+      <div class="term out">
+<pre>Number of key(s) added: 1
+...
+ahp-server
+adminremot
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKGkeEKs3gkmxbRRl4s9FoYf... client-linux</pre>
+      </div>
+      <h4>Fixeu-vos</h4>
+      <ul>
+        <li>Ja no demana contrasenya: entra amb la clau. <code>srv</code> substitueix usuari, adreça, port i clau.</li>
+        <li><code>authorized_keys</code> té una línia per cada clau que pot entrar. El comentari (<code>client-linux</code>) serveix per saber de qui és cada una.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>La clau des de Windows</h3>
+
+  <p>A Windows no hi ha <code>ssh-copy-id</code>, però es fa el mateix en una línia de PowerShell. Feu-ho <strong>abans d'endurir el servidor</strong> (secció 7): després ja no es podrà entrar amb contrasenya per copiar-la.</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>PS&gt;</b> ssh-keygen -t ed25519 -C "client-windows"
+<b>PS&gt;</b> type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh adminremot@192.168.50.10 "cat &gt;&gt; ~/.ssh/authorized_keys"
+<b>PS&gt;</b> ssh adminremot@192.168.50.10 hostname</pre>
+    <p class="cap">L'últim <code>ssh</code> ja no ha de demanar contrasenya. A <code>authorized_keys</code> hi haurà dues línies: <code>client-linux</code> i <code>client-windows</code>.</p>
+  </div>
+</section>
+
+<!-- ========== 6 ========== -->
+<section id="s6">
+  <div class="shead">
+    <span class="num">06</span>
+    <h2>Ordres remotes i còpia de fitxers</h2>
+    <p class="sub">Feina sense sessió: preguntar, recollir i copiar.</p>
+  </div>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Ordre</th><th>Què fa</th></tr></thead>
+    <tbody>
+      <tr><td><code>ssh srv ordre</code></td><td>Executa l'ordre al servidor i en mostra la sortida al client</td></tr>
+      <tr><td><code>ssh srv 'ordre' &gt; fitxer</code></td><td>La sortida es desa <strong>al client</strong>: la redirecció la fa el vostre shell</td></tr>
+      <tr><td><code>scp fitxer srv:</code> · <code>scp srv:fitxer .</code></td><td>Copia un fitxer cap al servidor o des del servidor</td></tr>
+      <tr><td><code>rsync -avz dir/ srv:dir/</code></td><td>Sincronitza un directori: només copia el que ha canviat</td></tr>
+      <tr><td><code>sftp srv</code></td><td>Sessió interactiva de transferència (<code>ls</code>, <code>get</code>, <code>put</code>)</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="prova">
+    <div class="ph"><b>PROVA-HO</b><span>Un informe del servidor, fet des del client</span></div>
+    <div class="pb">
+      <h4>Executeu (al client)</h4>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ssh srv 'ps -eo pid,user,%cpu,%mem,comm --sort=-%mem | head -6' &gt; informe.txt
+<b>$</b> cat informe.txt
+<b>$</b> mkdir -p proves &amp;&amp; date &gt; proves/hora.txt
+<b>$</b> rsync -avz proves/ srv:proves/
+<b>$</b> rsync -avz proves/ srv:proves/         <i># segona vegada: no copia res</i>
+<b>$</b> ssh srv ls -l proves</pre>
+      </div>
+      <h4>Fixeu-vos</h4>
+      <ul>
+        <li><code>informe.txt</code> és al client, però les dades són del servidor: l'ordre s'ha executat allà i la sortida ha viatjat xifrada fins aquí.</li>
+        <li>La segona vegada, <code>rsync</code> no transfereix res: compara i només envia els canvis. Per a còpies de seguretat, és el que es fa servir.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 7 ========== -->
+<section id="s7">
+  <div class="shead">
+    <span class="num">07</span>
+    <h2>Endurir el servidor SSH</h2>
+    <p class="sub">Qui pot entrar, com i per on. Sense tancar-vos la porta a vosaltres mateixos.</p>
+  </div>
+
+  <p>La configuració es posa en un fitxer propi dins de <code>/etc/ssh/sshd_config.d/</code>, sense tocar el fitxer principal. Per a cada directiva, <strong>guanya el primer valor que llegeix</strong>, i els fitxers d'aquest directori es llegeixen per ordre alfabètic i abans que la resta.</p>
+
+  <div class="note">
+    <span class="lbl">EL FITXER DE CLOUD-INIT</span>
+    <p>Ubuntu Server en porta un, <code>50-cloud-init.conf</code>, que posa <code>PasswordAuthentication yes</code>. Si el vostre fitxer es diu <code>99-...</code>, es llegeix després i el seu <code>no</code> no té cap efecte: les contrasenyes continuen funcionant i no ho veureu fins que algú hi entri. Poseu-li un número més baix: <code>10-lamerce.conf</code>.</p>
+  </div>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Directiva</th><th>Efecte</th></tr></thead>
+    <tbody>
+      <tr><td><code>Port 2222</code></td><td>Escolta en un altre port. Treu del mig els robots que proven el 22, no els atacs dirigits</td></tr>
+      <tr><td><code>PermitRootLogin no</code></td><td><code>root</code> no pot entrar per SSH. S'entra amb un usuari i s'usa <code>sudo</code></td></tr>
+      <tr><td><code>PasswordAuthentication no</code></td><td>Només claus: sense la clau privada no s'entra, encara que se sàpiga la contrasenya</td></tr>
+      <tr><td><code>AllowUsers localadm adminremot</code></td><td>Només aquests usuaris. La resta, rebutjats encara que tinguin clau</td></tr>
+      <tr><td><code>MaxAuthTries 3</code></td><td>Intents d'autenticació per connexió</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="prova">
+    <div class="ph"><b>PROVA-HO</b><span>Endurir i comprovar</span></div>
+    <div class="pb">
+      <p><strong>Mantingueu oberta una sessió SSH mentre ho feu.</strong> Si us equivoqueu, és el que us permetrà arreglar-ho.</p>
+      <h4>1. La configuració</h4>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo nano /etc/ssh/sshd_config.d/10-lamerce.conf</pre>
+      </div>
+      <div class="term out">
+<pre>Port 2222
+PermitRootLogin no
+PasswordAuthentication no
+AllowUsers localadm adminremot
+MaxAuthTries 3</pre>
+      </div>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo sshd -t                                   <i># sintaxi: sense sortida, tot bé</i>
+<b>$</b> sudo sshd -T | grep -E '^(port|permitrootlogin|passwordauthentication|allowusers|maxauthtries) '
+<b>$</b> sudo systemctl daemon-reload
+<b>$</b> sudo systemctl restart ssh.socket                <i># el port nou</i>
+<b>$</b> sudo systemctl restart ssh                       <i># la resta</i>
+<b>$</b> sudo ss -tlnp | grep 2222</pre>
+      </div>
+      <h4>Sortida</h4>
+      <div class="term out">
+<pre>port 2222
+maxauthtries 3
+permitrootlogin no
+passwordauthentication no
+allowusers localadm
+allowusers adminremot</pre>
+      </div>
+      <p>A Ubuntu 24.04, SSH s'activa per <em>socket</em>: qui escolta al port és <code>systemd</code> (<code>ssh.socket</code>), que llegeix el <code>Port</code> de la configuració quan es fa <code>daemon-reload</code>. Per això el port nou necessita aquests dos passos.</p>
+      <h4>2. Proves des del client</h4>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sed -i 's/Port 22$/Port 2222/' ~/.ssh/config     <i># l'àlies, al port nou</i>
+<b>$</b> ssh srv whoami                                   <i># amb clau: entra</i>
+<b>$</b> ssh -o PubkeyAuthentication=no -p 2222 adminremot@192.168.50.10
+<b>$</b> ssh -p 2222 root@192.168.50.10
+<b>$</b> ssh -p 22 adminremot@192.168.50.10</pre>
+      </div>
+      <h4>Sortida</h4>
+      <div class="term out">
+<pre>adminremot
+adminremot@192.168.50.10: Permission denied (publickey).
+root@192.168.50.10: Permission denied (publickey).
+ssh: connect to host 192.168.50.10 port 22: Connection refused</pre>
+      </div>
+      <h4>Fixeu-vos</h4>
+      <ul>
+        <li><code>(publickey)</code>: el servidor ja només ofereix l'autenticació per clau. Ni tan sols pregunta la contrasenya.</li>
+        <li>Al servidor, <code>sudo journalctl -u ssh -n 10</code> diu per què ha rebutjat cadascun: <code>User root from 192.168.50.20 not allowed because not listed in AllowUsers</code>.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 8 ========== -->
+<section id="s8">
+  <div class="shead">
+    <span class="num">08</span>
+    <h2>Tallafoc amb ufw</h2>
+    <p class="sub">Tancar-ho tot i obrir només SSH. La resta, si cal, per túnel.</p>
+  </div>
+
+  <p><code>ufw</code> (<em>uncomplicated firewall</em>) és la manera senzilla de configurar el tallafoc del nucli a Ubuntu. La política que fareu servir: <strong>denegar tot el que entra</strong> i obrir només el port d'SSH.</p>
+
+  <div class="prova">
+    <div class="ph"><b>PROVA-HO</b><span>Abans i després del tallafoc</span></div>
+    <div class="pb">
+      <h4>1. Abans (des del client)</h4>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> nc -zv -w 3 192.168.50.10 9090              <i># Cockpit</i>
+<b>$</b> nc -zv -w 3 192.168.50.10 631               <i># CUPS (pràctica 1)</i></pre>
+      </div>
+      <h4>2. Al servidor: primer obrir, després activar</h4>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo ufw default deny incoming
+<b>$</b> sudo ufw default allow outgoing
+<b>$</b> sudo ufw allow 2222/tcp
+<b>$</b> sudo ufw enable
+<b>$</b> sudo ufw status verbose</pre>
+      </div>
+      <h4>3. Després (des del client), repetiu els <code>nc</code></h4>
+      <div class="term out">
+<pre>Connection to 192.168.50.10 9090 port [tcp/*] succeeded!       <i>(abans)</i>
+nc: connect to 192.168.50.10 port 9090 (tcp) timed out          <i>(després)</i>
+
+Status: active
+Default: deny (incoming), allow (outgoing), disabled (routed)
+To                         Action      From
+--                         ------      ----
+2222/tcp                   ALLOW IN    Anywhere</pre>
+      </div>
+      <h4>Fixeu-vos</h4>
+      <ul>
+        <li>L'ordre importa: si activeu el tallafoc abans d'obrir el 2222, us quedeu fora. Per això primer <code>allow</code>, després <code>enable</code>.</li>
+        <li>Cockpit i CUPS continuen funcionant al servidor, però ja no s'hi arriba des de fora. A la secció 10 hi arribareu per un túnel.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 9 ========== -->
+<section id="s9">
+  <div class="shead">
+    <span class="num">09</span>
+    <h2>Aplicacions gràfiques remotes: X11</h2>
+    <p class="sub">Una finestra que s'executa al servidor i es dibuixa a la vostra pantalla.</p>
+  </div>
+
+  <p>El sistema gràfic clàssic de Linux, X11, funciona en xarxa: l'aplicació (client X) envia les ordres de dibuix a un <strong>servidor X</strong>, que és qui té la pantalla. Aquí els noms van al revés del que sembla: el <strong>servidor X és el vostre client</strong>, perquè és on hi ha la pantalla, i l'aplicació s'executa a la màquina remota.</p>
+
+  <p>Amb <code>ssh -X</code>, SSH fa de pont: l'aplicació del servidor dibuixa al vostre escriptori i el trànsit viatja xifrat. Al servidor no cal cap escriptori, només l'aplicació i <code>xauth</code>. El client Ubuntu fa servir Wayland, però porta XWayland, que fa de servidor X per a aquestes aplicacions.</p>
+
+  <div class="prova">
+    <div class="ph"><b>PROVA-HO</b><span>El gestor de tasques del servidor, a la pantalla del client</span></div>
+    <div class="pb">
+      <h4>Executeu (al client, en un terminal de l'escriptori)</h4>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ssh -X srv xeyes                       <i># uns ulls que segueixen el ratolí</i>
+<b>$</b> ssh -X srv xfce4-taskmanager           <i># els processos del SERVIDOR</i>
+<b>$</b> ssh -X srv 'echo $DISPLAY'</pre>
+      </div>
+      <h4>Sortida</h4>
+      <div class="term out">
+<pre>localhost:10.0</pre>
+      </div>
+      <h4>Fixeu-vos</h4>
+      <ul>
+        <li>El gestor de tasques llista els processos del servidor (<code>sshd</code>, <code>cupsd</code>...), no els del client: s'executa allà.</li>
+        <li><code>DISPLAY=localhost:10.0</code>: al servidor, SSH s'ha inventat una pantalla número 10 que en realitat és la vostra.</li>
+        <li>En tancar la finestra, l'ordre acaba i torneu al prompt del client.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 10 ========== -->
+<section id="s10">
+  <div class="shead">
+    <span class="num">10</span>
+    <h2>Túnels SSH</h2>
+    <p class="sub">Fer passar qualsevol connexió TCP per dins d'SSH: xifrada i per l'única porta que el tallafoc deixa oberta.</p>
+  </div>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Tipus</th><th>Ordre</th><th>Qui escolta</th><th>Per a què</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Local</strong></td><td><code>ssh -L 8081:localhost:8080 srv</code></td><td>El <strong>client</strong>, al port 8081</td><td>Arribar des del client a un servei que només és accessible des del servidor</td></tr>
+      <tr><td><strong>Remot</strong> (invers)</td><td><code>ssh -R 9000:localhost:7000 srv</code></td><td>El <strong>servidor</strong>, al port 9000</td><td>Deixar que el servidor arribi a un servei del client. Així funcionen les eines de suport remot que entren en equips sense IP pública</td></tr>
+      <tr><td><strong>Dinàmic</strong></td><td><code>ssh -D 1080 srv</code></td><td>El <strong>client</strong>, com a proxy SOCKS</td><td>Navegar com si fóssiu al servidor, cap a qualsevol destí</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>Com es llegeix <code>-L 8081:localhost:8080</code>: «obre el port 8081 al client; el que hi entri, envia-ho pel túnel i, un cop al servidor, connecta-ho a <code>localhost:8080</code>». El <code>localhost</code> es resol <strong>al servidor</strong>. Amb <code>-f -N</code> el túnel queda en segon pla, sense obrir cap shell.</p>
+
+  <div class="tunel" id="tunel">
+    <div class="th"><b>INTERACTIU</b><span>Constructor de túnels</span></div>
+    <div class="tb">
+      <div class="tmodes" role="group" aria-label="Tipus de túnel">
+        <button type="button" data-mode="L" aria-pressed="true">-L local</button>
+        <button type="button" data-mode="R" aria-pressed="false">-R remot</button>
+        <button type="button" data-mode="D" aria-pressed="false">-D dinàmic</button>
+      </div>
+      <div class="tfields">
+        <label><span id="lblPort">Port que s'obre al client</span><input type="text" id="tPort" value="8081"></label>
+        <label class="dst"><span id="lblHost">Destí (vist des del servidor)</span><input type="text" id="tHost" value="localhost"></label>
+        <label class="dst"><span>Port del destí</span><input type="text" id="tDport" value="8080"></label>
+        <label><span>Connexió SSH</span><input type="text" id="tSsh" value="srv"></label>
+        <label class="chk"><input type="checkbox" id="tBg" checked> En segon pla (<code>-f -N</code>)</label>
+      </div>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre id="tCmd"><b>$</b> ssh -f -N -L 8081:localhost:8080 srv</pre>
+      </div>
+      <div class="tdiag" id="tDiag"><svg viewBox="0 0 960 210" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif"><defs><marker id="ta" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#BE2D2A"/></marker></defs><rect x="10" y="40" width="220" height="140" fill="#F4F2F1" stroke="#242121" stroke-width="2"/><text x="120" y="66" text-anchor="middle" font-weight="700" font-size="15" fill="#242121">Client</text><text x="120" y="86" text-anchor="middle" font-size="12" fill="#6E6764">aquí escolta :8081</text><rect x="58.2" y="104" width="123.6" height="26" rx="13" fill="#BE2D2A" stroke="#BE2D2A" stroke-width="2"/><text x="120" y="122" text-anchor="middle" font-size="12" font-family="monospace" font-weight="700" fill="#fff">localhost:8081</text><rect x="230" y="96" width="320" height="30" fill="#BE2D2A"/><text x="390" y="116" text-anchor="middle" fill="#fff" font-weight="700" font-size="13">túnel SSH xifrat</text><rect x="550" y="40" width="200" height="140" fill="#242121"/><text x="650" y="66" text-anchor="middle" font-weight="700" font-size="15" fill="#fff">Servidor SSH</text><text x="650" y="86" text-anchor="middle" font-size="12" fill="#F08A86">srv</text><rect x="588.2" y="136" width="123.6" height="26" rx="13" fill="#fff" stroke="#BE2D2A" stroke-width="2"/><text x="650" y="154" text-anchor="middle" font-size="12" font-family="monospace" font-weight="700" fill="#8C1512">localhost:8080</text><text x="860" y="110" text-anchor="middle" font-size="12" fill="#6E6764">el destí és</text><text x="860" y="126" text-anchor="middle" font-size="12" fill="#6E6764">el mateix servidor</text></svg></div>
+      <p class="texp" id="tExp">Al client, obriu <code>http://localhost:8081</code>: arribareu al port 8080 del mateix servidor, encara que el tallafoc el tingui tancat.</p>
+    </div>
+  </div>
+
+  <div class="prova">
+    <div class="ph"><b>PROVA-HO</b><span>Una intranet que només existeix dins del servidor</span></div>
+    <div class="pb">
+      <h4>1. Al servidor: una web que només escolta a localhost</h4>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> mkdir -p ~/intranet &amp;&amp; echo "&lt;h1&gt;Intranet de $(hostname)&lt;/h1&gt;" &gt; ~/intranet/index.html
+<b>$</b> cd ~/intranet &amp;&amp; nohup python3 -m http.server 8080 --bind 127.0.0.1 &gt; /dev/null 2&gt;&amp;1 &amp;
+<b>$</b> sudo ss -tlnp | grep 8080</pre>
+      </div>
+      <h4>2. Al client</h4>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> curl -m 3 http://192.168.50.10:8080          <i># directament: no hi arriba</i>
+<b>$</b> ssh -f -N -L 8081:localhost:8080 srv
+<b>$</b> ss -tln | grep 8081                          <i># qui escolta ara és el client</i>
+<b>$</b> curl http://localhost:8081</pre>
+      </div>
+      <h4>Sortida</h4>
+      <div class="term out">
+<pre>LISTEN 0      5          127.0.0.1:8080       0.0.0.0:*    users:(("python3",pid=3102,fd=3))
+curl: (28) Connection timed out after 3001 milliseconds
+LISTEN 0      128        127.0.0.1:8081       0.0.0.0:*
+&lt;h1&gt;Intranet de ahp-server&lt;/h1&gt;</pre>
+      </div>
+      <h4>Fixeu-vos</h4>
+      <ul>
+        <li>La web només escolta a <code>127.0.0.1</code> del servidor i, a més, hi ha el tallafoc: des de fora és impossible. Pel túnel hi arribeu igualment.</li>
+        <li>Al navegador del client, <code>http://localhost:8081</code> mostra la mateixa pàgina. El mateix truc serveix per a la web de CUPS: <code>ssh -f -N -L 8631:localhost:631 srv</code> i <code>https://localhost:8631</code>.</li>
+        <li>El túnel és un procés <code>ssh</code> del client: <code>pgrep -af "ssh -f"</code> el troba i <code>pkill -f "ssh -f -N"</code> el tanca.</li>
+      </ul>
+      <p class="neteja"><b>Neteja:</b> al client, <code>pkill -f "ssh -f -N"</code>. La intranet del servidor, deixeu-la: la tornareu a fer servir.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 11 ========== -->
+<section id="s11">
+  <div class="shead">
+    <span class="num">11</span>
+    <h2>Escriptori remot</h2>
+    <p class="sub">L'escriptori sencer del servidor en una finestra. I que només s'hi pugui arribar per SSH.</p>
+  </div>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th></th><th>VNC</th><th>RDP</th></tr></thead>
+    <tbody>
+      <tr><td>Què envia</td><td>La imatge de la pantalla (píxels)</td><td>Ordres de dibuix: més eficient amb poca amplada de banda</td></tr>
+      <tr><td>Port</td><td><code>5900 + número de pantalla</code> (<code>:1</code> → 5901)</td><td><code>3389</code></td></tr>
+      <tr><td>Xifratge</td><td>No de sèrie. Contrasenya de 8 caràcters com a màxim</td><td>TLS</td></tr>
+      <tr><td>A Linux</td><td>TigerVNC (<code>vncserver :1</code>)</td><td><code>xrdp</code></td></tr>
+      <tr><td>Clients</td><td>Remmina, TigerVNC Viewer</td><td>Remmina a Linux; Connexió a Escriptori remot (<code>mstsc</code>) a Windows</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>Fareu servir <strong>RDP amb <code>xrdp</code></strong>: el mateix servidor serveix el client Linux i el Windows. El configurareu perquè <strong>només escolti a <code>127.0.0.1</code></strong>: des de la xarxa no s'hi arriba, i l'única manera d'entrar-hi és un túnel SSH. Així, a més del TLS de l'RDP, l'accés queda darrere de les claus d'SSH.</p>
+
+  <div class="prova">
+    <div class="ph"><b>PROVA-HO</b><span>L'escriptori del servidor, per túnel</span></div>
+    <div class="pb">
+      <h4>1. Al servidor</h4>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo adduser xrdp ssl-cert                                   <i># que pugui llegir el certificat</i>
+<b>$</b> sudo sed -i 's|^port=3389|port=tcp://.:3389|' /etc/xrdp/xrdp.ini   <i># només 127.0.0.1</i>
+<b>$</b> sudo -u adminremot sh -c 'echo xfce4-session &gt; ~/.xsession'   <i># quin escriptori obrir</i>
+<b>$</b> sudo systemctl restart xrdp
+<b>$</b> sudo ss -tlnp | grep 3389</pre>
+      </div>
+      <div class="term out">
+<pre>LISTEN 0      2          127.0.0.1:3389       0.0.0.0:*    users:(("xrdp",pid=4120,fd=11))</pre>
+      </div>
+      <h4>2. Al client Linux</h4>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ssh -f -N -L 3390:localhost:3389 srv</pre>
+      </div>
+      <p>Obriu <strong>Remmina</strong> → protocol <strong>RDP</strong> → servidor <code>localhost:3390</code>. Accepteu el certificat i, a la pantalla d'<code>xrdp</code>, sessió <strong>Xorg</strong> amb l'usuari <code>adminremot</code> i la seva contrasenya.</p>
+      <h4>Fixeu-vos</h4>
+      <ul>
+        <li><code>port=tcp://.:3389</code> vol dir «escolta al 3389 de <code>127.0.0.1</code>»: <code>ss</code> ho confirma.</li>
+        <li>Aquí sí que es fa servir la contrasenya, però de la sessió gràfica: per arribar-hi heu hagut de passar per SSH amb clau.</li>
+        <li>Si surt la pantalla negra i es tanca, normalment és que l'usuari té una sessió gràfica oberta a la consola, o que falta el fitxer <code>~/.xsession</code>.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 12 ========== -->
+<section id="s12">
+  <div class="shead">
+    <span class="num">12</span>
+    <h2>Des de Windows</h2>
+    <p class="sub">Administrar el servidor Linux amb les eines que Windows ja porta.</p>
+  </div>
+
+  <p>Windows 11 porta el client OpenSSH (<code>ssh</code>, <code>scp</code>, <code>ssh-keygen</code>) i la Connexió a Escriptori remot (<code>mstsc</code>). Les claus són a <code>C:\Users\usuari\.ssh\</code> i també s'hi pot fer un fitxer <code>config</code> amb àlies, igual que a Linux.</p>
+
+  <div class="prova">
+    <div class="ph"><b>PROVA-HO</b><span>SSH, còpia i escriptori del servidor des de Windows</span></div>
+    <div class="pb">
+      <h4>Executeu (PowerShell)</h4>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>PS&gt;</b> ssh -p 2222 adminremot@192.168.50.10 "hostname; uptime"
+<b>PS&gt;</b> "Fitxer creat a Windows" | Out-File prova-windows.txt
+<b>PS&gt;</b> scp -P 2222 prova-windows.txt adminremot@192.168.50.10:
+<b>PS&gt;</b> ssh -N -L 3390:localhost:3389 -p 2222 adminremot@192.168.50.10</pre>
+      </div>
+      <p>El darrer <code>ssh</code> es queda obert: és el túnel. Sense tancar-lo, <strong>Win+R → <code>mstsc /v:localhost:3390</code></strong>. Accepteu el certificat, i a la pantalla d'<code>xrdp</code>, sessió Xorg amb <code>adminremot</code>.</p>
+      <h4>Fixeu-vos</h4>
+      <ul>
+        <li>No demana contrasenya per SSH: Windows fa servir la clau que vau copiar a la secció 5.</li>
+        <li>Amb <code>scp</code> el port va amb <code>-P</code> majúscula; amb <code>ssh</code>, <code>-p</code> minúscula.</li>
+        <li>El port 3390 i no el 3389: el 3389 és el de l'Escriptori remot del mateix Windows.</li>
+        <li>Windows i Linux, administrats igual: el mateix protocol, les mateixes claus, el mateix túnel. És el que vol dir sistemes heterogenis.</li>
+      </ul>
+      <p class="neteja"><b>Neteja:</b> tanqueu l'Escriptori remot i Ctrl+C a la finestra del túnel.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 13 ========== -->
+<section id="s13">
+  <div class="shead">
+    <span class="num">13</span>
+    <h2>Administració web: Cockpit</h2>
+    <p class="sub">El servidor en un navegador: estat, serveis, registres, usuaris i un terminal.</p>
+  </div>
+
+  <p>Cockpit és l'eina d'administració web que proposen Ubuntu i Red Hat. Escolta al port <code>9090</code> per HTTPS i s'hi entra amb un usuari del sistema. Amb el tallafoc tancat, hi arribareu per túnel. Webmin (port <code>10000</code>) és l'alternativa clàssica.</p>
+
+  <div class="prova">
+    <div class="ph"><b>PROVA-HO</b><span>Cockpit per túnel</span></div>
+    <div class="pb">
+      <h4>Executeu (al client)</h4>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ssh -f -N -L 9090:localhost:9090 srv</pre>
+      </div>
+      <p>Al navegador del client: <code>https://localhost:9090</code>, accepteu el certificat i entreu com a <code>localadm</code>. Activeu l'<strong>accés administratiu</strong> (el botó de dalt, amb la vostra contrasenya): sense això, Cockpit només mostra.</p>
+      <h4>Fixeu-vos</h4>
+      <ul>
+        <li><strong>Visió general</strong>: CPU, memòria i càrrega. <strong>Serveis</strong>: <code>cups</code>, <code>ssh</code>, <code>xrdp</code>, amb botons per reiniciar-los. <strong>Registres</strong>: el mateix que <code>journalctl</code>. <strong>Terminal</strong>: un shell al navegador.</li>
+        <li>Reinicieu <code>cups.service</code> des de Cockpit i, al servidor, <code>journalctl -u cups -n 3</code>: el reinici hi queda registrat com si l'haguéssiu fet per consola.</li>
+        <li><code>root</code> no hi pot entrar: és a <code>/etc/cockpit/disallowed-users</code>.</li>
+      </ul>
+      <p class="neteja"><b>Neteja:</b> <code>pkill -f "ssh -f -N"</code></p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 14 ========== -->
+<section id="s14">
+  <div class="shead">
+    <span class="num">14</span>
+    <h2>Qui hi ha connectat, i sessions compartides</h2>
+    <p class="sub">Saber qui és dins del servidor, des d'on i des de quan. I treballar dos alhora al mateix terminal.</p>
+  </div>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Ordre</th><th>Què diu</th></tr></thead>
+    <tbody>
+      <tr><td><code>w</code> · <code>who</code></td><td>Qui hi ha connectat ara, des de quina IP i què fa</td></tr>
+      <tr><td><code>last -n 10</code></td><td>Les últimes entrades i sortides</td></tr>
+      <tr><td><code>sudo ss -tnp | grep ssh</code></td><td>Connexions SSH obertes, amb IP i port d'origen</td></tr>
+      <tr><td><code>sudo journalctl -u ssh -f</code></td><td>El registre d'SSH en directe: entrades, rebuigs, desconnexions</td></tr>
+      <tr><td><code>/var/log/auth.log</code></td><td>El mateix, en un fitxer</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Un compte per a un company</h3>
+
+  <p>Per deixar entrar algú al vostre servidor: un compte per a ell, la seva <strong>clau pública</strong> al seu <code>authorized_keys</code> i el seu usuari a <code>AllowUsers</code>. La clau pública no és secreta: us la pot enviar per xat. La privada, mai.</p>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo adduser company
+<b>$</b> sudo install -d -m 700 -o company -g company /home/company/.ssh
+<b>$</b> echo "ssh-ed25519 AAAA...la-seva-clau... company" | sudo tee -a /home/company/.ssh/authorized_keys
+<b>$</b> sudo chown company: /home/company/.ssh/authorized_keys; sudo chmod 600 /home/company/.ssh/authorized_keys
+<b>$</b> sudo sed -i 's/^AllowUsers.*/&amp; company/' /etc/ssh/sshd_config.d/10-lamerce.conf
+<b>$</b> sudo systemctl reload ssh</pre>
+    <p class="cap">El company entra des del seu servidor, pel switch del grup: <code>ssh -p 2222 company@10.10.10.N</code>. Per canviar els usuaris permesos n'hi ha prou amb <code>reload</code>: només el port necessita reiniciar el socket.</p>
+  </div>
+
+  <h3>tmux: un terminal que sobreviu i que es pot compartir</h3>
+
+  <p><code>tmux</code> manté sessions de terminal al servidor: si es talla la connexió, la sessió continua i us hi torneu a connectar. I com que és al servidor, s'hi poden connectar dues persones i veure el mateix terminal en directe.</p>
+
+  <div class="prova">
+    <div class="ph"><b>PROVA-HO</b><span>Un terminal compartit amb el company</span></div>
+    <div class="pb">
+      <h4>Al vostre servidor (vosaltres)</h4>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> tmux -S /tmp/equip new-session -d -s equip
+<b>$</b> tmux -S /tmp/equip server-access -a -r company    <i># el company, només mirar</i>
+<b>$</b> chmod 777 /tmp/equip
+<b>$</b> tmux -S /tmp/equip server-access -l
+<b>$</b> tmux -S /tmp/equip attach -t equip</pre>
+      </div>
+      <h4>El company, connectat al vostre servidor</h4>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> tmux -S /tmp/equip attach -t equip</pre>
+      </div>
+      <h4>Sortida</h4>
+      <div class="term out">
+<pre>localadm (W)
+company (R)</pre>
+      </div>
+      <h4>Fixeu-vos</h4>
+      <ul>
+        <li>Tot el que escriviu el company ho veu en directe, però no pot escriure: <code>(R)</code>, només lectura. Amb <code>server-access -a -w company</code> també podria escriure.</li>
+        <li>Per sortir sense tancar la sessió: <strong>Ctrl+B</strong> i després <strong>d</strong>. La sessió continua viva: <code>tmux -S /tmp/equip ls</code>.</li>
+        <li>Mentrestant, a una altra terminal, <code>w</code>: hi veureu el company, connectat des de <code>10.10.10.M</code>.</li>
+      </ul>
+      <p class="neteja"><b>Neteja:</b> <code>tmux -S /tmp/equip kill-server</code></p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 15 ========== -->
+<section id="s15">
+  <div class="shead">
+    <span class="num">15</span>
+    <h2>fail2ban: bloquejar qui ho intenta</h2>
+    <p class="sub">Llegeix els registres, compta els intents fallits i, quan n'hi ha massa, bloqueja la IP al tallafoc.</p>
+  </div>
+
+  <p><code>fail2ban</code> vigila els registres amb uns <strong>filtres</strong> (expressions que reconeixen un intent fallit) i, quan una IP n'acumula <code>maxretry</code> en <code>findtime</code>, la bloqueja durant <code>bantime</code>. Cada servei vigilat és una <strong>presó</strong> (<em>jail</em>). A Ubuntu, la de <code>sshd</code> ja ve activada, però vigila el port 22: si l'heu canviat, cal dir-l'hi.</p>
+
+  <div class="term out">
+<pre><b>$</b> sudo nano /etc/fail2ban/jail.local
+
+[sshd]
+port     = 2222
+maxretry = 5
+findtime = 10m
+bantime  = 10m</pre>
+  </div>
+
+  <div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo systemctl restart fail2ban
+<b>$</b> sudo fail2ban-client status sshd
+<b>$</b> sudo fail2ban-client set sshd unbanip 10.10.10.M      <i># desbloquejar una IP</i></pre>
+  </div>
+
+  <div class="prova">
+    <div class="ph"><b>PROVA-HO</b><span>Atac i defensa, en parelles</span></div>
+    <div class="pb">
+      <h4>Defensor (al seu servidor)</h4>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo journalctl -u ssh -f                      <i># deixeu-ho a la vista</i></pre>
+      </div>
+      <h4>Atacant (des del seu servidor, pel switch)</h4>
+      <div class="term">
+        <button class="copy" type="button">Copia</button>
+<pre><b>$</b> for i in 1 2 3 4 5 6; do ssh -o BatchMode=yes -o ConnectTimeout=5 -p 2222 pirata@10.10.10.N; done</pre>
+      </div>
+      <h4>Sortida</h4>
+      <div class="term out">
+<pre><i>(defensor)</i>
+sshd[5210]: Invalid user pirata from 10.10.10.12 port 51022
+...
+<i>(atacant)</i>
+pirata@10.10.10.7: Permission denied (publickey).
+...
+ssh: connect to host 10.10.10.7 port 2222: Connection refused
+
+<i>(defensor)</i> $ sudo fail2ban-client status sshd
+Status for the jail: sshd
+|- Filter
+|  |- Currently failed: 0
+|  |- Total failed:     5
+|  `- Journal matches:  _SYSTEMD_UNIT=sshd.service + _COMM=sshd
+`- Actions
+   |- Currently banned: 1
+   |- Total banned:     1
+   `- Banned IP list:   10.10.10.12</pre>
+      </div>
+      <h4>Fixeu-vos</h4>
+      <ul>
+        <li>Cada <code>Invalid user</code> és un intent fallit per al filtre. Al cinquè, la IP queda bloquejada i l'atacant passa a rebre <code>Connection refused</code>.</li>
+        <li>El bloqueig és per IP: si l'atacant és el mateix company a qui heu donat compte, tampoc no podrà entrar fins que caduqui o el desbloquegeu.</li>
+        <li>Desbloquegeu-lo amb <code>unbanip</code> i canvieu els papers.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 16 ========== -->
+<section id="s16">
+  <div class="shead">
+    <span class="num">16</span>
+    <h2>La pràctica 3 de l'AEA2</h2>
+    <p class="sub">Tot el que demana la pràctica té una prova en aquestes pàgines.</p>
+  </div>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Apartat de la pràctica</th><th>On és la teoria</th></tr></thead>
+    <tbody>
+      <tr><td>Apartat 1 · Mètodes, comptes i claus (A a C)</td><td>Seccions 2 a 6</td></tr>
+      <tr><td>Apartat 2 · Enduriment (D i E)</td><td>Seccions 7 i 8</td></tr>
+      <tr><td>Apartat 3 · Eines gràfiques i túnels (F a J)</td><td>Seccions 9 a 13</td></tr>
+      <tr><td>Apartat 4 · En parelles (K i L)</td><td>Seccions 14 i 15</td></tr>
+      <tr><td>Apartat 5 · Documentació (M)</td><td>Seccions 2, 3 i 14</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note dark">
+    <span class="lbl">ENTREGA</span>
+    <p>Memòria individual en <strong>PDF</strong> al Classroom. La nota de la pràctica forma part de la qualificació del <strong>RA4</strong>.</p>
+    <p>Per a cada apartat: les ordres exactes, les captures amb el prompt visible i l'explicació del que heu vist.</p>
+  </div>
+</section>
+
+<!-- ========== 17 ========== -->
+<section id="s17">
+  <div class="shead">
+    <span class="num">17</span>
+    <h2>Fonts i documentació</h2>
+    <p class="sub">On anar a buscar-ho quan no ho recordeu.</p>
+  </div>
+
+  <h3>SSH</h3>
+  <ul>
+    <li><a href="https://documentation.ubuntu.com/server/how-to/security/openssh-server/">OpenSSH server</a>, documentació d'Ubuntu Server</li>
+    <li><a href="https://man.openbsd.org/sshd_config">sshd_config(5)</a>, <a href="https://man.openbsd.org/ssh_config">ssh_config(5)</a> i <a href="https://man.openbsd.org/ssh">ssh(1)</a>, amb totes les opcions de túnel</li>
+    <li><a href="https://learn.microsoft.com/windows-server/administration/openssh/openssh_overview">OpenSSH per a Windows</a>, Microsoft</li>
+  </ul>
+
+  <h3>Eines</h3>
+  <ul>
+    <li><a href="https://help.ubuntu.com/community/UFW">UFW</a>, documentació d'Ubuntu</li>
+    <li><a href="https://github.com/fail2ban/fail2ban">fail2ban</a></li>
+    <li><a href="https://cockpit-project.org/">Cockpit</a></li>
+    <li><a href="https://github.com/neutrinolabs/xrdp">xrdp</a></li>
+    <li><a href="https://github.com/tmux/tmux/wiki">tmux</a></li>
+  </ul>
+
+  <div class="note">
+    <span class="lbl">LA PRIMERA FONT ÉS EL SERVIDOR</span>
+    <p><code>man sshd_config</code>, <code>man ssh</code>, <code>man ufw</code>, <code>man tmux</code>. I <code>sudo sshd -T</code>, que diu la configuració que s'aplica de veritat.</p>
+  </div>
+</section>
+
+</main>
+</div>
+
+<footer>
+  <div class="footer-in">
+    <img src="data:image/png;base64,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" alt="Institut Mare de Déu de la Mercè">
+    <p><strong>MP0374 · Administració de sistemes operatius</strong><br>
+    CFGS Administració de Sistemes Informàtics en Xarxa · 2n curs · 2026-2027<br>
+    Departament d'Informàtica i Comunicacions · Institut Mare de Déu de la Mercè</p>
+    <p>Material d'administració remota (AEA2, RA4), sobre Ubuntu Server 24.04 LTS, Ubuntu Desktop i Windows 11.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var box = document.getElementById('tunel');
+  if (!box) return;
+  var mode = 'L';
+  var $ = function(id){ return document.getElementById(id); };
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function val(id, def){ var v = $(id).value.trim(); return v === '' ? def : v; }
+
+  function box3(x, y, w, h, fill, stroke, title, sub, dark){
+    var tc = dark ? '#fff' : '#242121';
+    return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+fill+'"'+(stroke?' stroke="'+stroke+'" stroke-width="2"':'')+'/>'
+      + '<text x="'+(x+w/2)+'" y="'+(y+26)+'" text-anchor="middle" font-weight="700" font-size="15" fill="'+tc+'">'+esc(title)+'</text>'
+      + (sub ? '<text x="'+(x+w/2)+'" y="'+(y+46)+'" text-anchor="middle" font-size="12" fill="'+(dark?'#F08A86':'#6E6764')+'">'+esc(sub)+'</text>' : '');
+  }
+  function pill(x, y, txt, red){
+    var w = Math.max(90, txt.length * 7.4 + 20);
+    return '<rect x="'+(x - w/2)+'" y="'+(y-14)+'" width="'+w+'" height="26" rx="13" fill="'+(red?'#BE2D2A':'#fff')+'" stroke="#BE2D2A" stroke-width="2"/>'
+      + '<text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" font-size="12" font-family="monospace" font-weight="700" fill="'+(red?'#fff':'#8C1512')+'">'+esc(txt)+'</text>';
+  }
+
+  function render(){
+    var port = val('tPort', '8081'), host = val('tHost', 'localhost'), dport = val('tDport', '8080'), sshdst = val('tSsh', 'srv');
+    var bg = $('tBg').checked ? '-f -N ' : '';
+    var local = (host === 'localhost' || host === '127.0.0.1');
+    var cmd, exp, svg = '';
+    var defs = '<defs><marker id="ta" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#BE2D2A"/></marker></defs>';
+
+    Array.prototype.forEach.call(box.querySelectorAll('.dst'), function(el){ el.classList.toggle('hidden', mode === 'D'); });
+    $('lblPort').textContent = mode === 'R' ? "Port que s'obre al servidor" : (mode === 'D' ? 'Port del proxy al client' : "Port que s'obre al client");
+    $('lblHost').textContent = mode === 'R' ? 'Destí (vist des del client)' : 'Destí (vist des del servidor)';
+
+    var tunnel = '<rect x="230" y="96" width="320" height="30" fill="#BE2D2A"/>'
+      + '<text x="390" y="116" text-anchor="middle" fill="#fff" font-weight="700" font-size="13">túnel SSH xifrat</text>';
+
+    if (mode === 'L'){
+      cmd = 'ssh ' + bg + '-L ' + port + ':' + host + ':' + dport + ' ' + sshdst;
+      svg += box3(10, 40, 220, 140, '#F4F2F1', '#242121', 'Client', 'aquí escolta :' + port);
+      svg += pill(120, 118, 'localhost:' + port, true);
+      svg += tunnel;
+      svg += box3(550, 40, 200, 140, '#242121', null, 'Servidor SSH', sshdst, true);
+      if (local){
+        svg += pill(650, 150, 'localhost:' + dport, false);
+        svg += '<text x="860" y="110" text-anchor="middle" font-size="12" fill="#6E6764">el destí és</text><text x="860" y="126" text-anchor="middle" font-size="12" fill="#6E6764">el mateix servidor</text>';
+        exp = 'Al client, connecteu-vos a <code>localhost:' + esc(port) + '</code>: arribareu al port ' + esc(dport) + ' del mateix servidor, encara que el tallafoc el tingui tancat o només escolti a 127.0.0.1.';
+      } else {
+        svg += box3(790, 60, 160, 100, '#fff', '#242121', host, 'port ' + dport);
+        svg += '<line x1="750" y1="110" x2="786" y2="110" stroke="#6E6764" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#ta)"/>';
+        svg += '<text x="770" y="196" text-anchor="middle" font-size="11" fill="#6E6764">últim tram: sense el xifratge d\'SSH</text>';
+        exp = 'Al client, connecteu-vos a <code>localhost:' + esc(port) + '</code>: el servidor obrirà la connexió cap a <code>' + esc(host) + ':' + esc(dport) + '</code>. Del client al servidor va xifrat; del servidor al destí, no.';
+      }
+    } else if (mode === 'R'){
+      cmd = 'ssh ' + bg + '-R ' + port + ':' + host + ':' + dport + ' ' + sshdst;
+      svg += box3(10, 40, 220, 140, '#F4F2F1', '#242121', 'Client', local ? 'aquí hi ha el servei :' + dport : 'llança el túnel');
+      if (local) svg += pill(120, 150, 'localhost:' + dport, false);
+      svg += tunnel;
+      svg += box3(550, 40, 200, 140, '#242121', null, 'Servidor SSH', 'aquí escolta :' + port, true);
+      svg += pill(650, 118, 'localhost:' + port, true);
+      if (!local){
+        svg += box3(790, 60, 160, 100, '#fff', '#242121', host, 'port ' + dport);
+        svg += '<text x="870" y="196" text-anchor="middle" font-size="11" fill="#6E6764">el client hi connecta sense xifrar</text>';
+      }
+      exp = 'Al servidor, qui es connecti a <code>localhost:' + esc(port) + '</code> arribarà a <code>' + esc(host) + ':' + esc(dport) + '</code> vist des del client. És el túnel invers: obre el camí de dins cap a fora.';
+    } else {
+      cmd = 'ssh ' + bg + '-D ' + port + ' ' + sshdst;
+      svg += box3(10, 40, 220, 140, '#F4F2F1', '#242121', 'Client', 'proxy SOCKS :' + port);
+      svg += pill(120, 118, 'localhost:' + port, true);
+      svg += tunnel;
+      svg += box3(550, 40, 200, 140, '#242121', null, 'Servidor SSH', sshdst, true);
+      svg += box3(790, 60, 160, 100, '#fff', '#242121', 'Qualsevol destí', 'el que demani el navegador');
+      svg += '<line x1="750" y1="110" x2="786" y2="110" stroke="#6E6764" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#ta)"/>';
+      exp = 'Configureu el navegador del client amb el proxy SOCKS <code>localhost:' + esc(port) + '</code>: totes les peticions surten del servidor, com si hi fóssiu.';
+    }
+    $('tCmd').innerHTML = '<b>$</b> ' + esc(cmd);
+    $('tDiag').innerHTML = '<svg viewBox="0 0 960 210" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">' + defs + svg + '</svg>';
+    $('tExp').innerHTML = exp;
+  }
+
+  Array.prototype.forEach.call(box.querySelectorAll('.tmodes button'), function(b){
+    b.addEventListener('click', function(){
+      mode = b.getAttribute('data-mode');
+      Array.prototype.forEach.call(box.querySelectorAll('.tmodes button'), function(o){ o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+      if (mode === 'R' && $('tPort').value === '8081'){ $('tPort').value = '9000'; $('tDport').value = '7000'; }
+      if (mode === 'L' && $('tPort').value === '9000'){ $('tPort').value = '8081'; $('tDport').value = '8080'; }
+      if (mode === 'D' && ($('tPort').value === '8081' || $('tPort').value === '9000')){ $('tPort').value = '1080'; }
+      if (mode !== 'D' && $('tPort').value === '1080'){ $('tPort').value = mode === 'R' ? '9000' : '8081'; }
+      render();
+    });
+  });
+  ['tPort','tHost','tDport','tSsh','tBg'].forEach(function(id){ $(id).addEventListener('input', render); $(id).addEventListener('change', render); });
+  render();
+})();
+</script>
+
+<script>
+(function(){
+  "use strict";
+
+  /* Índex desplegable en pantalles estretes */
+  var toc = document.getElementById('toc');
+  var tg  = document.getElementById('navtoggle');
+  if (tg && toc) {
+    tg.addEventListener('click', function(){
+      var open = toc.classList.toggle('open');
+      tg.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    toc.addEventListener('click', function(e){
+      if (e.target.closest('a') && window.matchMedia('(max-width:920px)').matches) {
+        toc.classList.remove('open');
+        tg.setAttribute('aria-expanded','false');
+      }
+    });
+  }
+
+  /* Barra de progrés de lectura */
+  var bar = document.getElementById('bar');
+  var ticking = false;
+  function progress(){
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+    if (bar) bar.style.width = pct.toFixed(2) + '%';
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if (!ticking) { window.requestAnimationFrame(progress); ticking = true; }
+  }, {passive:true});
+  progress();
+
+  /* Secció activa a l'índex */
+  var links = {};
+  Array.prototype.forEach.call(document.querySelectorAll('nav.toc a'), function(a){
+    links[a.getAttribute('href').slice(1)] = a;
+  });
+  var sections = document.querySelectorAll('main section');
+  if ('IntersectionObserver' in window && sections.length) {
+    var seen = {};
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ seen[en.target.id] = en.isIntersecting ? en.intersectionRatio : 0; });
+      var best = null, bestVal = 0;
+      Object.keys(seen).forEach(function(id){
+        if (seen[id] > bestVal) { bestVal = seen[id]; best = id; }
+      });
+      Object.keys(links).forEach(function(id){
+        links[id].classList.toggle('on', id === best);
+      });
+    }, {rootMargin:'-15% 0px -70% 0px', threshold:[0,.25,.5,1]});
+    Array.prototype.forEach.call(sections, function(s){ io.observe(s); });
+  }
+
+  /* Copiar blocs de terminal */
+  Array.prototype.forEach.call(document.querySelectorAll('.term .copy'), function(btn){
+    btn.addEventListener('click', function(){
+      var pre = btn.parentNode.querySelector('pre');
+      if (!pre) return;
+      var lines = pre.innerText.split('\n').map(function(l){
+        return l.replace(/\s+#\s.*$/, '').replace(/^\s*[$#]\s?/, '').trimEnd();
+      }).filter(function(l){ return l.length > 0; });
+      var text = lines.join('\n');
+      var done = function(){
+        var old = btn.textContent;
+        btn.textContent = 'Copiat';
+        setTimeout(function(){ btn.textContent = old; }, 1400);
+      };
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else { fallback(); }
+      function fallback(){
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly','');
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); done(); }
+        catch(e){ btn.textContent = 'Error'; }
+        document.body.removeChild(ta);
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
