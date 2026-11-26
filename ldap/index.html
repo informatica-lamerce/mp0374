@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Serveis de directori · MP0374 · 2n ASIX</title>
+<meta name="description" content="Material de serveis de directori amb OpenLDAP (RA1) del mòdul MP0374 Administració de sistemes operatius. Institut Mare de Déu de la Mercè.">
+<style>
+:root{
+  --ink:#242121;
+  --red:#BE2D2A;
+  --deep:#8C1512;
+  --paper:#FFFFFF;
+  --surface:#F4F2F1;
+  --rule:#DCD7D5;
+  --muted:#6E6764;
+  --term:#1A1817;
+  --termtext:#E8E4E2;
+  --maxw:none;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:5.5rem}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;
+  font-size:17px;
+  line-height:1.62;
+  -webkit-text-size-adjust:100%;
+}
+
+/* ---------- barra superior ---------- */
+.topbar{
+  position:sticky;top:0;z-index:60;
+  background:var(--ink);color:#fff;
+  padding-top:env(safe-area-inset-top,0px);
+  border-bottom:3px solid var(--red);
+}
+.topbar-in{
+  max-width:1360px;margin:0 auto;
+  display:flex;align-items:center;gap:1rem;
+  padding:.55rem 1.25rem;
+}
+.topbar img{height:26px;width:auto;display:block}
+.topbar .mod{
+  font-size:.78rem;letter-spacing:.06em;font-weight:700;
+  color:#fff;opacity:.92;
+}
+.topbar .mod span{color:var(--red);font-weight:700}
+.topbar .spacer{flex:1}
+.navtoggle{
+  display:none;background:none;border:1px solid rgba(255,255,255,.35);
+  color:#fff;font:inherit;font-size:.8rem;font-weight:700;
+  padding:.3rem .7rem;cursor:pointer;
+}
+#bar{height:3px;background:var(--red);width:0;transition:width .12s linear;
+  position:absolute;bottom:-3px;left:0}
+@media (prefers-reduced-motion:reduce){#bar{transition:none}}
+
+/* ---------- portada ---------- */
+.hero{
+  background:var(--ink);color:#fff;
+  padding:4.5rem 1.25rem 3.5rem;
+}
+.hero-in{max-width:1360px;margin:0 auto;padding:0 clamp(0px,2vw,2rem)}
+.hero img.mark{height:54px;width:auto;margin-bottom:2.6rem;display:block}
+.hero .kicker{
+  font-size:.82rem;font-weight:700;letter-spacing:.14em;
+  color:var(--red);margin:0 0 1.1rem;
+}
+.hero h1{
+  font-family:"Arial Black","Arial Bold",Arial,sans-serif;
+  font-weight:900;
+  font-size:clamp(3rem,11vw,7.5rem);
+  line-height:.88;letter-spacing:-.035em;
+  margin:0 0 1.5rem;
+}
+.hero h1 em{font-style:normal;color:var(--red)}
+.hero .lede{
+  font-size:clamp(1.05rem,2.2vw,1.3rem);
+  max-width:66ch;color:#D9D4D2;margin:0 0 2.6rem;line-height:1.5;
+}
+.prompt{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  font-size:.95rem;color:#C9C4C2;
+  border-top:1px solid rgba(255,255,255,.18);
+  padding-top:1.4rem;
+}
+.prompt b{color:var(--red);font-weight:700}
+.herometa{
+  display:flex;flex-wrap:wrap;gap:.5rem 2.5rem;
+  margin-top:1.4rem;font-size:.82rem;color:#9C9694;
+}
+
+/* ---------- graella ---------- */
+.shell{max-width:1360px;margin:0 auto;display:flex;align-items:flex-start;gap:0}
+nav.toc{
+  width:255px;flex:0 0 255px;
+  position:sticky;top:4.2rem;
+  max-height:calc(100vh - 5rem);overflow-y:auto;
+  padding:2.5rem 0 3rem 1.25rem;
+}
+nav.toc h2{
+  font-size:.7rem;letter-spacing:.14em;font-weight:700;
+  color:var(--muted);margin:0 0 .9rem;
+}
+nav.toc ol{list-style:none;margin:0;padding:0;counter-reset:t}
+nav.toc a{
+  display:flex;gap:.6rem;align-items:baseline;
+  padding:.3rem .6rem .3rem .5rem;
+  color:var(--ink);text-decoration:none;
+  font-size:.86rem;line-height:1.3;
+  border-left:3px solid transparent;
+}
+nav.toc a .n{
+  font-variant-numeric:tabular-nums;color:var(--muted);
+  font-size:.78rem;min-width:1.1em;font-weight:700;
+}
+nav.toc a:hover{background:var(--surface)}
+nav.toc a.on{background:var(--red);color:#fff;border-left-color:var(--deep)}
+nav.toc a.on .n{color:#fff}
+nav.toc a:focus-visible{outline:2px solid var(--red);outline-offset:-2px}
+
+main{flex:1;min-width:0;padding:2.5rem clamp(1.25rem,3.5vw,3.5rem) 5rem}
+
+/* ---------- seccions ---------- */
+section{padding-top:1.5rem;margin-bottom:4.5rem;scroll-margin-top:5rem}
+.shead{border-top:3px solid var(--ink);padding-top:1rem;margin-bottom:1.8rem}
+.shead .num{
+  font-family:"Arial Black",Arial,sans-serif;font-weight:900;
+  font-size:2.6rem;line-height:1;color:var(--red);
+  letter-spacing:-.04em;display:block;margin-bottom:.2rem;
+}
+.shead h2{
+  font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:700;
+  line-height:1.15;letter-spacing:-.02em;margin:0;max-width:30ch;
+}
+.shead p.sub{color:var(--muted);margin:.6rem 0 0;max-width:var(--maxw);font-size:.98rem}
+
+h3{font-size:1.18rem;font-weight:700;margin:2.4rem 0 .7rem;letter-spacing:-.01em}
+h3:first-of-type{margin-top:1.6rem}
+h4{font-size:1rem;font-weight:700;margin:1.7rem 0 .4rem;color:var(--deep)}
+p{max-width:var(--maxw);margin:0 0 1rem}
+ul,ol{max-width:var(--maxw);margin:0 0 1.15rem;padding-left:1.3rem}
+li{margin-bottom:.4rem}
+li::marker{color:var(--red)}
+strong{font-weight:700}
+a{color:var(--deep);text-decoration:underline;text-underline-offset:2px}
+a:hover{color:var(--red)}
+
+code{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  font-size:.88em;background:var(--surface);
+  padding:.1em .35em;border-radius:2px;
+  color:var(--deep);word-break:break-word;
+}
+
+/* ---------- terminal ---------- */
+.term{position:relative;margin:1.3rem 0 1.5rem}
+.term pre{
+  background:var(--term);color:var(--termtext);
+  margin:0;padding:1.05rem 1.1rem;
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  font-size:.84rem;line-height:1.72;
+  overflow-x:auto;border-left:3px solid var(--red);
+}
+.term pre b{color:var(--red);font-weight:700}
+.term pre i{color:#8C8683;font-style:normal}
+.term pre u{color:#C9A227;text-decoration:none}
+.copy{
+  position:absolute;top:.45rem;right:.45rem;
+  background:rgba(255,255,255,.1);color:#CFCAC8;
+  border:1px solid rgba(255,255,255,.22);
+  font:inherit;font-size:.7rem;font-weight:700;
+  padding:.22rem .55rem;cursor:pointer;
+}
+.copy:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.copy:focus-visible{outline:2px solid #fff;outline-offset:1px}
+.term .cap{font-size:.78rem;color:var(--muted);margin:.4rem 0 0}
+
+/* ---------- taules ---------- */
+.tw{overflow-x:auto;margin:1.3rem 0 1.6rem;border-bottom:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:.88rem}
+th,td{text-align:left;padding:.55rem .75rem;vertical-align:top;border-bottom:1px solid var(--rule)}
+thead th{
+  background:var(--ink);color:#fff;font-weight:700;
+  font-size:.78rem;letter-spacing:.03em;border-bottom:none;
+}
+tbody tr:nth-child(even){background:var(--surface)}
+td code{background:transparent;padding:0;color:var(--deep)}
+
+/* ---------- avisos ---------- */
+.note{
+  border-left:3px solid var(--red);background:var(--surface);
+  padding:.9rem 1.1rem;margin:1.3rem 0;max-width:var(--maxw);
+}
+.note p{margin:0}
+.note p+p{margin-top:.6rem}
+.note .lbl{
+  display:block;font-size:.72rem;font-weight:700;letter-spacing:.1em;
+  color:var(--deep);margin-bottom:.35rem;
+}
+.note.dark{background:var(--ink);color:#E6E2E0;border-left-color:var(--red)}
+.note.dark .lbl{color:#F0A5A3}
+.note.dark code{background:rgba(255,255,255,.12);color:#F3AFAD}
+
+/* ---------- capes / diagrama ---------- */
+.stack{margin:1.4rem 0 1.7rem;max-width:56ch}
+.stack div{
+  border:1px solid var(--rule);border-bottom:none;
+  padding:.6rem .9rem;font-size:.88rem;background:var(--paper);
+}
+.stack div:last-child{border-bottom:1px solid var(--rule)}
+.stack div b{display:inline-block;min-width:11.5em;font-weight:700}
+.stack div.k{background:var(--ink);color:#fff;border-color:var(--ink)}
+.stack div.k b{color:#fff}
+.stack div.hw{background:var(--surface);color:var(--muted)}
+
+/* ---------- llibertats ---------- */
+.freedoms{list-style:none;padding:0;margin:1.4rem 0 1.6rem;max-width:var(--maxw)}
+.freedoms li{
+  display:flex;gap:1rem;align-items:baseline;
+  border-top:1px solid var(--rule);padding:.75rem 0;margin:0;
+}
+.freedoms li span{
+  font-family:"Arial Black",Arial,sans-serif;font-weight:900;
+  font-size:1.5rem;color:var(--red);line-height:1;min-width:1.2em;
+}
+.freedoms li:last-child{border-bottom:1px solid var(--rule)}
+
+/* ---------- peu ---------- */
+footer{
+  background:var(--ink);color:#B4AEAC;
+  padding:3rem 1.25rem;margin-top:2rem;font-size:.86rem;
+}
+.footer-in{max-width:1360px;margin:0 auto;padding:0 clamp(0px,2vw,2rem)}
+footer img{height:34px;margin-bottom:1.4rem;display:block}
+footer a{color:#E8B4B2}
+footer ul{max-width:none;columns:2;column-gap:2.5rem}
+@media (max-width:640px){footer ul{columns:1}}
+
+/* ---------- responsive ---------- */
+@media (max-width:920px){
+  .shell{display:block}
+  nav.toc{
+    position:static;width:auto;flex:none;max-height:none;
+    padding:1.5rem 1.25rem 0;display:none;
+    border-bottom:1px solid var(--rule);
+  }
+  nav.toc.open{display:block}
+  nav.toc ol{columns:2;column-gap:1.2rem}
+  nav.toc a{break-inside:avoid}
+  .navtoggle{display:block}
+  main{padding:1.75rem 1.25rem 4rem}
+  body{font-size:16px}
+}
+@media (max-width:520px){
+  nav.toc ol{columns:1}
+  .hero{padding:3rem 1.25rem 2.5rem}
+  .stack div b{display:block;min-width:0}
+}
+
+/* ---------- mode fosc del visor ---------- */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#161514;--surface:#232120;--rule:#3B3735;
+    --ink:#F2EFEE;--muted:#A49D9A;--deep:#E88A87;--red:#D4433F;
+  }
+  :root:not([data-theme="light"]) .topbar,
+  :root:not([data-theme="light"]) .hero,
+  :root:not([data-theme="light"]) footer{background:#0E0D0D}
+  :root:not([data-theme="light"]) .shead{border-top-color:var(--red)}
+  :root:not([data-theme="light"]) thead th{background:#2E2B29;color:#F2EFEE}
+  :root:not([data-theme="light"]) .stack div.k{background:#2E2B29;border-color:#2E2B29}
+  :root:not([data-theme="light"]) .note.dark{background:#232120}
+}
+
+/* ---------- impressió / PDF ---------- */
+@media print{
+  @page{
+    size:A4;margin:17mm 15mm 16mm;
+    @bottom-left{
+      content:"MP0374 · Administració de sistemes operatius · Institut Mare de Déu de la Mercè";
+      font-family:Arial,sans-serif;font-size:7pt;color:#8A8482;
+    }
+    @bottom-right{
+      content:counter(page) " / " counter(pages);
+      font-family:Arial,sans-serif;font-size:7.5pt;color:#8A8482;
+    }
+  }
+  @page cover{
+    margin:0;
+    @bottom-left{content:none}
+    @bottom-right{content:none}
+  }
+  :root{--maxw:none}
+  html{scroll-behavior:auto}
+  body{font-size:10.2pt;line-height:1.45;background:#fff;color:#000}
+  .topbar,nav.toc,.copy,.navtoggle{display:none !important}
+  .shell{display:block}
+  main{padding:0}
+  .hero{
+    page:cover;background:#242121 !important;color:#fff !important;
+    height:297mm;padding:6.5cm 2.2cm 0;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
+  .hero-in{padding:0}
+  .hero img.mark{height:1.7cm;margin-bottom:3.2cm}
+  .hero h1{font-size:60pt;margin-bottom:1.4cm}
+  .hero .lede{font-size:12.5pt;color:#DDD !important;margin-bottom:2.4cm}
+  .hero .kicker{font-size:9.5pt}
+  section{page-break-before:always;break-before:page;margin-bottom:1.4cm;padding-top:0}
+  .shead .num{font-size:20pt}
+  .shead h2{font-size:17pt}
+  h3{font-size:12.5pt;page-break-after:avoid;break-after:avoid}
+  h4{page-break-after:avoid;break-after:avoid}
+  p,li{orphans:3;widows:3}
+  .term,.tw,.note,.stack,table,.freedoms{page-break-inside:avoid;break-inside:avoid}
+  .term pre{background:#1A1817 !important;color:#E8E4E2 !important;font-size:8.4pt;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;white-space:pre-wrap;word-break:break-word}
+  thead th{background:#242121 !important;color:#fff !important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  tbody tr:nth-child(even){background:#F4F2F1 !important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .note{background:#F4F2F1 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .note.dark{background:#242121 !important;color:#E6E2E0 !important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  table{min-width:0;font-size:8.6pt}
+  .tw{overflow:visible}
+  footer{background:#242121 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;
+    page-break-before:always;break-before:page}
+  a{color:#000;text-decoration:none}
+}
+
+.note.dark a{color:#F3AFAD}
+@media print{.note.dark a{color:#F3AFAD !important}}
+
+/* ---------- barres LVM ---------- */
+.lvm{margin:1.1rem 0 1.5rem;max-width:62rem}
+.lvm .lt{font-size:.82rem;font-weight:700;margin:.2rem 0 .35rem}
+.lvm .lt code{font-weight:400}
+.lvm .arrow{font-size:.82rem;color:var(--muted);margin:.55rem 0 .55rem}
+.lvm .bar{display:flex;border:1px solid var(--ink);font-size:.78rem;line-height:1.3}
+.lvm .bar>div{padding:.45rem .5rem;border-right:1px solid var(--ink);min-width:3.6rem;overflow:hidden}
+.lvm .bar>div:last-child{border-right:0}
+.lvm .bar b{display:block}
+.lvm .sys{background:var(--surface);color:var(--muted)}
+.lvm .pv{background:var(--ink);color:#fff}
+.lvm .lv{background:var(--paper)}
+.lvm .lv.grow{background:#F6DCDB}
+.lvm .free{background:repeating-linear-gradient(45deg,transparent 0 6px,rgba(190,45,42,.12) 6px 12px);color:var(--red)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .lvm .pv{background:#2E2B29}
+  :root:not([data-theme="light"]) .lvm .lv.grow{background:#4A2725}
+}
+@media (max-width:640px){.lvm .bar{font-size:.7rem}.lvm .bar>div{min-width:2.8rem;padding:.4rem .35rem}}
+@media print{
+  .lvm{break-inside:avoid;page-break-inside:avoid}
+  .lvm .pv{background:#242121 !important;color:#fff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .lvm .sys,.lvm .lv.grow,.lvm .free{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+/* ---------- topologia ---------- */
+.topo{display:flex;align-items:stretch;margin:1.4rem 0 1.7rem;max-width:62rem}
+.topo .box{flex:1 1 0;border:1px solid var(--rule);padding:.75rem .9rem;font-size:.86rem;background:var(--paper)}
+.topo .box.net{flex:1.25 1 0}
+.topo .box b{display:block;margin-bottom:.15rem}
+.topo .box code{background:transparent;padding:0}
+.topo .net{background:var(--ink);color:#fff;border-color:var(--ink)}
+.topo .net code{color:#F3AFAD}
+.topo .link{flex:0 0 1.6rem;height:3px;align-self:center;background:var(--red)}
+@media (max-width:640px){
+  .topo{flex-direction:column}
+  .topo .link{flex:0 0 1.1rem;width:3px;height:auto}
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .topo .net{background:#2E2B29;border-color:#2E2B29}
+}
+@media print{
+  .topo{break-inside:avoid;page-break-inside:avoid}
+  .topo .net{background:#242121 !important;color:#fff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .topo .link{background:#BE2D2A !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+<style>
+.mapa{display:grid;grid-template-columns:1fr 4.6rem 1fr;margin:1.4rem 0 .6rem;align-items:stretch}
+.maq{border:2px solid var(--red);border-radius:10px;overflow:hidden;background:var(--paper)}
+.maq h4{margin:0;background:var(--red);color:#fff;padding:.7rem 1rem;font-size:1.02rem}
+.maq h4 span{display:block;font-weight:normal;font-size:.84rem;opacity:.92}
+.maq ol{list-style:none;margin:0;padding:.5rem .8rem .7rem;counter-reset:pas}
+.maq li{counter-increment:pas;position:relative;padding:.5rem .4rem .5rem 2.5rem;border-bottom:1px dashed var(--rule)}
+.maq li:last-child{border-bottom:none}
+.maq li::before{content:counter(pas);position:absolute;left:.25rem;top:.5rem;width:1.65rem;height:1.65rem;border-radius:50%;background:var(--red);color:#fff;font-weight:bold;text-align:center;line-height:1.65rem;font-size:.88rem}
+.maq li b{display:block}
+.maq li small{color:var(--muted)}
+.maq li.ok::before{content:"\2713";background:#2f7d32}
+.maq.dreta ol{counter-reset:pas var(--inici,0)}
+.cable{display:flex;align-items:center;justify-content:center;position:relative}
+.cable::before{content:"";position:absolute;top:50%;left:0;right:0;border-top:4px dotted var(--red)}
+.cable span{position:relative;background:var(--paper);color:var(--red);font-weight:bold;font-size:.78rem;padding:.25rem .35rem;text-align:center;border:2px solid var(--red);border-radius:6px;line-height:1.25}
+.peu{font-size:.92rem;color:var(--muted);margin-top:.2rem}
+.dn{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:1rem 0;font-family:ui-monospace,Consolas,"Liberation Mono",monospace;font-size:.92rem}
+.dn div{border:2px solid var(--red);border-radius:6px;padding:.35rem .7rem}
+.dn .fl{color:var(--red);font-weight:bold;border:none;padding:0}
+.pas{display:inline-block;background:var(--red);color:#fff;border-radius:4px;padding:0 .45rem;margin-right:.45rem;font-size:.85em}
+@media (max-width:760px){.mapa{grid-template-columns:1fr}.cable{height:3.2rem}.cable::before{top:0;bottom:0;left:50%;right:auto;border-top:none;border-left:4px dotted var(--red)}}
+@media print{.mapa{break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <img src="data:image/png;base64,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" alt="Institut Mare de Déu de la Mercè">
+    <span class="mod">MP0374 <span>·</span> 2n ASIX</span>
+    <span class="spacer"></span>
+    <button class="navtoggle" id="navtoggle" aria-expanded="false" aria-controls="toc">Índex</button>
+  </div>
+  <div id="bar"></div>
+</header>
+
+<div class="hero">
+  <div class="hero-in">
+    <img class="mark" src="data:image/png;base64,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" alt="Institut Mare de Déu de la Mercè">
+    <p class="kicker">Administració de sistemes operatius · 2n ASIX · Curs 2026-2027</p>
+    <h1>Serveis de <em>directori</em></h1>
+    <p class="lede">Guia pas a pas d'OpenLDAP: muntar el servidor, connectar-hi un client, crear l'arbre d'usuaris i grups amb LDAP Account Manager i fer que una web identifiqui els usuaris amb el directori.</p>
+    <p class="prompt"><b>$</b> ldapsearch -x -LLL -b "dc=exemple,dc=asix" "(uid=aprats)"<br>RA1 · Pràctiques 1, 2 i 3</p>
+    <div class="herometa">
+      <span>Institut Mare de Déu de la Mercè</span>
+      <span>CFGS Administració de Sistemes Informàtics en Xarxa · 2n curs</span>
+    </div>
+  </div>
+</div>
+
+<div class="shell">
+<nav class="toc" id="toc">
+  <h2>ÍNDEX</h2>
+  <ol>
+    <li><a href="#s1"><span class="n">1</span> Com funciona un directori</a></li>
+    <li><a href="#s2"><span class="n">2</span> Part 1 · Servidor i client</a></li>
+    <li><a href="#s3"><span class="n">3</span> Contrasenya de l'admin</a></li>
+    <li><a href="#s4"><span class="n">4</span> Part 2 · Disseny</a></li>
+    <li><a href="#s5"><span class="n">5</span> Part 2 · LAM</a></li>
+    <li><a href="#s6"><span class="n">6</span> Part 2 · LDIF</a></li>
+    <li><a href="#s7"><span class="n">7</span> Part 2 · Client</a></li>
+    <li><a href="#s8"><span class="n">8</span> Part 2 · Filtres</a></li>
+    <li><a href="#s9"><span class="n">9</span> Part 3 · Apache</a></li>
+    <li><a href="#s10"><span class="n">10</span> Problemes habituals</a></li>
+    <li><a href="#s11"><span class="n">11</span> Les pràctiques</a></li>
+    <li><a href="#s12"><span class="n">12</span> Fonts</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ========== 1 ========== -->
+<section id="s1">
+  <div class="shead">
+    <span class="num">01</span>
+    <h2>Com funciona un directori</h2>
+    <p class="sub">El mínim que cal saber abans de començar.</p>
+  </div>
+
+<p>En una empresa, si cada ordinador té els seus usuaris locals, quan entra una persona nova cal crear-li el compte a cada equip. Un <strong>servei de directori</strong> guarda els usuaris i els grups en un sol servidor, i els equips i les aplicacions li pregunten a ell. Es crea l'usuari una vegada i pot entrar a qualsevol equip. Això és l'<strong>acreditació centralitzada</strong>.</p>
+<p>Farem servir <strong>OpenLDAP</strong>, un servidor de directori lliure. Els clients hi parlen amb el protocol <strong>LDAP</strong>, pel port <code>389</code>.</p>
+<h3>La informació s'organitza en un arbre</h3>
+<p>El directori és un arbre, el <strong>DIT</strong>. A dalt hi ha el domini. A sota, les <strong>unitats organitzatives</strong> (OU), que fan de carpetes. A les fulles, els usuaris i els grups. Aquest és l'arbre de l'empresa d'exemple d'aquesta guia:</p>
+<div class="term">
+<pre>dc=exemple,dc=asix                  ← el domini (l'arrel)
+├── ou=Persones                     ← unitat organitzativa
+│   ├── ou=Vendes
+│   │   ├── uid=aprats              ← usuari: Anna Prats
+│   │   └── uid=jgarcia             ← usuari: Jordi Garcia
+│   └── ou=Magatzem
+│       └── uid=mserra              ← usuari: Marta Serra
+├── ou=Grups
+│   ├── cn=comercials               ← grup
+│   ├── cn=magatzem
+│   └── cn=encarregats
+└── ou=Serveis
+    └── uid=escaner                 ← compte d'un aparell, no d'una persona</pre>
+  </div>
+<h3>Cada entrada té un nom complet: el DN</h3>
+<p>El <strong>DN</strong> és el camí de l'entrada fins a l'arrel, separat per comes. És com la ruta d'un fitxer, però escrita al revés:</p>
+<div class="dn"><div>uid=aprats</div><div class="fl">,</div><div>ou=Vendes</div><div class="fl">,</div><div>ou=Persones</div><div class="fl">,</div><div>dc=exemple,dc=asix</div></div>
+<p>L'arrel, el <strong>DN base</strong>, surt del nom del domini: cada part separada per punts es converteix en un <code>dc</code>.</p>
+<div class="dn"><div>exemple.asix</div><div class="fl">→</div><div>dc=exemple,dc=asix</div></div>
+<div class="tw">
+  <table>
+    <thead><tr><th>Abreviatura</th><th>Què és</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td><code>dc</code></td><td>part del nom de domini</td><td><code>dc=asix</code></td></tr>
+      <tr><td><code>ou</code></td><td>unitat organitzativa (una carpeta)</td><td><code>ou=Vendes</code></td></tr>
+      <tr><td><code>cn</code></td><td>nom: d'un grup o d'una persona</td><td><code>cn=comercials</code></td></tr>
+      <tr><td><code>uid</code></td><td>nom d'usuari per iniciar sessió</td><td><code>uid=aprats</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+<h3>Què guarda cada entrada</h3>
+<p>Cada entrada és una llista d'<strong>atributs</strong> (<code>nom: valor</code>). Les línies <code>objectClass</code> diuen quin tipus d'objecte és i, per tant, quins atributs ha de tenir obligatòriament:</p>
+<div class="tw">
+  <table>
+    <thead><tr><th>Objecte</th><th>objectClass</th><th>Atributs obligatoris</th></tr></thead>
+    <tbody>
+      <tr><td>Unitat organitzativa</td><td><code>organizationalUnit</code></td><td><code>ou</code></td></tr>
+      <tr><td>Grup</td><td><code>posixGroup</code></td><td><code>cn</code>, <code>gidNumber</code></td></tr>
+      <tr><td>Usuari que pot iniciar sessió a Linux</td><td><code>inetOrgPerson</code> + <code>posixAccount</code> + <code>shadowAccount</code></td><td><code>cn</code>, <code>sn</code>, <code>uid</code>, <code>uidNumber</code>, <code>gidNumber</code>, <code>homeDirectory</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+<p>Aquesta llista d'atributs es pot escriure en un fitxer de text amb format <strong>LDIF</strong>. És el que mostra el servidor quan li demanes el contingut, i el que faràs servir per crear usuaris des del terminal (secció 6).</p>
+</section>
+
+<!-- ========== 2 ========== -->
+<section id="s2">
+  <div class="shead">
+    <span class="num">02</span>
+    <h2>Part 1 · Servidor OpenLDAP i client</h2>
+    <p class="sub">Instal·lar el directori al servidor i connectar-hi l'Ubuntu Desktop. Pràctica 1.</p>
+  </div>
+
+<div class="note">
+    <span class="lbl">L'EXEMPLE D'AQUESTA GUIA</span>
+    <p>Tots els passos es fan amb l'empresa d'exemple: domini <code>exemple.asix</code>, servidor <code>ldap01</code> amb IP <code>192.168.50.10/24</code> i client <code>pc01</code> amb IP <code>192.168.50.20/24</code>. A la pràctica tu faràs servir el teu domini, els teus noms i les teves IP.</p>
+  </div>
+<div class="mapa"><section class="maq"><h4>Ubuntu Server<span>ldap01 · 192.168.50.10</span></h4><ol><li><b>Xarxa</b><small>IP fixa al 2n adaptador (netplan)</small></li><li><b>Nom de l'equip</b><small><code>hostnamectl</code> i <code>/etc/hosts</code></small></li><li><b>Instal·la OpenLDAP</b><small><code>apt install slapd</code> + <code>dpkg-reconfigure slapd</code></small></li><li><b>Comprova</b><small><code>slapcat</code> i <code>ldapwhoami</code></small></li><li><b>Mira la configuració</b><small><code>cn=config</code>: domini, admin i permisos</small></li></ol></section><div class="cable"><span>LDAP<br>port 389</span></div><section class="maq dreta" style="--inici:5"><h4>Ubuntu Desktop<span>pc01 · 192.168.50.20</span></h4><ol><li><b>Xarxa i nom</b><small>IP fixa al 2n adaptador (Paràmetres)</small></li><li><b>Connecta'l al domini</b><small><code>libnss-ldapd</code> + <code>libpam-ldapd</code></small></li><li><b>Directori personal automàtic</b><small><code>pam-auth-update --enable mkhomedir</code></small></li><li class="ok"><b>Comprova</b><small><code>ldapsearch</code> des del client</small></li></ol></section></div>
+<p class="peu">El servidor guarda els comptes. El client els pregunta al servidor cada vegada que algú inicia sessió.</p>
+<h3>Abans de començar: els dos adaptadors de xarxa</h3>
+<p>Les màquines d'Isard tenen dos adaptadors:</p>
+<div class="tw">
+  <table>
+    <thead><tr><th>Adaptador</th><th>Per a què serveix</th><th>Què hi has de fer</th></tr></thead>
+    <tbody>
+      <tr><td>1r · <em>Default</em></td><td>Surt a internet (IP per DHCP)</td><td>Res. No el toquis: és el que et deixa instal·lar paquets.</td></tr>
+      <tr><td>2n · xarxa personal</td><td>Comunica el servidor i el client</td><td>Posar-hi la IP fixa. Sense porta d'enllaç ni DNS.</td></tr>
+    </tbody>
+  </table>
+  </div>
+<p>Primer es fa tot el servidor i després el client, que s'hi connecta.</p>
+<h3>Servidor</h3>
+<h3><span class="pas">1</span>Xarxa amb IP fixa</h3>
+<p>Ubuntu Server configura la xarxa amb <strong>netplan</strong>, a partir d'un fitxer <code>.yaml</code> de la carpeta <code>/etc/netplan/</code>. Primer mira com es diuen els adaptadors i quin fitxer tens:</p>
+<div class="term">
+<pre><b>$</b> ip -br a          <i># el 2n adaptador és el que no té IP</i>
+lo        UNKNOWN   127.0.0.1/8
+enp1s0    UP        10.2.118.33/16
+enp2s0    UP
+<b>$</b> ls /etc/netplan/
+00-installer-config.yaml</pre>
+  </div>
+<p>El fitxer normalment és <code>00-installer-config.yaml</code>; en algunes màquines és <code>50-cloud-init.yaml</code>. <strong>Edita el que hi hagi; no en creïs un de nou.</strong> Hi trobaràs els adaptadors. Al segon, desactiva el DHCP i posa-hi la IP:</p>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo nano /etc/netplan/00-installer-config.yaml</pre>
+  </div>
+<div class="term">
+<pre>network:
+  ethernets:
+    enp1s0:              # 1r adaptador: no el toquis
+      dhcp4: true
+    enp2s0:              # 2n adaptador: afegeix aquestes línies
+      dhcp4: false
+      addresses:
+        - 192.168.50.10/24
+  version: 2</pre>
+    <p class="cap">Si el 2n adaptador no hi surt, afegeix-lo amb el mateix sagnat que el primer. Només espais, mai tabuladors: el YAML és molt estricte.</p>
+  </div>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo chmod 600 /etc/netplan/*.yaml
+<b>$</b> sudo netplan apply
+<b>$</b> ip -br a</pre>
+    <p class="cap">Ara el 2n adaptador ha de mostrar la IP. Si <code>netplan apply</code> diu <em>Cannot call Open vSwitch</em>, és un avís sense importància.</p>
+  </div>
+<h3><span class="pas">2</span>Nom de l'equip</h3>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo hostnamectl set-hostname ldap01
+<b>$</b> sudo nano /etc/hosts</pre>
+  </div>
+<p>A <code>/etc/hosts</code> afegeix una línia amb la IP, el nom complet (equip + domini) i el nom curt:</p>
+<div class="term">
+<pre>192.168.50.10   ldap01.exemple.asix   ldap01</pre>
+  </div>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> hostname -f       <i># ha de mostrar ldap01.exemple.asix</i></pre>
+  </div>
+<h3><span class="pas">3</span>Instal·la i configura OpenLDAP</h3>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo apt update
+<b>$</b> sudo apt install slapd ldap-utils</pre>
+    <p class="cap"><code>slapd</code> és el servidor; <code>ldap-utils</code>, les ordres per consultar-lo i modificar-lo.</p>
+  </div>
+<p>La instal·lació demana una contrasenya i crea el directori amb un domini per defecte (normalment <code>dc=nodomain</code>), que no és el teu. Per posar-hi el teu domini, obre l'assistent complet:</p>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo dpkg-reconfigure slapd</pre>
+  </div>
+<div class="tw">
+  <table>
+    <thead><tr><th>Pregunta de l'assistent</th><th>Què has de respondre</th></tr></thead>
+    <tbody>
+      <tr><td>Omit OpenLDAP server configuration?</td><td><strong>No</strong> (si dius que sí, no es crea el directori)</td></tr>
+      <tr><td>DNS domain name</td><td>El domini: <code>exemple.asix</code></td></tr>
+      <tr><td>Organization name</td><td>Un nom descriptiu: <code>exemple</code></td></tr>
+      <tr><td>Administrator password (dues vegades)</td><td>La contrasenya de l'administrador del directori</td></tr>
+      <tr><td>Do you want the database to be removed when slapd is purged?</td><td><strong>No</strong></td></tr>
+      <tr><td>Move old database?</td><td><strong>Yes</strong></td></tr>
+    </tbody>
+  </table>
+  </div>
+<p>A partir del domini, l'assistent crea l'arrel <code>dc=exemple,dc=asix</code> i l'<strong>administrador del directori</strong>:</p>
+<div class="dn"><div>cn=admin,dc=exemple,dc=asix</div><div class="fl">+</div><div>la contrasenya de l'assistent</div></div>
+<div class="note">
+    <span class="lbl">LA CONTRASENYA DE L'ADMINISTRADOR</span>
+    <p>La faràs servir a les tres pràctiques: per crear usuaris, per entrar a LAM... Apunta-la ara. Fes-la només de lletres i números: la consola d'Isard pot tenir el teclat en una altra distribució i els símbols no surten igual que quan després l'escrius al navegador. Si l'oblides, <strong>no tornis a fer <code>dpkg-reconfigure</code></strong> si ja tens usuaris creats, perquè esborra el directori: mira la secció 3.</p>
+  </div>
+<h3><span class="pas">4</span>Comprova que funciona</h3>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> systemctl status slapd        <i># ha de sortir active (running)</i>
+<b>$</b> sudo slapcat                  <i># mostra tot el contingut del directori</i>
+<b>$</b> ldapwhoami -x -H ldap://localhost -D "cn=admin,dc=exemple,dc=asix" -W</pre>
+  </div>
+<p><code>slapcat</code> mostra el directori en format LDIF. Ara només hi ha una entrada, l'arrel <code>dc=exemple,dc=asix</code>: és correcte, encara no hi has creat res. Si hi veus <code>dc=nodomain</code>, torna al pas 3.</p>
+<p><code>ldapwhoami</code> comprova la contrasenya de l'administrador. Si és bona, respon amb el seu DN (<code>dn:cn=admin,dc=exemple,dc=asix</code>). Si respon <code>Invalid credentials (49)</code>, la contrasenya o el DN no són els que creus.</p>
+<div class="tw">
+  <table>
+    <thead><tr><th>Opció</th><th>Què vol dir</th></tr></thead>
+    <tbody>
+      <tr><td><code>-x</code></td><td>autenticació simple, amb usuari i contrasenya</td></tr>
+      <tr><td><code>-H ldap://localhost</code></td><td>a quin servidor et connectes</td></tr>
+      <tr><td><code>-D "cn=admin,..."</code></td><td>amb quin usuari del directori t'identifiques</td></tr>
+      <tr><td><code>-W</code></td><td>que et demani la contrasenya</td></tr>
+    </tbody>
+  </table>
+  </div>
+<h3><span class="pas">5</span>Mira la configuració del servidor</h3>
+<p>La configuració d'OpenLDAP es guarda dins del mateix servidor, en una branca especial anomenada <code>cn=config</code>. No s'edita a mà: es consulta i es modifica amb les ordres LDAP. Aquesta ordre mostra on està definit el domini, l'administrador i qui pot llegir què:</p>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b cn=config "(olcSuffix=*)" olcSuffix olcRootDN olcAccess</pre>
+  </div>
+<div class="term">
+<pre>dn: olcDatabase={1}mdb,cn=config
+olcSuffix: dc=exemple,dc=asix
+olcAccess: {0}to attrs=userPassword by self write by anonymous auth by * none
+olcAccess: {1}to attrs=shadowLastChange by self write by * read
+olcAccess: {2}to * by * read
+olcRootDN: cn=admin,dc=exemple,dc=asix</pre>
+  </div>
+<div class="tw">
+  <table>
+    <thead><tr><th>Línia</th><th>Què vol dir</th></tr></thead>
+    <tbody>
+      <tr><td><code>olcSuffix</code></td><td>El domini del directori</td></tr>
+      <tr><td><code>olcRootDN</code></td><td>L'administrador. No és un usuari de l'arbre: està definit aquí, a la configuració. Per això <code>slapcat</code> no el mostra.</td></tr>
+      <tr><td><code>olcAccess {0}</code></td><td>Les contrasenyes: cada usuari pot canviar la seva i serveixen per iniciar sessió, però ningú no les pot llegir</td></tr>
+      <tr><td><code>olcAccess {2}</code></td><td>Tota la resta del directori la pot llegir qualsevol, fins i tot sense identificar-se</td></tr>
+    </tbody>
+  </table>
+  </div>
+<p><code>-Y EXTERNAL -H ldapi:///</code> vol dir: connecta't pel canal intern del servidor i identifica't com a <code>root</code> de la màquina. Per això no demana contrasenya, però només funciona amb <code>sudo</code> i al mateix servidor.</p>
+<h3>Client</h3>
+<h3><span class="pas">6</span>Xarxa i nom del client</h3>
+<p>A Ubuntu Desktop és més còmode per entorn gràfic: <strong>Paràmetres → Xarxa</strong>, engranatge de la connexió del <strong>2n adaptador</strong> → <strong>IPv4 → Manual</strong>. Adreça <code>192.168.50.20</code>, màscara <code>255.255.255.0</code>, porta d'enllaç i DNS buits. Aplica, i desactiva i torna a activar la connexió.</p>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo hostnamectl set-hostname pc01
+<b>$</b> sudo nano /etc/hosts</pre>
+  </div>
+<p>Afegeix-hi el servidor perquè el client el trobi pel nom:</p>
+<div class="term">
+<pre>192.168.50.10   ldap01.exemple.asix   ldap01</pre>
+  </div>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ping -c 3 ldap01</pre>
+  </div>
+<h3><span class="pas">7</span>Connecta el client al domini</h3>
+<p>Aquest és el pas que fa que el client faci servir els usuaris del directori. S'hi instal·la <strong>nslcd</strong>, un servei que pregunta al servidor LDAP en nom del sistema: quan algú inicia sessió, nslcd consulta si l'usuari existeix i si la contrasenya és correcta.</p>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo apt update
+<b>$</b> sudo apt install libnss-ldapd libpam-ldapd ldap-utils</pre>
+  </div>
+<p>En instal·lar-los s'obre un assistent:</p>
+<div class="tw">
+  <table>
+    <thead><tr><th>Pregunta</th><th>Què has de respondre</th></tr></thead>
+    <tbody>
+      <tr><td>LDAP server URI</td><td><code>ldap://192.168.50.10/</code> (esborra el que hi hagi)</td></tr>
+      <tr><td>LDAP server search base</td><td>El DN base: <code>dc=exemple,dc=asix</code></td></tr>
+      <tr><td>Name services to configure</td><td>Marca <strong>passwd</strong>, <strong>group</strong> i <strong>shadow</strong> amb la <strong>barra espaiadora</strong> i accepta amb Retorn</td></tr>
+    </tbody>
+  </table>
+  </div>
+<div class="note">
+    <span class="lbl">COMPTE</span>
+    <p>Si no marques <code>shadow</code>, en iniciar sessió el client dirà que la contrasenya és incorrecta. Si t'equivoques en alguna resposta, torna a obrir l'assistent: <code>sudo dpkg-reconfigure nslcd</code> (servidor i base) i <code>sudo dpkg-reconfigure libnss-ldapd</code> (serveis).</p>
+  </div>
+<p>On queda cada cosa:</p>
+<div class="term">
+<pre><b>$</b> grep -E "^(uri|base)" /etc/nslcd.conf
+uri ldap://192.168.50.10/
+base dc=exemple,dc=asix
+<b>$</b> grep -E "^(passwd|group|shadow)" /etc/nsswitch.conf
+passwd:         files systemd ldap
+group:          files systemd ldap
+shadow:         files systemd ldap</pre>
+    <p class="cap"><code>files ... ldap</code>: el sistema busca primer els usuaris locals i, si no el troba, el pregunta al directori.</p>
+  </div>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo systemctl restart nslcd</pre>
+  </div>
+<h3><span class="pas">8</span>Directori personal automàtic</h3>
+<p>Els usuaris del directori no tenen carpeta a <code>/home</code> del client. Sense carpeta, el sistema accepta la contrasenya i torna a la pantalla d'inici. Aquesta ordre fa que es creï sola el primer cop que l'usuari entra:</p>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo pam-auth-update --enable mkhomedir
+<b>$</b> grep mkhomedir /etc/pam.d/common-session      <i># ha de sortir una línia amb pam_mkhomedir.so</i></pre>
+  </div>
+<h3><span class="pas">9</span>Comprova el client</h3>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ldapsearch -x -H ldap://192.168.50.10 -b "dc=exemple,dc=asix"</pre>
+  </div>
+<p>Si surt el mateix que veus amb <code>slapcat</code> al servidor, el client arriba al directori. Encara no hi ha usuaris al directori, així que <code>getent passwd</code> només mostrarà els locals. Quan en creïs (Part 2), hi apareixeran i s'hi podrà iniciar sessió.</p>
+</section>
+
+<!-- ========== 3 ========== -->
+<section id="s3">
+  <div class="shead">
+    <span class="num">03</span>
+    <h2>Si oblides la contrasenya de l'administrador</h2>
+    <p class="sub">Recuperar-la sense perdre res del que has creat.</p>
+  </div>
+
+<p>És l'error més habitual. Abans de res, comprova-la al servidor:</p>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ldapwhoami -x -H ldap://localhost -D "cn=admin,dc=exemple,dc=asix" -W</pre>
+  </div>
+<p>Si respon <code>Invalid credentials (49)</code> i estàs segur que el DN és bo, la contrasenya no és la que creus. Hi ha dues situacions:</p>
+<div class="tw">
+  <table>
+    <thead><tr><th>Situació</th><th>Què fer</th></tr></thead>
+    <tbody>
+      <tr><td>El directori encara és buit (Pràctica 1)</td><td>Torna a fer <code>sudo dpkg-reconfigure slapd</code> i posa una contrasenya nova. Ho torna a crear tot des de zero.</td></tr>
+      <tr><td>Ja hi has creat usuaris (Pràctiques 2 i 3)</td><td><strong>No</strong> facis <code>dpkg-reconfigure</code>: esborraria el directori. Canvia només la contrasenya amb els passos d'aquí sota.</td></tr>
+    </tbody>
+  </table>
+  </div>
+<h3><span class="pas">1</span>Genera la contrasenya xifrada</h3>
+<div class="term">
+<pre><b>$</b> slappasswd
+New password:
+Re-enter new password:
+{SSHA}2DYqIZsdNR/rRUQ/oZNOkpLxBvZviywj</pre>
+    <p class="cap">Escriu la contrasenya nova dues vegades. Copia la línia que comença per <code>{SSHA}</code>: és la contrasenya xifrada.</p>
+  </div>
+<h3><span class="pas">2</span>Escriu un fitxer amb el canvi</h3>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> nano canvi-admin.ldif</pre>
+  </div>
+<div class="term">
+<pre>dn: olcDatabase={1}mdb,cn=config
+changetype: modify
+replace: olcRootPW
+olcRootPW: {SSHA}2DYqIZsdNR/rRUQ/oZNOkpLxBvZviywj</pre>
+    <p class="cap">A l'última línia, enganxa la teva línia <code>{SSHA}</code>. <code>olcRootPW</code> és on el servidor guarda la contrasenya de l'administrador (al costat d'<code>olcRootDN</code>, que vas veure al pas 5).</p>
+  </div>
+<h3><span class="pas">3</span>Aplica'l i comprova</h3>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo ldapmodify -Y EXTERNAL -H ldapi:/// -f canvi-admin.ldif
+<b>$</b> ldapwhoami -x -H ldap://localhost -D "cn=admin,dc=exemple,dc=asix" -W</pre>
+  </div>
+<p>Ara <code>ldapwhoami</code> ha d'acceptar la contrasenya nova. És la mateixa que faràs servir per entrar a LAM. No cal canviar res més: ni el client ni els usuaris fan servir la contrasenya de l'administrador.</p>
+</section>
+
+<!-- ========== 4 ========== -->
+<section id="s4">
+  <div class="shead">
+    <span class="num">04</span>
+    <h2>Part 2 · Dissenyar el directori</h2>
+    <p class="sub">Abans de crear res, es dibuixa l'arbre. Pràctica 2, part A.</p>
+  </div>
+
+<p>Abans d'obrir LAM es decideix com serà l'arbre: quines OU hi haurà, quins grups, quins usuaris i amb quins números. Si es canvia després, canvien els DN i cal refer feina.</p>
+<h3>Criteris</h3>
+<ul><li><strong>Separa per tipus al primer nivell:</strong> una OU per a les persones, una per als grups i una per als comptes de servei. Així una aplicació pot buscar només persones.</li><li><strong>Dins de les persones, una OU per departament,</strong> si l'empresa s'organitza així.</li><li><strong>Nom d'usuari:</strong> inicial del nom + primer cognom, en minúscules i sense accents: Anna Prats → <code>aprats</code>.</li><li><strong>Números:</strong> persones a partir de <code>uidNumber</code> 10001, grups a partir de <code>gidNumber</code> 20001 i comptes de servei a partir de 10100. Els usuaris locals de Linux comencen pel 1000: amb números alts no es barregen. LDAP no avisa si en repeteixes un, per això s'apunten al disseny.</li></ul>
+<h3>Grup principal i grups secundaris</h3>
+<p>Cada usuari té <strong>un grup principal</strong>, que s'indica a l'usuari (<code>gidNumber</code>). Si a més ha de ser d'un altre grup (un grup <strong>secundari</strong>, per exemple un equip que agrupa gent de diversos departaments), s'indica al grup, amb una línia <code>memberUid</code> per a cada membre.</p>
+<div class="dn"><div>uid=aprats · gidNumber: 20001</div><div class="fl">→</div><div>grup principal: comercials</div></div>
+<div class="dn"><div>cn=encarregats · memberUid: aprats</div><div class="fl">→</div><div>grup secundari: encarregats</div></div>
+<h3>Comptes de servei</h3>
+<p>Un escàner o una aplicació que necessita un usuari propi no és una persona i no ha d'iniciar sessió enlloc. Va a la seva OU, amb shell <code>/usr/sbin/nologin</code> i sense contrasenya.</p>
+<h3>Exemple resolt: el document de disseny</h3>
+<div class="note">
+    <span class="lbl">EL CAS</span>
+    <p><strong>Distribucions Exemple SL</strong> té dos departaments: Vendes (Anna Prats i Jordi Garcia) i Magatzem (Marta Serra). L'Anna i la Marta són les encarregades i formen un equip. Hi ha un escàner a la planta 1 que necessita un compte. El Jordi té el telèfon 934 00 11 22.</p>
+  </div>
+<p><strong>1. Arbre</strong></p>
+<div class="term">
+<pre>dc=exemple,dc=asix
+├── ou=Persones
+│   ├── ou=Vendes
+│   │   ├── uid=aprats
+│   │   └── uid=jgarcia
+│   └── ou=Magatzem
+│       └── uid=mserra
+├── ou=Grups
+│   ├── cn=comercials        (20001)
+│   ├── cn=magatzem          (20002)
+│   └── cn=encarregats       (20003)
+└── ou=Serveis
+    └── uid=escaner</pre>
+  </div>
+<p><strong>2. Justificació.</strong> Persones, grups i serveis separats al primer nivell perquè les aplicacions puguin buscar només persones. Dins de Persones, una OU per departament perquè l'empresa s'organitza així.</p>
+<p><strong>3. Unitats organitzatives</strong></p>
+<div class="tw">
+  <table>
+    <thead><tr><th>OU</th><th>Per a què</th></tr></thead>
+    <tbody>
+      <tr><td><code>ou=Persones,dc=exemple,dc=asix</code></td><td>Totes les persones</td></tr>
+      <tr><td><code>ou=Vendes,ou=Persones,dc=exemple,dc=asix</code></td><td>Personal de Vendes</td></tr>
+      <tr><td><code>ou=Magatzem,ou=Persones,dc=exemple,dc=asix</code></td><td>Personal de Magatzem</td></tr>
+      <tr><td><code>ou=Grups,dc=exemple,dc=asix</code></td><td>Grups</td></tr>
+      <tr><td><code>ou=Serveis,dc=exemple,dc=asix</code></td><td>Comptes que no són persones</td></tr>
+    </tbody>
+  </table>
+  </div>
+<p><strong>4. Grups</strong></p>
+<div class="tw">
+  <table>
+    <thead><tr><th>Grup</th><th>gidNumber</th><th>Tipus</th><th>Membres</th></tr></thead>
+    <tbody>
+      <tr><td>comercials</td><td>20001</td><td>principal de Vendes</td><td>aprats, jgarcia</td></tr>
+      <tr><td>magatzem</td><td>20002</td><td>principal de Magatzem</td><td>mserra, escaner</td></tr>
+      <tr><td>encarregats</td><td>20003</td><td>secundari</td><td>aprats, mserra (amb <code>memberUid</code>)</td></tr>
+    </tbody>
+  </table>
+  </div>
+<p><strong>5. Usuaris</strong></p>
+<div class="tw">
+  <table>
+    <thead><tr><th>uid</th><th>Nom</th><th>OU</th><th>uidNumber</th><th>Grup principal</th><th>Grup secundari</th><th>Telèfon</th><th>Shell</th></tr></thead>
+    <tbody>
+      <tr><td>aprats</td><td>Anna Prats</td><td>Vendes</td><td>10001</td><td>comercials</td><td>encarregats</td><td>—</td><td>/bin/bash</td></tr>
+      <tr><td>jgarcia</td><td>Jordi Garcia</td><td>Vendes</td><td>10002</td><td>comercials</td><td>—</td><td>934001122</td><td>/bin/bash</td></tr>
+      <tr><td>mserra</td><td>Marta Serra</td><td>Magatzem</td><td>10003</td><td>magatzem</td><td>encarregats</td><td>—</td><td>/bin/bash</td></tr>
+      <tr><td>escaner</td><td>Escàner planta 1</td><td>Serveis</td><td>10100</td><td>magatzem</td><td>—</td><td>—</td><td>/usr/sbin/nologin</td></tr>
+    </tbody>
+  </table>
+  </div>
+<p><strong>6. Convencions:</strong> les dels criteris d'aquesta secció.</p>
+</section>
+
+<!-- ========== 5 ========== -->
+<section id="s5">
+  <div class="shead">
+    <span class="num">05</span>
+    <h2>Part 2 · Crear l'arbre amb LDAP Account Manager</h2>
+    <p class="sub">L'eina gràfica per crear OU, grups i usuaris des del navegador. Pràctica 2, part B.</p>
+  </div>
+
+<div class="mapa"><section class="maq"><h4>Amb eina web<span>LDAP Account Manager (LAM)</span></h4><ol><li><b>Instal·la LAM</b><small>al servidor</small></li><li><b>Les tres contrasenyes</b><small>quina va a cada lloc</small></li><li><b>Configura el perfil</b><small>domini, administrador i on van usuaris i grups</small></li><li><b>Entra com a administrador</b><small>amb la contrasenya de l'admin LDAP</small></li><li><b>Crea OU i grups</b><small>l'estructura del disseny</small></li><li><b>Crea els usuaris</b><small>a la seva OU, amb grup i contrasenya</small></li><li class="ok"><b>Comprova</b><small>vista d'arbre i <code>slapcat</code></small></li></ol></section><div class="cable"><span>mateix<br>directori</span></div><section class="maq dreta" style="--inici:0"><h4>Amb línia d'ordres<span>fitxers LDIF (secció 6)</span></h4><ol><li><b>Consulta què hi ha</b><small><code>ldapsearch</code></small></li><li><b>Escriu el fitxer</b><small>les entrades noves</small></li><li><b>Afegeix-lo</b><small><code>ldapadd</code> + <code>ldappasswd</code></small></li><li><b>Modifica</b><small><code>ldapmodify</code></small></li><li class="ok"><b>Comprova</b><small><code>slapcat</code> i LAM</small></li></ol></section></div>
+<p class="peu">LAM i els fitxers LDIF escriuen al mateix directori: el que creïs amb un ho veuràs amb l'altre.</p>
+<p><strong>LDAP Account Manager</strong> (LAM) és una pàgina web que s'instal·la al servidor i que permet gestionar el directori sense escriure ordres. S'hi entra des del navegador del client.</p>
+<h3><span class="pas">1</span>Instal·la LAM al servidor</h3>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo apt update
+<b>$</b> sudo apt install ldap-account-manager
+<b>$</b> systemctl status apache2       <i># LAM és una web: funciona amb Apache</i></pre>
+  </div>
+<p>Al navegador del <strong>client</strong>, obre <code>http://192.168.50.10/lam</code>.</p>
+<h3><span class="pas">2</span>Les tres contrasenyes de LAM</h3>
+<p>A LAM hi ha tres contrasenyes i és fàcil confondre-les:</p>
+<div class="tw">
+  <table>
+    <thead><tr><th>Contrasenya</th><th>Quan te la demana</th><th>Valor</th></tr></thead>
+    <tbody>
+      <tr><td>General (<em>master</em>)</td><td><em>LAM configuration → Edit general settings</em></td><td><code>lam</code></td></tr>
+      <tr><td>Del perfil</td><td><em>LAM configuration → Edit server profiles</em></td><td><code>lam</code></td></tr>
+      <tr><td>Administrador LDAP</td><td>A la pantalla d'inici de LAM, per entrar a treballar</td><td>La de l'administrador del directori (Part 1, pas 3)</td></tr>
+    </tbody>
+  </table>
+  </div>
+<p>Les dues primeres són de LAM i durant la pràctica les deixes com estan (<code>lam</code>). La tercera no és de LAM: és la del directori, i LAM només la comprova contra el servidor.</p>
+<h3><span class="pas">3</span>Configura el perfil</h3>
+<p>LAM ve preparat per a un domini d'exemple (<code>dc=my-domain,dc=com</code>) que no és el teu. A la pantalla d'inici, fes clic a <strong>LAM configuration</strong> (a dalt a la dreta) → <strong>Edit server profiles</strong> → contrasenya <code>lam</code>.</p>
+<div class="tw">
+  <table>
+    <thead><tr><th>Pestanya i camp</th><th>Què hi has de posar</th></tr></thead>
+    <tbody>
+      <tr><td>General settings → Server address</td><td><code>ldap://localhost:389</code> (LAM és al mateix servidor que OpenLDAP)</td></tr>
+      <tr><td>General settings → Tree suffix</td><td>El DN base: <code>dc=exemple,dc=asix</code></td></tr>
+      <tr><td>General settings → List of valid users</td><td>El DN de l'administrador: <code>cn=admin,dc=exemple,dc=asix</code></td></tr>
+      <tr><td>General settings → Language</td><td>Català, si el vols en català</td></tr>
+      <tr><td>General settings → Profile password</td><td>Deixa-la buida: continua sent <code>lam</code></td></tr>
+      <tr><td>Account types → Users → LDAP suffix</td><td>L'OU de les persones: <code>ou=Persones,dc=exemple,dc=asix</code></td></tr>
+      <tr><td>Account types → Groups → LDAP suffix</td><td>L'OU dels grups: <code>ou=Grups,dc=exemple,dc=asix</code></td></tr>
+      <tr><td>Modules → Unix → UID / GID</td><td>Els rangs del disseny: usuaris 10001-19999, grups 20001-29999</td></tr>
+    </tbody>
+  </table>
+  </div>
+<p>Desa els canvis i torna a la pantalla d'inici.</p>
+<div class="note">
+    <span class="lbl">COMPTE</span>
+    <p>Els noms dels menús canvien una mica segons la versió i l'idioma de LAM. Si no trobes un camp amb aquest nom exacte, busca'l per la funció.</p>
+  </div>
+<h3><span class="pas">4</span>Entra com a administrador</h3>
+<p>A la pantalla d'inici, l'usuari ja surt (<code>admin</code>). Escriu la contrasenya de l'<strong>administrador LDAP</strong>, no <code>lam</code>. La primera vegada, LAM avisa que no existeixen les OU de persones i de grups i et proposa crear-les: accepta.</p>
+<div class="note">
+    <span class="lbl">COMPTE</span>
+    <p>Si no et deixa entrar, prova la contrasenya al servidor amb <code>ldapwhoami</code> (Part 1, pas 4). Si allà funciona, el problema és del perfil: revisa <em>List of valid users</em> i <em>Tree suffix</em>. Si allà tampoc funciona, la contrasenya de l'admin no és la que creus: secció 3.</p>
+  </div>
+<h3><span class="pas">5</span>Crea les OU i els grups</h3>
+<p><strong>OU:</strong> a <strong>Tree view</strong> (vista d'arbre), selecciona l'OU pare i crea-hi una entrada nova de tipus unitat organitzativa. Les de primer nivell (<code>Persones</code>, <code>Grups</code>) potser ja les ha creat LAM al pas 4. Falten les de dins (<code>Vendes</code>, <code>Magatzem</code>) i <code>Serveis</code>. Sempre de dalt a baix: no es pot crear una OU dins d'una que encara no existeix.</p>
+<p><strong>Grups:</strong> pestanya <strong>Groups → New group</strong>. Escriu el nom i comprova que el <code>gidNumber</code> és el del disseny; si LAM en proposa un altre, canvia'l. Desa.</p>
+<h3><span class="pas">6</span>Crea els usuaris</h3>
+<p>Pestanya <strong>Users → New user</strong>. Cada usuari té diverses pestanyes:</p>
+<div class="tw">
+  <table>
+    <thead><tr><th>Pestanya</th><th>Què hi poses</th></tr></thead>
+    <tbody>
+      <tr><td>Personal</td><td>Nom i cognom. Telèfon, si en té.</td></tr>
+      <tr><td>Unix</td><td>Nom d'usuari (revisa'l: LAM el genera sol i potser no segueix la convenció), <code>uidNumber</code>, grup principal, directori personal <code>/home/usuari</code> i shell <code>/bin/bash</code>.</td></tr>
+      <tr><td>Set password (botó)</td><td>La contrasenya de l'usuari</td></tr>
+      <tr><td>Suffix (desplegable, a dalt)</td><td>L'OU del seu departament: <code>ou=Vendes,ou=Persones,...</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+<div class="note">
+    <span class="lbl">COMPTE</span>
+    <p><strong>El desplegable <em>Suffix</em>.</strong> LAM posa cada usuari nou a l'OU general de persones. Si no el canvies a l'OU del seu departament abans de desar, tots els usuaris acaben al mateix lloc. Si et passa, es poden moure des de LAM.</p>
+  </div>
+<p>Per fer que un usuari sigui membre d'un grup <strong>secundari</strong> (com <code>encarregats</code>): a l'usuari, pestanya <em>Unix</em> → <em>Edit groups</em>; o al grup, <em>Members</em>.</p>
+<h3><span class="pas">7</span>Comprova</h3>
+<p>A <strong>Tree view</strong>, desplega tot l'arbre i compara'l amb el disseny. Al servidor:</p>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo slapcat | grep "^dn:"</pre>
+  </div>
+</section>
+
+<!-- ========== 6 ========== -->
+<section id="s6">
+  <div class="shead">
+    <span class="num">06</span>
+    <h2>Part 2 · Crear i modificar amb fitxers LDIF</h2>
+    <p class="sub">El mateix des del terminal. Pràctica 2, part C.</p>
+  </div>
+
+<p>Al terminal, les entrades s'escriuen en un fitxer LDIF i s'envien al servidor. Serveix per fer moltes altes de cop o canvis repetibles. Tot es fa al servidor.</p>
+<h3><span class="pas">1</span>Consulta abans d'escriure</h3>
+<p>Abans d'escriure el fitxer, demana al directori els DN exactes de les OU i els números que ja estan ocupats:</p>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ldapsearch -x -LLL -H ldap://localhost -b "dc=exemple,dc=asix" "(objectClass=organizationalUnit)" dn
+<b>$</b> ldapsearch -x -LLL -H ldap://localhost -b "dc=exemple,dc=asix" "(objectClass=posixGroup)" cn gidNumber
+<b>$</b> ldapsearch -x -LLL -H ldap://localhost -b "dc=exemple,dc=asix" "(objectClass=posixAccount)" uid uidNumber</pre>
+  </div>
+<h3><span class="pas">2</span>Escriu el fitxer d'altes</h3>
+<p>Normes: cada entrada comença amb <code>dn:</code>; una línia per atribut; una <strong>línia en blanc</strong> entre entrades; <strong>cap espai al final de les línies</strong>.</p>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> nano alta.ldif</pre>
+  </div>
+<div class="term">
+<pre>dn: uid=mserra,ou=Magatzem,ou=Persones,dc=exemple,dc=asix
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: mserra
+cn: Marta Serra
+givenName: Marta
+sn: Serra
+uidNumber: 10003
+gidNumber: 20002
+homeDirectory: /home/mserra
+loginShell: /bin/bash
+
+dn: uid=escaner,ou=Serveis,dc=exemple,dc=asix
+objectClass: inetOrgPerson
+objectClass: posixAccount
+uid: escaner
+cn: Escaner de la planta 1
+sn: escaner
+uidNumber: 10100
+gidNumber: 20002
+homeDirectory: /nonexistent
+loginShell: /usr/sbin/nologin</pre>
+  </div>
+<h3><span class="pas">3</span>Afegeix-lo i posa contrasenya</h3>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ldapadd -x -H ldap://localhost -D "cn=admin,dc=exemple,dc=asix" -W -f alta.ldif
+<b>$</b> ldappasswd -x -H ldap://localhost -D "cn=admin,dc=exemple,dc=asix" -W -S "uid=mserra,ou=Magatzem,ou=Persones,dc=exemple,dc=asix"</pre>
+  </div>
+<p><code>ldappasswd</code> demana tres contrasenyes, en aquest ordre: la nova de l'usuari (dues vegades, per <code>-S</code>) i la de l'administrador (per <code>-W</code>). Al compte de servei no se li posa.</p>
+<h3><span class="pas">4</span>Modifica entrades</h3>
+<p>Per canviar una entrada que ja existeix, el fitxer porta <code>changetype: modify</code> i què fas amb cada atribut: <code>add</code> (afegir), <code>replace</code> (substituir; si no hi era, el crea) o <code>delete</code> (treure). Si canvies dues coses de la mateixa entrada, les separes amb una línia que només té un guionet <code>-</code>. Exemple: posar telèfon a la Marta i fer-la membre del grup <code>encarregats</code>.</p>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> nano canvis.ldif</pre>
+  </div>
+<div class="term">
+<pre>dn: uid=mserra,ou=Magatzem,ou=Persones,dc=exemple,dc=asix
+changetype: modify
+replace: telephoneNumber
+telephoneNumber: 934005566
+
+dn: cn=encarregats,ou=Grups,dc=exemple,dc=asix
+changetype: modify
+add: memberUid
+memberUid: mserra</pre>
+  </div>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ldapmodify -x -H ldap://localhost -D "cn=admin,dc=exemple,dc=asix" -W -f canvis.ldif
+<b>$</b> ldapsearch -x -LLL -H ldap://localhost -b "dc=exemple,dc=asix" "(cn=encarregats)" memberUid</pre>
+  </div>
+<h3><span class="pas">5</span>Comprova</h3>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo slapcat | grep "^dn:"</pre>
+  </div>
+<p>Les entrades creades amb LDIF també surten a la vista d'arbre de LAM.</p>
+<div class="note">
+    <span class="lbl">ELS MISSATGES D'ERROR</span>
+    <p>El servidor explica què ha fallat. Els més habituals:</p><ul><li><code>No such object (32)</code>: l'OU on vols crear l'entrada no existeix o el DN està mal escrit.</li><li><code>Already exists (68)</code>: l'entrada ja hi era.</li><li><code>Object class violation (65)</code>: falta un atribut obligatori; el missatge diu quin.</li><li><code>Type or value exists (20)</code>: afegeixes un <code>memberUid</code> que el grup ja tenia.</li><li><code>Invalid credentials (49)</code>: contrasenya de l'admin incorrecta (secció 3).</li></ul>
+  </div>
+</section>
+
+<!-- ========== 7 ========== -->
+<section id="s7">
+  <div class="shead">
+    <span class="num">07</span>
+    <h2>Part 2 · Iniciar sessió al client</h2>
+    <p class="sub">Comprovar que els usuaris del directori entren a l'Ubuntu Desktop. Pràctica 2, part D.</p>
+  </div>
+
+<p>Ara que el directori té usuaris, el client els veu com si fossin locals:</p>
+<div class="term">
+<pre><b>$</b> getent passwd | tail -4
+<b>$</b> id aprats
+uid=10001(aprats) gid=20001(comercials) groups=20001(comercials),20003(encarregats)</pre>
+    <p class="cap"><code>id</code> mostra l'usuari, el seu grup principal i els secundaris: ha de coincidir amb el disseny.</p>
+  </div>
+<p>Per entrar en entorn gràfic: tanca la sessió, a la pantalla d'inici fes clic a <strong>No apareix a la llista?</strong> (<em>Not listed?</em>) i escriu l'usuari (<code>aprats</code>) i la seva contrasenya. Dins de la sessió, obre un terminal:</p>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> whoami
+<b>$</b> pwd            <i># ha de ser /home/aprats: s'ha creat sol</i>
+<b>$</b> id</pre>
+  </div>
+<div class="tw">
+  <table>
+    <thead><tr><th>Si passa això</th><th>Per on mirar</th></tr></thead>
+    <tbody>
+      <tr><td>Accepta la contrasenya però torna a la pantalla d'inici</td><td>No es crea el directori personal: Part 1, pas 8</td></tr>
+      <tr><td>Diu que la contrasenya és incorrecta</td><td>L'usuari no té contrasenya, o al client falta <code>shadow</code> (Part 1, pas 7)</td></tr>
+      <tr><td><code>getent passwd</code> no mostra els usuaris del directori</td><td><code>/etc/nslcd.conf</code> i <code>/etc/nsswitch.conf</code> (Part 1, pas 7)</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ========== 8 ========== -->
+<section id="s8">
+  <div class="shead">
+    <span class="num">08</span>
+    <h2>Part 2 · Buscar amb filtres</h2>
+    <p class="sub">Trobar entrades concretes amb ldapsearch. Pràctica 2, part E.</p>
+  </div>
+
+<p>Una cerca té quatre parts: des d'on busques, fins a quina profunditat, què busques i quins atributs vols veure.</p>
+<div class="term">
+<pre><b>$</b> ldapsearch -x -LLL -H ldap://192.168.50.10 -b "dc=exemple,dc=asix" -s sub "(objectClass=posixAccount)" uid cn</pre>
+  </div>
+<div class="tw">
+  <table>
+    <thead><tr><th>Part</th><th>A l'exemple</th><th>Què vol dir</th></tr></thead>
+    <tbody>
+      <tr><td><code>-b</code></td><td><code>"dc=exemple,dc=asix"</code></td><td>Des d'on: tot el domini</td></tr>
+      <tr><td><code>-s</code></td><td><code>sub</code></td><td>Profunditat: <code>sub</code> tot el que hi ha a sota (per defecte); <code>one</code> només el primer nivell; <code>base</code> només l'entrada de <code>-b</code></td></tr>
+      <tr><td>filtre</td><td><code>"(objectClass=posixAccount)"</code></td><td>Què: els comptes Unix</td></tr>
+      <tr><td>atributs</td><td><code>uid cn</code></td><td>Què vols veure de cada resultat. Si no en poses, surten tots</td></tr>
+    </tbody>
+  </table>
+  </div>
+<h3>Com s'escriuen els filtres</h3>
+<div class="tw">
+  <table>
+    <thead><tr><th>Filtre</th><th>Significat</th></tr></thead>
+    <tbody>
+      <tr><td><code>(uid=aprats)</code></td><td>igual a</td></tr>
+      <tr><td><code>(telephoneNumber=*)</code></td><td>té aquest atribut</td></tr>
+      <tr><td><code>(sn=G*)</code></td><td>comença per G</td></tr>
+      <tr><td><code>(uidNumber&gt;=10002)</code></td><td>més gran o igual (també <code>&lt;=</code>)</td></tr>
+      <tr><td><code>(&amp;(...)(...))</code></td><td>es compleixen totes</td></tr>
+      <tr><td><code>(|(...)(...))</code></td><td>se'n compleix alguna</td></tr>
+      <tr><td><code>(!(...))</code></td><td>no es compleix</td></tr>
+    </tbody>
+  </table>
+  </div>
+<p>El símbol (<code>&amp;</code>, <code>|</code>, <code>!</code>) va <strong>davant</strong> de les condicions. Cada condició va entre parèntesis, i el filtre sencer també. Posa sempre el filtre entre cometes dobles.</p>
+<h3>Exemples</h3>
+<div class="tw">
+  <table>
+    <thead><tr><th>Què busques</th><th>Filtre</th><th>Resultat</th></tr></thead>
+    <tbody>
+      <tr><td>Tots els comptes Unix</td><td><code>"(objectClass=posixAccount)"</code></td><td>aprats, jgarcia, mserra, escaner</td></tr>
+      <tr><td>Cognom que comença per G</td><td><code>"(sn=G*)"</code></td><td>jgarcia</td></tr>
+      <tr><td>Grups on aprats és membre secundari</td><td><code>"(&amp;(objectClass=posixGroup)(memberUid=aprats))"</code></td><td>encarregats</td></tr>
+      <tr><td>Comptes sense telèfon</td><td><code>"(&amp;(objectClass=posixAccount)(!(telephoneNumber=*)))"</code></td><td>aprats, escaner</td></tr>
+      <tr><td>Amb telèfon o que no poden iniciar sessió</td><td><code>"(&amp;(objectClass=inetOrgPerson)(|(telephoneNumber=*)(loginShell=/usr/sbin/nologin)))"</code></td><td>jgarcia, mserra, escaner</td></tr>
+      <tr><td>UID 10002 o més i grup principal comercials</td><td><code>"(&amp;(uidNumber&gt;=10002)(gidNumber=20001))"</code></td><td>jgarcia</td></tr>
+    </tbody>
+  </table>
+  </div>
+<h3>Buscar dins d'una sola OU</h3>
+<p>Per buscar només les persones de Vendes, es canvia <code>-b</code>, no el filtre. Les persones no tenen un atribut <code>ou</code>: l'OU forma part del seu DN.</p>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ldapsearch -x -LLL -H ldap://192.168.50.10 -b "ou=Vendes,ou=Persones,dc=exemple,dc=asix" "(objectClass=posixAccount)" uid</pre>
+  </div>
+<h3>Comptar resultats</h3>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> ldapsearch -x -LLL -H ldap://192.168.50.10 -b "dc=exemple,dc=asix" "(objectClass=posixAccount)" dn | grep -c "^dn:"</pre>
+  </div>
+<div class="note">
+    <span class="lbl">NOMS AMB ACCENT</span>
+    <p>Si un nom té accents, <code>ldapsearch</code> el mostra codificat, amb dos punts dobles: <code>cn:: TnXDunJpYSBSb2Nh</code>. És normal. Per llegir-lo: <code>echo TnXDunJpYSBSb2Nh | base64 -d</code>.</p>
+  </div>
+</section>
+
+<!-- ========== 9 ========== -->
+<section id="s9">
+  <div class="shead">
+    <span class="num">09</span>
+    <h2>Part 3 · Una web que fa servir el directori</h2>
+    <p class="sub">Apache demana usuari i contrasenya i els comprova contra LDAP. Pràctica 3.</p>
+  </div>
+
+<p>Moltes aplicacions poden fer servir el directori per identificar els usuaris: webs, correu, VPN, carpetes compartides... Així cada persona té un sol usuari i una sola contrasenya per a tot. Aquí ho farem amb <strong>Apache</strong>: una intranet on cada persona entra amb el seu usuari del directori i només veu les zones que li toquen.</p>
+<div class="topo">
+  <div class="box"><b>Navegador</b>pc01<br>usuari + contrasenya</div>
+  <div class="link"></div>
+  <div class="box"><b>Apache</b>ldap01<br>mòdul <code>authnz_ldap</code></div>
+  <div class="link"></div>
+  <div class="box net"><b>OpenLDAP</b>ldap01<br>port <code>389</code></div>
+</div>
+<p>Quan algú escriu el seu usuari, Apache fa tres coses: <strong>busca</strong> l'usuari al directori, <strong>comprova la contrasenya</strong> connectant-se al directori amb aquell usuari, i mira si <strong>té permís</strong> per a la zona que demana.</p>
+<div class="tw">
+  <table>
+    <thead><tr><th>Zona</th><th>Qui hi entra a l'exemple</th></tr></thead>
+    <tbody>
+      <tr><td><code>/intranet/</code></td><td>Qualsevol persona del directori</td></tr>
+      <tr><td><code>/intranet/vendes/</code></td><td>Les persones amb grup principal comercials</td></tr>
+      <tr><td><code>/intranet/magatzem/</code></td><td>Les persones amb grup principal magatzem</td></tr>
+      <tr><td><code>/intranet/encarregats/</code></td><td>Els membres del grup secundari encarregats</td></tr>
+      <tr><td><code>/intranet/direccio/</code></td><td>Només l'Anna</td></tr>
+      <tr><td><code>/intranet/telefons/</code></td><td>Les persones de Vendes que tenen telèfon</td></tr>
+    </tbody>
+  </table>
+  </div>
+<h3><span class="pas">1</span>Activa el mòdul</h3>
+<p>Apache ja és al servidor: el va instal·lar LAM. Només cal activar-li el mòdul que parla amb LDAP:</p>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo a2enmod authnz_ldap
+<b>$</b> sudo systemctl restart apache2
+<b>$</b> apache2ctl -M | grep ldap          <i># han de sortir authnz_ldap_module i ldap_module</i></pre>
+  </div>
+<h3><span class="pas">2</span>Crea les carpetes</h3>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo mkdir -p /var/www/html/intranet/{vendes,magatzem,encarregats,direccio,telefons}
+<b>$</b> echo "Intranet Distribucions Exemple" | sudo tee /var/www/html/intranet/index.html
+<b>$</b> echo "Zona vendes" | sudo tee /var/www/html/intranet/vendes/index.html</pre>
+    <p class="cap">I el mateix per a cada zona, amb el seu nom.</p>
+  </div>
+<h3><span class="pas">3</span>On busca Apache els usuaris</h3>
+<p>Es diu amb una sola línia, <code>AuthLDAPURL</code>, que té cinc parts separades per <code>/</code> i <code>?</code>:</p>
+<div class="dn"><div>ldap://127.0.0.1</div><div class="fl">/</div><div>ou=Persones,dc=exemple,dc=asix</div><div class="fl">?</div><div>uid</div><div class="fl">?</div><div>sub</div><div class="fl">?</div><div>(objectClass=posixAccount)</div></div>
+<div class="tw">
+  <table>
+    <thead><tr><th>Part</th><th>Què vol dir</th></tr></thead>
+    <tbody>
+      <tr><td><code>ldap://127.0.0.1</code></td><td>el servidor LDAP: és la mateixa màquina</td></tr>
+      <tr><td><code>ou=Persones,...</code></td><td>on busca: només a les persones (els comptes de servei no hi són i no podran entrar)</td></tr>
+      <tr><td><code>uid</code></td><td>el nom que escriu l'usuari es compara amb <code>uid</code></td></tr>
+      <tr><td><code>sub</code></td><td>busca a tots els nivells per sota</td></tr>
+      <tr><td><code>(objectClass=posixAccount)</code></td><td>només comptes Unix</td></tr>
+    </tbody>
+  </table>
+  </div>
+<h3><span class="pas">4</span>Escriu la configuració</h3>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo nano /etc/apache2/conf-available/intranet-ldap.conf</pre>
+  </div>
+<div class="term">
+<pre>&lt;Directory /var/www/html/intranet&gt;
+    AuthType Basic
+    AuthName "Intranet Distribucions Exemple"
+    AuthBasicProvider ldap
+    AuthLDAPURL "ldap://127.0.0.1/ou=Persones,dc=exemple,dc=asix?uid?sub?(objectClass=posixAccount)"
+    AuthLDAPGroupAttribute memberUid
+    AuthLDAPGroupAttributeIsDN off
+    Require valid-user
+&lt;/Directory&gt;
+
+&lt;Directory /var/www/html/intranet/vendes&gt;
+    Require ldap-attribute gidNumber=20001
+&lt;/Directory&gt;
+
+&lt;Directory /var/www/html/intranet/magatzem&gt;
+    Require ldap-attribute gidNumber=20002
+&lt;/Directory&gt;
+
+&lt;Directory /var/www/html/intranet/encarregats&gt;
+    Require ldap-group cn=encarregats,ou=Grups,dc=exemple,dc=asix
+&lt;/Directory&gt;
+
+&lt;Directory /var/www/html/intranet/direccio&gt;
+    Require ldap-user aprats
+&lt;/Directory&gt;
+
+&lt;Directory /var/www/html/intranet/telefons&gt;
+    Require ldap-filter &amp;(gidNumber=20001)(telephoneNumber=*)
+&lt;/Directory&gt;</pre>
+    <p class="cap">El primer bloc diu com s'autentica (i ho hereten totes les subcarpetes). Cada subcarpeta només canvia la línia <code>Require</code>: qui hi pot entrar.</p>
+  </div>
+<div class="tw">
+  <table>
+    <thead><tr><th>Línia Require</th><th>Qui hi entra</th><th>Per a què ho fem servir</th></tr></thead>
+    <tbody>
+      <tr><td><code>valid-user</code></td><td>qualsevol usuari amb contrasenya correcta</td><td>la intranet general</td></tr>
+      <tr><td><code>ldap-attribute gidNumber=20001</code></td><td>qui té aquest valor a l'atribut</td><td><strong>grup principal</strong></td></tr>
+      <tr><td><code>ldap-group cn=...</code></td><td>qui surt a <code>memberUid</code> del grup</td><td><strong>grup secundari</strong></td></tr>
+      <tr><td><code>ldap-user aprats jgarcia</code></td><td>els usuaris de la llista (separats per espais)</td><td>persones concretes</td></tr>
+      <tr><td><code>ldap-filter ...</code></td><td>qui compleix un filtre LDAP</td><td>condicions combinades</td></tr>
+    </tbody>
+  </table>
+  </div>
+<div class="note">
+    <span class="lbl">COMPTE</span>
+    <p><strong>Grup principal → <code>ldap-attribute</code>; grup secundari → <code>ldap-group</code>.</strong> <code>ldap-group</code> només mira les línies <code>memberUid</code> del grup, i els membres per grup principal no hi són.</p><p><strong>A <code>ldap-filter</code>, el filtre va sense el parèntesi de fora i sense cometes:</strong> <code>&amp;(gidNumber=20001)(telephoneNumber=*)</code>. Apache ja hi afegeix els parèntesis.</p>
+  </div>
+<h3><span class="pas">5</span>Activa-la</h3>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo a2enconf intranet-ldap
+<b>$</b> sudo apache2ctl configtest         <i># ha de dir Syntax OK</i>
+<b>$</b> sudo systemctl reload apache2</pre>
+    <p class="cap">L'avís <em>AH00558: Could not reliably determine the server's fully qualified domain name</em> no és un error.</p>
+  </div>
+<h3><span class="pas">6</span>Prova-ho</h3>
+<p>Al navegador del client: <code>http://192.168.50.10/intranet/</code>. Et demana usuari i contrasenya. Per provar amb un altre usuari, fes servir una <strong>finestra privada</strong>: el navegador recorda l'últim.</p>
+<p>És més ràpid provar des del terminal del client amb <code>curl</code>, que només mostra el codi de resposta: <strong>200</strong> ha entrat, <strong>401</strong> no.</p>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> curl -s -o /dev/null -w "%{http_code}\n" -u aprats http://192.168.50.10/intranet/vendes/</pre>
+  </div>
+<div class="tw">
+  <table>
+    <thead><tr><th>Zona</th><th>aprats</th><th>jgarcia</th><th>mserra</th></tr></thead>
+    <tbody>
+      <tr><td>/intranet/</td><td>200</td><td>200</td><td>200</td></tr>
+      <tr><td>/intranet/vendes/</td><td>200</td><td>200</td><td>401</td></tr>
+      <tr><td>/intranet/magatzem/</td><td>401</td><td>401</td><td>200</td></tr>
+      <tr><td>/intranet/encarregats/</td><td>200</td><td>401</td><td>200</td></tr>
+      <tr><td>/intranet/direccio/</td><td>200</td><td>401</td><td>401</td></tr>
+      <tr><td>/intranet/telefons/</td><td>401</td><td>200</td><td>401</td></tr>
+    </tbody>
+  </table>
+  </div>
+<p>L'<code>escaner</code> rep 401 a tot arreu: és a <code>ou=Serveis</code>, fora d'on busca Apache.</p>
+<div class="note">
+    <span class="lbl">COMPTE</span>
+    <p>Apache recorda uns minuts les comprovacions que ha fet. Si canvies alguna cosa al directori (afegeixes algú a un grup) i Apache no ho nota: <code>sudo systemctl restart apache2</code>.</p>
+  </div>
+<h3><span class="pas">7</span>Mira el registre</h3>
+<p>Al servidor, deixa el registre obert mentre proves:</p>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo tail -f /var/log/apache2/error.log</pre>
+  </div>
+<div class="tw">
+  <table>
+    <thead><tr><th>Missatge</th><th>Què ha passat</th></tr></thead>
+    <tbody>
+      <tr><td><code>user ningu not found</code></td><td>L'usuari no existeix o és fora d'on busca Apache</td></tr>
+      <tr><td><code>user aprats: authentication failure ... Password Mismatch</code></td><td>L'usuari existeix, però la contrasenya és incorrecta</td></tr>
+      <tr><td><code>user jgarcia: authorization failure for "/intranet/magatzem/"</code></td><td>Usuari i contrasenya bons, però no té permís per a aquella zona</td></tr>
+    </tbody>
+  </table>
+  </div>
+<h3><span class="pas">8</span>Protegeix la contrasenya amb HTTPS</h3>
+<p>Amb HTTP, el navegador envia l'usuari i la contrasenya només codificats, no xifrats. Qualsevol que vegi el trànsit els pot llegir:</p>
+<div class="term">
+<pre><b>$</b> curl -sv -u aprats http://192.168.50.10/intranet/ -o /dev/null 2&gt;&amp;1 | grep Authorization
+&gt; Authorization: Basic YXByYXRzOlBhdGF0YTEyMw==
+<b>$</b> echo YXByYXRzOlBhdGF0YTEyMw== | base64 -d
+aprats:Patata123</pre>
+  </div>
+<p>Ubuntu porta preparat un lloc web HTTPS amb un certificat de prova. Al servidor:</p>
+<div class="term">
+    <button class="copy" type="button">Copia</button>
+<pre><b>$</b> sudo a2enmod ssl
+<b>$</b> sudo a2ensite default-ssl
+<b>$</b> sudo systemctl reload apache2</pre>
+  </div>
+<p>I perquè la intranet no s'obri mai per HTTP, una redirecció. Edita <code>/etc/apache2/sites-available/000-default.conf</code> i, abans de <code>&lt;/VirtualHost&gt;</code>, afegeix:</p>
+<div class="term">
+<pre>Redirect permanent /intranet https://192.168.50.10/intranet</pre>
+  </div>
+<div class="term">
+<pre><b>$</b> sudo systemctl reload apache2
+<b>$</b> curl -s -o /dev/null -w "%{http_code} %{redirect_url}\n" http://192.168.50.10/intranet/
+301 https://192.168.50.10/intranet/</pre>
+    <p class="cap">El navegador avisarà que el certificat no és de confiança: és normal, és un certificat de prova. Amb <code>curl</code>, l'opció <code>-k</code> l'accepta.</p>
+  </div>
+</section>
+
+<!-- ========== 10 ========== -->
+<section id="s10">
+  <div class="shead">
+    <span class="num">10</span>
+    <h2>Problemes habituals</h2>
+    <p class="sub">Per on començar a mirar.</p>
+  </div>
+
+<p>Aquesta taula t'ajuda a trobar l'origen del problema. A l'apartat <strong>Issues and solutions</strong> de cada pràctica has d'explicar els que t'hagin passat a tu, amb les teves paraules.</p>
+<h3>Part 1</h3>
+<div class="tw">
+  <table>
+    <thead><tr><th>Símptoma</th><th>Per on començar a mirar</th></tr></thead>
+    <tbody>
+      <tr><td><code>netplan apply</code> dona error</td><td>Sagnat del YAML (espais, no tabuladors) i nom de l'adaptador</td></tr>
+      <tr><td><code>slapcat</code> mostra <code>dc=nodomain</code></td><td>Falta <code>dpkg-reconfigure slapd</code> (pas 3)</td></tr>
+      <tr><td><code>Invalid credentials (49)</code></td><td>DN de l'admin mal escrit o contrasenya incorrecta: secció 3</td></tr>
+      <tr><td><code>Can't contact LDAP server (-1)</code> des del client</td><td><code>ping</code> al servidor, <code>systemctl status slapd</code>, IP ben escrita a <code>-H</code></td></tr>
+      <tr><td><code>No such object (32)</code> amb <code>ldapsearch</code></td><td>El DN de <code>-b</code> no és el del teu domini</td></tr>
+      <tr><td>El client no veu els usuaris del directori</td><td><code>/etc/nsswitch.conf</code> sense <code>ldap</code>, base incorrecta a <code>/etc/nslcd.conf</code>, nslcd sense reiniciar</td></tr>
+    </tbody>
+  </table>
+  </div>
+<h3>Part 2</h3>
+<div class="tw">
+  <table>
+    <thead><tr><th>Símptoma</th><th>Per on començar a mirar</th></tr></thead>
+    <tbody>
+      <tr><td>LAM no accepta la contrasenya a <em>Edit server profiles</em></td><td>Aquí va <code>lam</code>, no la de l'admin</td></tr>
+      <tr><td>LAM no deixa entrar amb l'admin</td><td><code>ldapwhoami</code> al servidor; després <em>List of valid users</em> i <em>Tree suffix</em> del perfil</td></tr>
+      <tr><td>Tots els usuaris a la mateixa OU</td><td>El desplegable <em>Suffix</em> de LAM</td></tr>
+      <tr><td><code>No such object (32)</code> amb <code>ldapadd</code></td><td>L'OU pare no existeix o el DN està mal escrit</td></tr>
+      <tr><td><code>Object class violation (65)</code></td><td>Falta un atribut obligatori: el missatge diu quin</td></tr>
+      <tr><td><code>Invalid syntax (21)</code></td><td>Espai al final d'alguna línia del fitxer</td></tr>
+      <tr><td>Accepta la contrasenya i torna a la pantalla d'inici</td><td>Falta <code>mkhomedir</code> al client</td></tr>
+      <tr><td>El client diu que la contrasenya és incorrecta</td><td>Usuari sense contrasenya o <code>shadow</code> sense <code>ldap</code> al client</td></tr>
+    </tbody>
+  </table>
+  </div>
+<h3>Part 3</h3>
+<div class="tw">
+  <table>
+    <thead><tr><th>Símptoma</th><th>Per on començar a mirar</th></tr></thead>
+    <tbody>
+      <tr><td><code>configtest</code>: <code>Unknown Authn provider: ldap</code></td><td>Mòdul sense activar (pas 1)</td></tr>
+      <tr><td>Totes les zones donen 401</td><td>La base de l'<code>AuthLDAPURL</code> no existeix: prova-la amb <code>ldapsearch -b</code></td></tr>
+      <tr><td>Error 500</td><td>Apache no arriba a slapd: <code>systemctl status slapd</code></td></tr>
+      <tr><td>Zona de departament: no hi entra ningú</td><td>Has fet servir <code>ldap-group</code> amb un grup principal</td></tr>
+      <tr><td>Zona amb filtre: no hi entra ningú</td><td>Parèntesis de fora o cometes a <code>ldap-filter</code></td></tr>
+      <tr><td>El navegador diu que hi ha massa redireccions</td><td>El <code>Redirect</code> és al lloc HTTPS: ha d'anar a <code>000-default.conf</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ========== 11 ========== -->
+<section id="s11">
+  <div class="shead">
+    <span class="num">11</span>
+    <h2>Les pràctiques del RA1</h2>
+    <p class="sub">Tres pràctiques sobre les mateixes màquines.</p>
+  </div>
+
+<div class="tw">
+  <table>
+    <thead><tr><th>Pràctica</th><th>Què fas</th><th>Sessions</th><th>On és a la guia</th></tr></thead>
+    <tbody>
+      <tr><td>P1 · Instal·lació d'un domini OpenLDAP</td><td>Muntes el servidor i hi connectes el client. El directori queda buit.</td><td>30/11 i 03/12</td><td>Seccions 1, 2 i 3</td></tr>
+      <tr><td>P2 · Disseny i creació del directori</td><td>Dissenyes l'arbre d'una empresa, el crees amb LAM i amb LDIF, hi inicies sessió i hi busques amb filtres.</td><td>10/12, 14/12 i 17/12</td><td>Seccions 4 a 8</td></tr>
+      <tr><td>P3 · Integració d'Apache amb LDAP</td><td>Fas una intranet que identifica els usuaris amb el directori.</td><td>11/01</td><td>Secció 9</td></tr>
+    </tbody>
+  </table>
+  </div>
+<div class="note dark">
+    <span class="lbl">ENTREGA</span>
+    <p>Cada pràctica, un PDF individual al Classroom, amb les captures en ordre i la data visible (executa <code>date</code> abans de cada captura). Les tres pràctiques, la prova pràctica del 18/01 i el test del 21/01 formen la nota del <strong>RA1</strong>.</p>
+  </div>
+</section>
+
+<!-- ========== 12 ========== -->
+<section id="s12">
+  <div class="shead">
+    <span class="num">12</span>
+    <h2>Fonts</h2>
+    <p class="sub">Per ampliar.</p>
+  </div>
+
+<ul><li><a href="https://documentation.ubuntu.com/server/">Ubuntu Server documentation</a>: OpenLDAP i netplan</li><li><a href="https://www.openldap.org/doc/admin26/">OpenLDAP 2.6 Administrator's Guide</a></li><li><a href="https://www.ldap-account-manager.org/">LDAP Account Manager</a></li><li><a href="https://httpd.apache.org/docs/2.4/mod/mod_authnz_ldap.html">Apache mod_authnz_ldap</a></li></ul>
+</section>
+
+</main>
+</div>
+
+<footer>
+  <div class="footer-in">
+    <img src="data:image/png;base64,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" alt="Institut Mare de Déu de la Mercè">
+    <p><strong>MP0374 · Administració de sistemes operatius</strong><br>
+    CFGS Administració de Sistemes Informàtics en Xarxa · 2n curs · 2026-2027<br>
+    Departament d'Informàtica i Comunicacions · Institut Mare de Déu de la Mercè</p>
+    <p>Guia de serveis de directori (RA1) sobre Ubuntu Server 24.04 LTS, OpenLDAP 2.6, LDAP Account Manager i Apache 2.4.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* Índex desplegable en pantalles estretes */
+  var toc = document.getElementById('toc');
+  var tg  = document.getElementById('navtoggle');
+  if (tg && toc) {
+    tg.addEventListener('click', function(){
+      var open = toc.classList.toggle('open');
+      tg.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    toc.addEventListener('click', function(e){
+      if (e.target.closest('a') && window.matchMedia('(max-width:920px)').matches) {
+        toc.classList.remove('open');
+        tg.setAttribute('aria-expanded','false');
+      }
+    });
+  }
+
+  /* Barra de progrés de lectura */
+  var bar = document.getElementById('bar');
+  var ticking = false;
+  function progress(){
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+    if (bar) bar.style.width = pct.toFixed(2) + '%';
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if (!ticking) { window.requestAnimationFrame(progress); ticking = true; }
+  }, {passive:true});
+  progress();
+
+  /* Secció activa a l'índex */
+  var links = {};
+  Array.prototype.forEach.call(document.querySelectorAll('nav.toc a'), function(a){
+    links[a.getAttribute('href').slice(1)] = a;
+  });
+  var sections = document.querySelectorAll('main section');
+  if ('IntersectionObserver' in window && sections.length) {
+    var seen = {};
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ seen[en.target.id] = en.isIntersecting ? en.intersectionRatio : 0; });
+      var best = null, bestVal = 0;
+      Object.keys(seen).forEach(function(id){
+        if (seen[id] > bestVal) { bestVal = seen[id]; best = id; }
+      });
+      Object.keys(links).forEach(function(id){
+        links[id].classList.toggle('on', id === best);
+      });
+    }, {rootMargin:'-15% 0px -70% 0px', threshold:[0,.25,.5,1]});
+    Array.prototype.forEach.call(sections, function(s){ io.observe(s); });
+  }
+
+  /* Copiar blocs de terminal */
+  Array.prototype.forEach.call(document.querySelectorAll('.term .copy'), function(btn){
+    btn.addEventListener('click', function(){
+      var pre = btn.parentNode.querySelector('pre');
+      if (!pre) return;
+      var lines = pre.innerText.split('\n').map(function(l){
+        return l.replace(/\s+#\s.*$/, '').replace(/^\s*[$#]\s?/, '').trimEnd();
+      }).filter(function(l){ return l.length > 0; });
+      var text = lines.join('\n');
+      var done = function(){
+        var old = btn.textContent;
+        btn.textContent = 'Copiat';
+        setTimeout(function(){ btn.textContent = old; }, 1400);
+      };
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else { fallback(); }
+      function fallback(){
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly','');
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); done(); }
+        catch(e){ btn.textContent = 'Error'; }
+        document.body.removeChild(ta);
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
